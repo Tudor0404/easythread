@@ -100,8 +100,6 @@ async function itemToPathItem(item: paper.Item) {
 			json.children[0].attributes["stroke-width"]
 		);
 
-	pItem.strokeWidth = 1;
-
 	pItem.position = item.position;
 
 	return pItem;
@@ -133,7 +131,7 @@ function isNumeric(str: string) {
 		// only digits
 		return parseInt(str);
 	} else if (str.match(/^\d+\.\d+$/)) {
-		// digits follow by '.' follow by more digits
+		// digits follow by '.' followed by more digits
 		return parseFloat(str);
 	} else {
 		return false;
