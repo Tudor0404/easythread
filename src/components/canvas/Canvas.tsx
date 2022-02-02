@@ -54,10 +54,10 @@ const Canvas: React.FC<Props> = (props) => {
 	}, [width, height]);
 
 	return (
-		<div ref={ref} className="h-full w-full">
+		<div ref={ref} className="h-full w-full overflow-none">
 			<canvas
 				ref={canvasRef}
-				className="h-full w-full"
+				className="h-full w-full overflow-none"
 				id="canvas"
 			></canvas>
 		</div>

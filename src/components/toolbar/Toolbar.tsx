@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Button from "../button/Button";
 import {
 	ArrowLeftIcon,
@@ -12,7 +12,9 @@ import {
 	FolderOpenIcon,
 	FolderAddIcon,
 	FolderDownloadIcon,
+	CubeTransparentIcon
 } from "@heroicons/react/outline";
+import Paper from "paper"
 
 import Logo from "../../data/logo.png";
 import TextInput from "../input/TextInput";
@@ -30,6 +32,15 @@ const Toolbar: React.FC<Props> = (props) => {
 	const [zoom, setZoom] = useState(100);
 	const [scale, setScale] = useState(1);
 	const [isSizeLinked, setSizeLinked] = useState(true);
+	const [isOutlineShown, setOutlineShown] = useState(false);
+
+	useEffect(() => {
+		if (Paper.project)
+			Paper.project.getItems({}).forEach((e) => {
+				e.selected = isOutlineShown;
+			}) 
+
+	}, [isOutlineShown])
 
 	const buttonStyle =
 		"ease-in-out text-center transition-all duration-200 flex justify-center items-center";
@@ -105,7 +116,7 @@ const Toolbar: React.FC<Props> = (props) => {
 				</div>
 
 				{/*Lower Toolbar*/}
-				<div className="mt-0.5 stroke-gray-700 text-gray-700 flex flex-row items-center justify-start py-1">
+				<div className="mt-0.5 stroke-gray-700 text-gray-700 flex flex-row items-center justify-start py-1 prose-p:leading-1 prose-p:text-center">
 					{/*Undo*/}
 					<Button className="!p-1 ml-4 mx-0.5" tooltip="undo">
 						<ArrowLeftIcon className="h-5 w-5" stroke="inherit" />
@@ -158,6 +169,14 @@ const Toolbar: React.FC<Props> = (props) => {
 					></TextInput>
 					<p className="mx-0.5">mm</p>
 
+					<Button
+						className="!p-1 mx-0.5"
+						tooltip="toggle outline"
+						onClick={() => {setOutlineShown(!isOutlineShown)}}
+					>
+						<CubeTransparentIcon className="h-5 w-5" stroke="inherit" />
+					</Button>
+
 					<Seperator />
 					{/*View*/}
 					<p className="mx-0.5">zoom</p>
@@ -182,7 +201,7 @@ const Toolbar: React.FC<Props> = (props) => {
 
 					<Seperator />
 					<p className="mx-0.5">
-						<strong>scale</strong> 1px ={" "}
+						scale
 					</p>
 					<TextInput
 						setValue={(val: any) => {
@@ -192,11 +211,11 @@ const Toolbar: React.FC<Props> = (props) => {
 						className="max-w-[50px] !px-0.5 !py-0 mx-0.5 !border-2 !border-opacity-100 font-mono"
 						type={"number"}
 					></TextInput>
-					<p className="mx-0.5">mm</p>
+					<p className="mx-0.5">mm/px</p>
 					<Seperator />
 					<Button
 						filled
-						className="!py-0 !px-1 !mx-0.5"
+						className="!py-0.5 !px-1 !mx-0.5"
 						tooltip="convert to embroidery"
 					>
 						Convert
