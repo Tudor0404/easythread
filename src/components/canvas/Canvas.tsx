@@ -3,21 +3,21 @@ import Paper from "paper";
 import useResizeObserver from "use-resize-observer";
 import { Point } from "paper/dist/paper-core";
 
+import options from "../../data/options.json";
+import eventBus from "../../lib/eventBus";
+
 interface Props {}
 
 const Canvas: React.FC<Props> = (props) => {
 	const canvasRef = useRef(null);
-	const [width, setWidth] = useState(0);
-	const [height, setHeight] = useState(0);
-	const { ref } = useResizeObserver({
-		onResize: ({ width, height }) => {
-			setHeight(height ? height : 1);
-			setWidth(width ? width : 1);
-		},
-	});
-	const [objects, setObjects] = useState([]);
+	const { ref, width = 1, height = 1 } = useResizeObserver();
+
+	function resetCenter() {
+		Paper.view.center = new Point(width / 2, height / 2);
+	}
 
 	useEffect(() => {
+		// set inital dimensions
 		const canvas = canvasRef.current;
 		//@ts-ignore
 		Paper.setup(canvas);
@@ -39,17 +39,29 @@ const Canvas: React.FC<Props> = (props) => {
 			{ applyMatrix: true }
 		);
 
-		item1.selected = true;
-
 		Paper.project.addLayer(new Paper.Layer(item1));
 
 		Paper.view.update();
+
+		new Paper.Tool().on({
+			mousedrag: function (event: paper.ToolEvent) {
+				var pan_offset = event.point.subtract(event.downPoint);
+				Paper.view.center = Paper.view.center.subtract(pan_offset);
+			},
+		});
+
+		eventBus.on("resetView", (data: any) => {
+			Paper.view.zoom = 1;
+			resetCenter();
+		});
+
+		return eventBus.remove("resetView", () => {});
 	}, []);
 
-	// keep elements centered on canvas
 	useEffect(() => {
-		Paper.project.layers.forEach((layer) => {
-			layer.position = new Point(width / 2, height / 2);
+		Paper.project.layers.forEach((element) => {
+			//element.position = new Paper.Point(width / 2, height / 2);
+			element.position = new Paper.Point(width / 2, height / 2);
 		});
 	}, [width, height]);
 
@@ -57,8 +69,48 @@ const Canvas: React.FC<Props> = (props) => {
 		<div ref={ref} className="h-full w-full overflow-none">
 			<canvas
 				ref={canvasRef}
-				className="h-full w-full overflow-none"
+				className="h-full w-full"
 				id="canvas"
+				onWheel={(event) => {
+					let newZoom = Paper.view.zoom;
+					let oldZoom = Paper.view.zoom;
+
+					if (event.deltaY < 0) {
+						newZoom = Paper.view.zoom + 0.15;
+						newZoom =
+							newZoom > options.maxZoom
+								? options.maxZoom
+								: newZoom;
+					} else {
+						newZoom = Paper.view.zoom - 0.15;
+						newZoom =
+							newZoom < options.minZoom
+								? options.minZoom
+								: newZoom;
+					}
+
+					let beta = oldZoom / newZoom;
+
+					let mousePosition = new Paper.Point(
+						event.clientX,
+						event.clientY
+					);
+
+					//viewToProject: gives the coordinates in the Project space from the Screen Coordinates
+					var viewPosition = Paper.view.viewToProject(mousePosition);
+
+					var mpos = viewPosition;
+					var ctr = Paper.view.center;
+
+					var pc = mpos.subtract(ctr);
+					var offset = mpos.subtract(pc.multiply(beta)).subtract(ctr);
+
+					Paper.view.zoom = newZoom;
+					Paper.view.center = Paper.view.center.add(offset);
+
+					event.preventDefault();
+					Paper.view.update();
+				}}
 			></canvas>
 		</div>
 	);

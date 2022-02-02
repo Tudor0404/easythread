@@ -21,13 +21,11 @@ function App() {
 				/>
 				<Script />
 			</Head> */}
-			<main className="h-screen max-w-screen flex flex-col justify-start items-center overflow-x-hidden bg-repeating-pattern bg-stone-200">
+			<main className="h-screen max-w-screen flex flex-col justify-start items-center overflow-y-clip overflow-x-hidden bg-repeating-pattern bg-stone-200">
 				<Toolbar></Toolbar>
-				<div className="grid grid-cols-4 h-full w-full max-h-[1000px]">
-					<div className="col-span-3 h-full w-full p-3">
-						<div className="bg-white w-full h-full shadow-md">
-							<Canvas></Canvas>
-						</div>
+				<div className="flex flex-row h-full w-full ">
+					<div className="basis-3/4 max-h-fit w-full m-3 bg-white shadow-md">
+						<Canvas></Canvas>
 					</div>
 					<Sidebar state="SVG" />
 				</div>

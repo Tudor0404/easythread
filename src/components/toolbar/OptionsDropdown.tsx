@@ -4,6 +4,8 @@ import Switch from "../input/Switch";
 import Dropdown from "../dropdown/Dropdown";
 
 import useState from "react-usestateref";
+import TextInput from "../input/TextInput";
+import NumberInput from "../input/NumberInput";
 
 interface Props {}
 
@@ -11,6 +13,7 @@ const OptionsDropdown: React.FC<Props> = () => {
 	const [isConvertToEmbroidery, setConvertToEmbroidery] = useState(true);
 	const [isRemoveOverlap, setRemoveOverlap] = useState(true);
 	const [isAverageOutColours, setAverageOutColours] = useState(true);
+	const [stitchLength, setStitchLength] = useState("2.7");
 
 	return (
 		<Dropdown
@@ -58,6 +61,15 @@ const OptionsDropdown: React.FC<Props> = () => {
 					>
 						Average colours to DMC
 					</p>
+				</div>
+				<div className="p-1 flex flex-row w-[250px] justify-start items-center">
+					<p className="mr-2">Stitch length</p>
+					<NumberInput
+						className="max-w-[70px] !px-0.5 !py-0 mx-0.5"
+						setValue={setStitchLength}
+						value={stitchLength}
+					></NumberInput>
+					<p>mm</p>
 				</div>
 			</div>
 		</Dropdown>

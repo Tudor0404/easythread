@@ -9,12 +9,10 @@ import {
 	ArrowsExpandIcon,
 	DocumentIcon,
 	DocumentAddIcon,
-	FolderOpenIcon,
-	FolderAddIcon,
-	FolderDownloadIcon,
-	CubeTransparentIcon
+	CubeTransparentIcon,
+	DocumentDownloadIcon,
 } from "@heroicons/react/outline";
-import Paper from "paper"
+import Paper from "paper";
 
 import Logo from "../../data/logo.png";
 import TextInput from "../input/TextInput";
@@ -22,6 +20,9 @@ import Seperator from "../seperator/Seperator";
 import OptionsDropdown from "./OptionsDropdown";
 import Dropdown from "../dropdown/Dropdown";
 import DropdownItem from "../dropdown/DropdownItem";
+import options from "../../data/options.json";
+import eventBus from "../../lib/eventBus";
+import UndoRedoTool from "../../lib/canvas/UndoRedoTool";
 
 interface Props {}
 
@@ -29,8 +30,6 @@ const Toolbar: React.FC<Props> = (props) => {
 	const [filename, setFilename] = useState("");
 	const [width, setWidth] = useState<number>(0);
 	const [length, setLength] = useState<number>(0);
-	const [zoom, setZoom] = useState(100);
-	const [scale, setScale] = useState(1);
 	const [isSizeLinked, setSizeLinked] = useState(true);
 	const [isOutlineShown, setOutlineShown] = useState(false);
 
@@ -38,9 +37,8 @@ const Toolbar: React.FC<Props> = (props) => {
 		if (Paper.project)
 			Paper.project.getItems({}).forEach((e) => {
 				e.selected = isOutlineShown;
-			}) 
-
-	}, [isOutlineShown])
+			});
+	}, [isOutlineShown]);
 
 	const buttonStyle =
 		"ease-in-out text-center transition-all duration-200 flex justify-center items-center";
@@ -128,13 +126,13 @@ const Toolbar: React.FC<Props> = (props) => {
 
 					<Seperator />
 					<Button className="!p-1 mx-0.5" tooltip="new file">
-						<FolderAddIcon className="h-5 w-5" stroke="inherit" />
+						<DocumentAddIcon className="h-5 w-5" stroke="inherit" />
 					</Button>
 					<Button className="!p-1 mx-0.5" tooltip="open file">
-						<FolderOpenIcon className="h-5 w-5" stroke="inherit" />
+						<DocumentIcon className="h-5 w-5" stroke="inherit" />
 					</Button>
 					<Button className="!p-1 mx-0.5" tooltip="download file">
-						<FolderDownloadIcon
+						<DocumentDownloadIcon
 							className="h-5 w-5"
 							stroke="inherit"
 						/>
@@ -172,46 +170,64 @@ const Toolbar: React.FC<Props> = (props) => {
 					<Button
 						className="!p-1 mx-0.5"
 						tooltip="toggle outline"
-						onClick={() => {setOutlineShown(!isOutlineShown)}}
+						onClick={() => {
+							setOutlineShown(!isOutlineShown);
+						}}
 					>
-						<CubeTransparentIcon className="h-5 w-5" stroke="inherit" />
-					</Button>
-
-					<Seperator />
-					{/*View*/}
-					<p className="mx-0.5">zoom</p>
-
-					<TextInput
-						setValue={setZoom}
-						value={zoom + "%"}
-						className="max-w-[50px] !px-0.5 !py-0 mx-0.5 !border-2 !border-opacity-100 font-mono"
-					></TextInput>
-					<Button className="!p-1 mx-0.5" tooltip="zoom in">
-						<ZoomInIcon className="h-5 w-5" stroke="inherit" />
-					</Button>
-					<Button className="!p-1 mx-0.5" tooltip="zoom out">
-						<ZoomOutIcon className="h-5 w-5" stroke="inherit" />
-					</Button>
-					<Button className="!p-1 mx-0.5" tooltip="reset view">
-						<ArrowsExpandIcon
+						<CubeTransparentIcon
 							className="h-5 w-5"
 							stroke="inherit"
 						/>
 					</Button>
 
 					<Seperator />
-					<p className="mx-0.5">
-						scale
-					</p>
-					<TextInput
-						setValue={(val: any) => {
-							setScale(val.replace(/\D/g, ""));
+					<Button
+						className="!p-1 mx-0.5"
+						tooltip="zoom in"
+						onClick={() => {
+							let newZoom = Paper.view.zoom;
+
+							newZoom = Paper.view.zoom + 0.15;
+							newZoom =
+								newZoom > options.maxZoom
+									? options.maxZoom
+									: newZoom;
+
+							Paper.view.zoom = newZoom;
 						}}
-						value={scale}
-						className="max-w-[50px] !px-0.5 !py-0 mx-0.5 !border-2 !border-opacity-100 font-mono"
-						type={"number"}
-					></TextInput>
-					<p className="mx-0.5">mm/px</p>
+					>
+						<ZoomInIcon className="h-5 w-5" stroke="inherit" />
+					</Button>
+					<Button
+						className="!p-1 mx-0.5"
+						tooltip="zoom out"
+						onClick={() => {
+							let newZoom = Paper.view.zoom;
+
+							newZoom = Paper.view.zoom - 0.15;
+							newZoom =
+								newZoom < options.minZoom
+									? options.minZoom
+									: newZoom;
+
+							Paper.view.zoom = newZoom;
+						}}
+					>
+						<ZoomOutIcon className="h-5 w-5" stroke="inherit" />
+					</Button>
+					<Button
+						className="!p-1 mx-0.5"
+						tooltip="reset view"
+						onClick={() => {
+							eventBus.dispatch("resetView", {});
+						}}
+					>
+						<ArrowsExpandIcon
+							className="h-5 w-5"
+							stroke="inherit"
+						/>
+					</Button>
+
 					<Seperator />
 					<Button
 						filled
