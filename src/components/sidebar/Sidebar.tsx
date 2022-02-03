@@ -7,7 +7,7 @@ import ColourBox from "./ColourBox";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/outline";
 import type { DMCColour } from "../../types/DMCColour";
 import normaliseColours from "../../lib/svg/normaliseColour";
-import removeOverlaps from "../../lib/svg/removeOverlap";
+import eventBus from "../../lib/eventBus";
 
 interface Props {
 	state: "SVG" | "Embroidery";
@@ -155,13 +155,38 @@ const Sidebar: React.FC<Props> = (props) => {
 				>
 					Normalise colours
 				</Button>
+				<div className="grid grid-cols-2 w-full my-1">
 				<Button
-					className="self-place-center w-full my-2"
+					className="self-place-center w-full"
 					filled
-					onClick={() => removeOverlaps()}
+					onClick={() => {
+						if (softColour["#RGB"])
+							eventBus.dispatch("setSelectedStrokeColour", {hex: softColour["#RGB"]})
+						else if (hardColour["#RGB"])							
+							eventBus.dispatch("setSelectedStrokeColour", {hex: softColour["#RGB"]})
+
+					}}
 				>
-					Remove Overlap
+					Set stroke
 				</Button>
+				<Button
+					className="self-place-center w-full"
+					filled
+					onClick={() => {
+						if (softColour["#RGB"]) {
+							console.log(softColour["#RGB"])
+							eventBus.dispatch("setSelectedFillColour", softColour["#RGB"])
+						}
+						else if (hardColour["#RGB"]) {	
+							console.log(hardColour["#RGB"])						
+							eventBus.dispatch("setSelectedFillColour", softColour["#RGB"])
+						}
+
+					}}
+				>
+					Set fill
+				</Button>
+				</div>
 			</div>
 		</div>
 	);
