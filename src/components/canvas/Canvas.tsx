@@ -144,7 +144,12 @@ const Canvas: React.FC<Props> = (props) => {
 			if (layer) {
 				Paper.project.clear();
 				Paper.project.addLayer(layer);
-				// must add back onClick events to items apprently
+
+				Paper.project.getItems({}).forEach((e) => {
+					if (e.hasChildren()) return;
+					//@ts-ignore
+					e.onClick = onClickItemEvent;
+				});
 			}
 		});
 
