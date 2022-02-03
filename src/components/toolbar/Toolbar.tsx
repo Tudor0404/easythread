@@ -29,7 +29,7 @@ interface Props {}
 const Toolbar: React.FC<Props> = (props) => {
 	const [filename, setFilename] = useState("");
 	const [width, setWidth] = useState<number>(0);
-	const [length, setLength] = useState<number>(0);
+	const [height, setHeight] = useState<number>(0);
 	const [isSizeLinked, setSizeLinked] = useState(true);
 	const [isOutlineShown, setOutlineShown] = useState(false);
 
@@ -39,6 +39,18 @@ const Toolbar: React.FC<Props> = (props) => {
 				e.selected = isOutlineShown;
 			});
 	}, [isOutlineShown]);
+
+	useEffect(() => {
+		eventBus.on(
+			"initialSvgBounds",
+			({ width, height }: { width: number; height: number }) => {
+				setWidth(width);
+				setHeight(height);
+			}
+		);
+
+		return eventBus.remove(["initialSvgBounds"], () => {});
+	}, []);
 
 	const buttonStyle =
 		"ease-in-out text-center transition-all duration-200 flex justify-center items-center";
@@ -116,11 +128,23 @@ const Toolbar: React.FC<Props> = (props) => {
 				{/*Lower Toolbar*/}
 				<div className="mt-0.5 stroke-gray-700 text-gray-700 flex flex-row items-center justify-start py-1 prose-p:leading-1 prose-p:text-center">
 					{/*Undo*/}
-					<Button className="!p-1 ml-4 mx-0.5" tooltip="undo">
+					<Button
+						className="!p-1 ml-4 mx-0.5"
+						tooltip="undo"
+						onClick={() => {
+							UndoRedoTool.undo();
+						}}
+					>
 						<ArrowLeftIcon className="h-5 w-5" stroke="inherit" />
 					</Button>
 					{/*Redo*/}
-					<Button className="!p-1 mx-0.5" tooltip="redo">
+					<Button
+						className="!p-1 mx-0.5"
+						tooltip="redo"
+						onClick={() => {
+							UndoRedoTool.redo();
+						}}
+					>
 						<ArrowRightIcon className="h-5 w-5" stroke="inherit" />
 					</Button>
 
@@ -160,8 +184,8 @@ const Toolbar: React.FC<Props> = (props) => {
 					</Button>
 					<p className="mx-0.5">length</p>
 					<TextInput
-						setValue={setLength}
-						value={length}
+						setValue={setHeight}
+						value={height}
 						className="max-w-[70px] !px-0.5 !py-0 mx-0.5 !border-2 !border-opacity-100 font-mono focus:border-primary"
 						type={"number"}
 					></TextInput>

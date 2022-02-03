@@ -14,7 +14,7 @@ function normaliseColour(
 			);
 		}
 		if (stroke && elem.strokeColor)
-			elem.fillColor = new Paper.Color(
+			elem.strokeColor = new Paper.Color(
 				getClosestColour(elem.strokeColor)["#RGB"]
 			);
 	} else {
@@ -24,7 +24,7 @@ function normaliseColour(
 					getClosestColour(item.fillColor)["#RGB"]
 				);
 			if (stroke && item.strokeColor)
-				item.fillColor = new Paper.Color(
+				item.strokeColor = new Paper.Color(
 					getClosestColour(item.strokeColor)["#RGB"]
 				);
 		});
@@ -37,8 +37,6 @@ function getClosestColour(c: paper.Color) {
 	// if the brightness is very low, hue does not matter, vice versa. This multiple will reflect this
 	const brightnessMultiple =
 		c.brightness < 0.05 ? 100 : -2.5 * c.brightness + 4;
-
-	console.log(brightnessMultiple);
 
 	DMCColours.forEach((e) => {
 		const c1 = new Color(e["#RGB"]);

@@ -1,1 +1,0 @@
-import Paper from "paper";

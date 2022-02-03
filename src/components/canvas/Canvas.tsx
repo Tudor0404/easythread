@@ -6,6 +6,7 @@ import useState from "react-usestateref";
 
 import options from "../../data/options.json";
 import eventBus from "../../lib/eventBus";
+import UndoRedoTool from "../../lib/canvas/UndoRedoTool";
 
 interface Props {}
 
@@ -13,62 +14,67 @@ const Canvas: React.FC<Props> = (props) => {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 
 	// using useStateRefs for the width and height because they are not updated in passed functions, which results in the original values (1, 1) being used in functions such as the one to reset view, instead of the new dimensions
-	const [width, setWidth, refWidth] = useState(1)
-	const [height, setHeight, refHeight] = useState(1)
+	const [width, setWidth, refWidth] = useState(1);
+	const [height, setHeight, refHeight] = useState(1);
 	// get updates on the dimsenions of the encapsulating div
-	const {ref} = useResizeObserver({onResize: ({width, height}) => {
-		if (width)
-			setWidth(width)
-		if (height)
-			setHeight(height)
-	}});
+	const { ref } = useResizeObserver({
+		onResize: ({ width, height }) => {
+			if (width) setWidth(width);
+			if (height) setHeight(height);
+		},
+	});
 
-	function onClickItemEvent(e:MouseEvent) {
+	function onClickItemEvent(e: MouseEvent) {
 		// prevent from selecting items below it
 		e.stopPropagation();
 
 		//@ts-ignore
-		e.target.selected = !e.target.selected
+		e.target.selected = !e.target.selected;
 	}
 
+	// add SVG to screen
 	function addSvg(svg: string) {
 		Paper.project.clear();
 
-		const item = Paper.project.importSVG(svg, {insert: false})
+		const item = Paper.project.importSVG(svg, { insert: false });
 
 		// add item to new layer, so that the layer can be centered by itself
 		let l = new Paper.Layer();
-		l.addChild(item)
+		l.addChild(item);
 
 		Paper.project.getItems({}).forEach((e) => {
 			if (e.hasChildren()) return;
-
-			// add ability to select items
 			//@ts-ignore
 			e.onClick = onClickItemEvent;
-		})
+		});
+
+		eventBus.dispatch("initialSvgBounds", {
+			width: l.strokeBounds.width,
+			height: l.strokeBounds.height,
+		});
 
 		Paper.view.update();
 	}
 
 	function setSelectedStroke(hex: string) {
 		Paper.project.selectedItems.forEach((e) => {
-			e.strokeColor = new Paper.Color(hex)
-		})
+			e.strokeColor = new Paper.Color(hex);
+		});
 	}
 
 	function setSelectedFill(hex: string) {
 		Paper.project.selectedItems.forEach((e) => {
-			e.fillColor = new Paper.Color(hex)
-		})
+			e.fillColor = new Paper.Color(hex);
+		});
 	}
-
-
 
 	function resetCenter() {
 		// set center of view to the center of the view
 		if (refWidth.current && refHeight.current)
-			Paper.view.center = new Point(refWidth.current / 2, refHeight.current / 2);
+			Paper.view.center = new Point(
+				refWidth.current / 2,
+				refHeight.current / 2
+			);
 	}
 
 	useEffect(() => {
@@ -87,9 +93,8 @@ const Canvas: React.FC<Props> = (props) => {
 			<path id="path2876" transform="matrix(1 0 0 -.63504 0 1129.2)" fill="#f3c075" d="m665.71 570.93c0 108.09-136.87 195.71-305.71 195.71s-305.71-87.624-305.71-195.71v-0.00001h305.71z"/>
 		</g>
 		</g>
-	</svg>`)
+	</svg>`);
 
-		
 		new Paper.Tool().on({
 			mousedrag: function (event: paper.ToolEvent) {
 				var pan_offset = event.point.subtract(event.downPoint);
@@ -97,24 +102,63 @@ const Canvas: React.FC<Props> = (props) => {
 			},
 		});
 
-
 		// handle bus events
 		eventBus.on("resetView", (data: null) => {
 			Paper.view.zoom = 1;
 			resetCenter();
 		});
 
-		eventBus.on("setSelectedStrokeColour", (data: {hex:string}) => {
-			console.log(data)
-			setSelectedStroke(data.hex)
+		eventBus.on("setSelectedStrokeColour", (data: any) => {
+			if (Paper.project.selectedItems.length > 0) {
+				UndoRedoTool.addStateDefault();
+				setSelectedStroke(data);
+			}
 		});
 
-		eventBus.on("setSelectedFillColour", (data: {hex:string}) => {
-			console.log("recieved", data)
-			setSelectedFill(data.hex)
+		eventBus.on("setSelectedFillColour", (data: any) => {
+			if (Paper.project.selectedItems.length > 0) {
+				UndoRedoTool.addStateDefault();
+				setSelectedFill(data);
+			}
 		});
 
-		return eventBus.remove(["resetView", "setSelectedStrokeColour", "setSelectedFillColour"], () => {});
+		eventBus.on("removeSelectedStroke", () => {
+			if (Paper.project.selectedItems.length > 0) {
+				UndoRedoTool.addStateDefault();
+				Paper.project.selectedItems.forEach((e) => {
+					e.strokeColor = null;
+				});
+			}
+		});
+
+		eventBus.on("removeSelectedFill", () => {
+			if (Paper.project.selectedItems.length > 0) {
+				UndoRedoTool.addStateDefault();
+				Paper.project.selectedItems.forEach((e) => {
+					e.fillColor = null;
+				});
+			}
+		});
+
+		eventBus.on("setCanvasLayer", (layer: paper.Layer) => {
+			if (layer) {
+				Paper.project.clear();
+				Paper.project.addLayer(layer);
+				// must add back onClick events to items apprently
+			}
+		});
+
+		return eventBus.remove(
+			[
+				"resetView",
+				"setSelectedStrokeColour",
+				"setSelectedFillColour",
+				"removeSelectedStroke",
+				"removeSelectedFill",
+				"setCanvasLayer",
+			],
+			() => {}
+		);
 	}, []);
 
 	useEffect(() => {

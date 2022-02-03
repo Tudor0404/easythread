@@ -8,6 +8,7 @@ import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/outline";
 import type { DMCColour } from "../../types/DMCColour";
 import normaliseColours from "../../lib/svg/normaliseColour";
 import eventBus from "../../lib/eventBus";
+import UndoRedoTool from "../../lib/canvas/UndoRedoTool";
 
 interface Props {
 	state: "SVG" | "Embroidery";
@@ -56,7 +57,7 @@ const Sidebar: React.FC<Props> = (props) => {
 					<div className="flex flex-row items-start justify-start">
 						<div className="flex flex-col justify-start items-start">
 							<div
-								className="min-h-[40px] min-w-[40px] rounded-lg"
+								className="min-h-[40px] min-w-[40px] rounded-lg border-2 border-black/20"
 								style={{
 									background:
 										softColour["#RGB"] ||
@@ -65,7 +66,7 @@ const Sidebar: React.FC<Props> = (props) => {
 							></div>
 							<p>
 								<strong>
-									{softColour.DMC || hardColour.DMC}
+									{softColour.DMC || hardColour.DMC || "code"}
 								</strong>
 							</p>
 						</div>
@@ -73,10 +74,13 @@ const Sidebar: React.FC<Props> = (props) => {
 							<p className=" text-lg text-gray-800">
 								<strong>
 									{softColour["Floss Name"] ||
-										hardColour["Floss Name"]}
+										hardColour["Floss Name"] ||
+										"Name"}
 								</strong>{" "}
 								<span className="text-sm">
-									{softColour["#RGB"] || hardColour["#RGB"]}
+									{softColour["#RGB"] ||
+										hardColour["#RGB"] ||
+										"#hex"}
 								</span>
 							</p>
 						</div>
@@ -84,15 +88,15 @@ const Sidebar: React.FC<Props> = (props) => {
 					<div className="grid grid-cols-3 w-full">
 						<p>
 							<strong>R</strong>{" "}
-							{softColour?.Red || hardColour?.Red}
+							{softColour?.Red || hardColour?.Red || "---"}
 						</p>
 						<p>
 							<strong>G</strong>{" "}
-							{softColour?.Blue || hardColour?.Blue}
+							{softColour?.Blue || hardColour?.Blue || "---"}
 						</p>
 						<p>
 							<strong>B</strong>{" "}
-							{softColour?.Green || hardColour?.Green}
+							{softColour?.Green || hardColour?.Green || "---"}
 						</p>
 					</div>
 				</div>
@@ -151,41 +155,69 @@ const Sidebar: React.FC<Props> = (props) => {
 				<Button
 					className="self-place-center w-full my-2"
 					filled
-					onClick={() => normaliseColours()}
+					onClick={() => {
+						UndoRedoTool.addStateDefault();
+						normaliseColours();
+					}}
 				>
 					Normalise colours
 				</Button>
-				<div className="grid grid-cols-2 w-full my-1">
-				<Button
-					className="self-place-center w-full"
-					filled
-					onClick={() => {
-						if (softColour["#RGB"])
-							eventBus.dispatch("setSelectedStrokeColour", {hex: softColour["#RGB"]})
-						else if (hardColour["#RGB"])							
-							eventBus.dispatch("setSelectedStrokeColour", {hex: softColour["#RGB"]})
-
-					}}
-				>
-					Set stroke
-				</Button>
-				<Button
-					className="self-place-center w-full"
-					filled
-					onClick={() => {
-						if (softColour["#RGB"]) {
-							console.log(softColour["#RGB"])
-							eventBus.dispatch("setSelectedFillColour", softColour["#RGB"])
-						}
-						else if (hardColour["#RGB"]) {	
-							console.log(hardColour["#RGB"])						
-							eventBus.dispatch("setSelectedFillColour", softColour["#RGB"])
-						}
-
-					}}
-				>
-					Set fill
-				</Button>
+				<div className="grid grid-cols-2 w-full gap-2 my-1">
+					<Button
+						className="self-place-center w-full !m-0"
+						filled
+						onClick={() => {
+							if (softColour["#RGB"])
+								eventBus.dispatch("setSelectedStrokeColour", {
+									hex: softColour["#RGB"],
+								});
+							else if (hardColour["#RGB"])
+								eventBus.dispatch("setSelectedStrokeColour", {
+									hex: hardColour["#RGB"],
+								});
+						}}
+					>
+						Set stroke
+					</Button>
+					<Button
+						className="self-place-center w-full !m-0"
+						filled
+						onClick={() => {
+							if (softColour["#RGB"]) {
+								console.log(softColour["#RGB"]);
+								eventBus.dispatch(
+									"setSelectedFillColour",
+									softColour["#RGB"]
+								);
+							} else if (hardColour["#RGB"]) {
+								console.log(hardColour["#RGB"]);
+								eventBus.dispatch(
+									"setSelectedFillColour",
+									hardColour["#RGB"]
+								);
+							}
+						}}
+					>
+						Set fill
+					</Button>
+					<Button
+						className="self-place-center w-full !m-0 p-0"
+						filled
+						onClick={() => {
+							eventBus.dispatch("removeSelectedStroke", {});
+						}}
+					>
+						Remove stroke
+					</Button>
+					<Button
+						className="self-place-center w-full !m-0"
+						filled
+						onClick={() => {
+							eventBus.dispatch("removeSelectedFill", {});
+						}}
+					>
+						Remove fill
+					</Button>
 				</div>
 			</div>
 		</div>
