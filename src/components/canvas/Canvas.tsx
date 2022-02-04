@@ -16,6 +16,9 @@ const Canvas: React.FC<Props> = (props) => {
 	// using useStateRefs for the width and height because they are not updated in passed functions, which results in the original values (1, 1) being used in functions such as the one to reset view, instead of the new dimensions
 	const [width, setWidth, refWidth] = useState(1);
 	const [height, setHeight, refHeight] = useState(1);
+	// prevent selection for a short while after dragging
+	const [preventSelect, setPreventSelect, refPreventSelect] = useState(false)
+	const [timer, setTimer] = useState<NodeJS.Timeout>();
 	// get updates on the dimsenions of the encapsulating div
 	const { ref } = useResizeObserver({
 		onResize: ({ width, height }) => {
@@ -27,9 +30,9 @@ const Canvas: React.FC<Props> = (props) => {
 	function onClickItemEvent(e: MouseEvent) {
 		// prevent from selecting items below it
 		e.stopPropagation();
-
-		//@ts-ignore
-		e.target.selected = !e.target.selected;
+		if (!refPreventSelect.current)
+			//@ts-ignore
+			e.target.selected = !e.target.selected;
 	}
 
 	// add SVG to screen
@@ -97,11 +100,15 @@ const Canvas: React.FC<Props> = (props) => {
 
 		new Paper.Tool().on({
 			mousedrag: function (event: paper.ToolEvent) {
+				event.stopPropagation();
+				event.preventDefault();
 				var pan_offset = event.point.subtract(event.downPoint);
 				Paper.view.center = Paper.view.center.subtract(pan_offset);
+				setPreventSelect(true);
 			},
 		});
 
+		//#region bus events
 		// handle bus events
 		eventBus.on("resetView", (data: null) => {
 			Paper.view.zoom = 1;
@@ -149,9 +156,11 @@ const Canvas: React.FC<Props> = (props) => {
 					if (e.hasChildren()) return;
 					//@ts-ignore
 					e.onClick = onClickItemEvent;
+					e.selected = false;
 				});
 			}
 		});
+		//#endregion
 
 		return eventBus.remove(
 			[
@@ -165,6 +174,22 @@ const Canvas: React.FC<Props> = (props) => {
 			() => {}
 		);
 	}, []);
+
+	useEffect(() => {
+		if (timer) {
+			clearTimeout(timer)
+		}
+
+		if (preventSelect) {
+			console.log("reset timer")
+			setTimer(setTimeout(() => {
+				setPreventSelect(false)
+			}, 200))
+		}
+
+			//@ts-ignore
+		return () => clearTimeout(timer)
+	}, [preventSelect])
 
 	useEffect(() => {
 		Paper.project.layers.forEach((element) => {
