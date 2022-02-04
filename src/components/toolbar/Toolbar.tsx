@@ -24,7 +24,7 @@ import options from "../../data/options.json";
 import eventBus from "../../lib/eventBus";
 import UndoRedoTool from "../../lib/canvas/UndoRedoTool";
 
-interface Props {}
+interface Props { }
 
 const Toolbar: React.FC<Props> = (props) => {
 	const [filename, setFilename] = useState("");
@@ -32,6 +32,8 @@ const Toolbar: React.FC<Props> = (props) => {
 	const [height, setHeight] = useState<number>(0);
 	const [isSizeLinked, setSizeLinked] = useState(true);
 	const [isOutlineShown, setOutlineShown] = useState(false);
+	const [isUndo, setUndo] = useState(false);
+	const [isRedo, setRedo] = useState(false);
 
 	useEffect(() => {
 		if (Paper.project)
@@ -49,7 +51,15 @@ const Toolbar: React.FC<Props> = (props) => {
 			}
 		);
 
-		return eventBus.remove(["initialSvgBounds"], () => {});
+		eventBus.on("undoAvailable", (state: boolean) => {
+			setUndo(state)
+		})
+
+		eventBus.on("redoAvailable", (state: boolean) => {
+			setRedo(state)
+		})
+
+		return eventBus.remove(["initialSvgBounds"], () => { });
 	}, []);
 
 	const buttonStyle =
@@ -98,8 +108,12 @@ const Toolbar: React.FC<Props> = (props) => {
 									align="left"
 									contentStyle="min-w-[150px]"
 								>
-									<DropdownItem label="Undo" />
-									<DropdownItem label="Redo" />
+									<DropdownItem label="Undo" onClick={() => {
+										UndoRedoTool.undo();
+									}} />
+									<DropdownItem label="Redo" onClick={() => {
+										UndoRedoTool.redo();
+									}} />
 								</Dropdown>
 								<Dropdown
 									button={<Button>View</Button>}
@@ -110,6 +124,7 @@ const Toolbar: React.FC<Props> = (props) => {
 									<DropdownItem label="Zoom in" />
 									<DropdownItem label="Zoom out" />
 									<DropdownItem label="Reset zoom" />
+									<DropdownItem label="Show hoop" />
 								</Dropdown>
 								<Dropdown
 									button={<Button>Help</Button>}
@@ -131,6 +146,7 @@ const Toolbar: React.FC<Props> = (props) => {
 					<Button
 						className="!p-1 ml-4 mx-0.5"
 						tooltip="undo"
+						disabled={!isUndo}
 						onClick={() => {
 							UndoRedoTool.undo();
 						}}
@@ -141,6 +157,7 @@ const Toolbar: React.FC<Props> = (props) => {
 					<Button
 						className="!p-1 mx-0.5"
 						tooltip="redo"
+						disabled={!isRedo}
 						onClick={() => {
 							UndoRedoTool.redo();
 						}}

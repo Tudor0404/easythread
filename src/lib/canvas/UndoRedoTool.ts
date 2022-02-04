@@ -13,9 +13,11 @@ class UndoRedoTool {
 		UndoRedoTool.undoStack.push(
 			Paper.project.layers[0].clone({ insert: false })
 		);
-
+		
 		// since state changed, must clean redo stack
 		UndoRedoTool.redoStack = [];
+
+		UndoRedoTool.dispatchAvailability();
 	}
 
 	static undo() {
@@ -25,6 +27,8 @@ class UndoRedoTool {
 			);
 			eventBus.dispatch("setCanvasLayer", UndoRedoTool.undoStack.pop());
 		}
+
+		UndoRedoTool.dispatchAvailability();
 	}
 
 	static redo() {
@@ -34,6 +38,13 @@ class UndoRedoTool {
 			);
 			eventBus.dispatch("setCanvasLayer", UndoRedoTool.redoStack.pop());
 		}
+
+		UndoRedoTool.dispatchAvailability();
+	}
+
+	static dispatchAvailability() {
+		eventBus.dispatch("undoAvailable", UndoRedoTool.undoStack.length > 0)
+		eventBus.dispatch("redoAvailable", UndoRedoTool.redoStack.length > 0)
 	}
 }
 
