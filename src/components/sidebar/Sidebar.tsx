@@ -50,12 +50,12 @@ const Sidebar: React.FC<Props> = (props) => {
 	}, [coloursPerPage]);
 
 	return (
-		<div className="max-h-full basis-1/4 shadow-inner bg-white flex flex-col justify-start items-center pt-3 overflow-y-scroll">
-			<h1 className="text-xl border-b-2 mb-1">Colours</h1>
-			<div className="flex flex-row flex-wrap justify-start items-center w-[90%] ">
-				<div className="w-full flex flex-col justify-between p-1 shadow-xl bg-stone-200 rounded-md my-2 min-h-[100px]">
+		<div className="flex max-h-full basis-1/4 flex-col items-center justify-start overflow-y-scroll bg-white pt-3 shadow-inner">
+			<h1 className="mb-1 border-b-2 text-xl">Colours</h1>
+			<div className="flex w-[90%] flex-row flex-wrap items-center justify-start ">
+				<div className="my-2 flex min-h-[100px] w-full flex-col justify-between rounded-md bg-stone-200 p-1 shadow-xl">
 					<div className="flex flex-row items-start justify-start">
-						<div className="flex flex-col justify-start items-start">
+						<div className="flex flex-col items-start justify-start">
 							<div
 								className="min-h-[40px] min-w-[40px] rounded-lg border-2 border-black/20"
 								style={{
@@ -85,7 +85,7 @@ const Sidebar: React.FC<Props> = (props) => {
 							</p>
 						</div>
 					</div>
-					<div className="grid grid-cols-3 w-full">
+					<div className="grid w-full grid-cols-3">
 						<p>
 							<strong>R</strong>{" "}
 							{softColour?.Red || hardColour?.Red || "---"}
@@ -100,8 +100,8 @@ const Sidebar: React.FC<Props> = (props) => {
 						</p>
 					</div>
 				</div>
-				<div ref={ref} className="justify-center items-start h-[300px]">
-					<div className="w-full flex flex-row flex-wrap justify-center items-start">
+				<div ref={ref} className="h-[300px] items-start justify-center">
+					<div className="flex w-full flex-row flex-wrap items-start justify-center">
 						{DMCColours.slice(
 							(currPage - 1) * coloursPerPage,
 							currPage * coloursPerPage + 1 >
@@ -123,17 +123,17 @@ const Sidebar: React.FC<Props> = (props) => {
 						})}
 					</div>
 				</div>
-				<div className="w-full flex flex-row justify-between items-center">
+				<div className="flex w-full flex-row items-center justify-between">
 					<Button
 						onClick={() => {
 							setCurrPage(
 								currPage - 1 === 0 ? maxPerPage : currPage - 1
 							);
 						}}
-						className="p-1 border-2"
+						className="border-2 p-1"
 						tooltip="previous page"
 					>
-						<ChevronLeftIcon className="w-5 h-5" />
+						<ChevronLeftIcon className="h-5 w-5" />
 					</Button>
 					<p className="select-none">
 						{currPage} of {maxPerPage}
@@ -146,14 +146,14 @@ const Sidebar: React.FC<Props> = (props) => {
 									: currPage + 1
 							);
 						}}
-						className="p-1 border-2"
+						className="border-2 p-1"
 						tooltip="next page"
 					>
-						<ChevronRightIcon className="w-5 h-5" />
+						<ChevronRightIcon className="h-5 w-5" />
 					</Button>
 				</div>
 				<Button
-					className="self-place-center w-full my-2"
+					className="self-place-center my-2 w-full"
 					filled
 					onClick={() => {
 						UndoRedoTool.addStateDefault();
@@ -162,9 +162,9 @@ const Sidebar: React.FC<Props> = (props) => {
 				>
 					Normalise colours
 				</Button>
-				<div className="grid grid-cols-2 w-full gap-2 my-1">
+				<div className="my-1 grid w-full grid-cols-2 gap-2">
 					<Button
-						className="self-place-center w-full !m-0"
+						className="self-place-center !m-0 w-full"
 						filled
 						onClick={() => {
 							if (softColour["#RGB"])
@@ -180,7 +180,7 @@ const Sidebar: React.FC<Props> = (props) => {
 						Set stroke
 					</Button>
 					<Button
-						className="self-place-center w-full !m-0"
+						className="self-place-center !m-0 w-full"
 						filled
 						onClick={() => {
 							if (softColour["#RGB"]) {
@@ -201,7 +201,7 @@ const Sidebar: React.FC<Props> = (props) => {
 						Set fill
 					</Button>
 					<Button
-						className="self-place-center w-full !m-0 p-0"
+						className="self-place-center !m-0 w-full p-0"
 						filled
 						onClick={() => {
 							eventBus.dispatch("removeSelectedStroke", {});
@@ -210,7 +210,7 @@ const Sidebar: React.FC<Props> = (props) => {
 						Remove stroke
 					</Button>
 					<Button
-						className="self-place-center w-full !m-0"
+						className="self-place-center !m-0 w-full"
 						filled
 						onClick={() => {
 							eventBus.dispatch("removeSelectedFill", {});

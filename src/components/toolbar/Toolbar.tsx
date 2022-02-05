@@ -24,7 +24,7 @@ import options from "../../data/options.json";
 import eventBus from "../../lib/eventBus";
 import UndoRedoTool from "../../lib/canvas/UndoRedoTool";
 
-interface Props { }
+interface Props {}
 
 const Toolbar: React.FC<Props> = (props) => {
 	const [filename, setFilename] = useState("");
@@ -52,14 +52,14 @@ const Toolbar: React.FC<Props> = (props) => {
 		);
 
 		eventBus.on("undoAvailable", (state: boolean) => {
-			setUndo(state)
-		})
+			setUndo(state);
+		});
 
 		eventBus.on("redoAvailable", (state: boolean) => {
-			setRedo(state)
-		})
+			setRedo(state);
+		});
 
-		return eventBus.remove(["initialSvgBounds"], () => { });
+		return eventBus.remove(["initialSvgBounds"], () => {});
 	}, []);
 
 	const buttonStyle =
@@ -69,7 +69,7 @@ const Toolbar: React.FC<Props> = (props) => {
 		<div>
 			<div className="w-screen bg-white shadow-sm">
 				{/*Upper Toolbar*/}
-				<div className="flex flex-row justify-between items-center px-3 pt-2 pb-1 border-b-[0.8px]">
+				<div className="flex flex-row items-center justify-between border-b-[0.8px] px-3 pt-2 pb-1">
 					<div className="flex flex-row items-center justify-start">
 						<div className="mr-2">
 							<img
@@ -85,7 +85,7 @@ const Toolbar: React.FC<Props> = (props) => {
 							<div>
 								<TextInput
 									placeholder="Untitled File"
-									className="text-lg rounded-none"
+									className="rounded-none text-lg"
 									value={filename}
 									setValue={setFilename}
 								></TextInput>
@@ -108,12 +108,18 @@ const Toolbar: React.FC<Props> = (props) => {
 									align="left"
 									contentStyle="min-w-[150px]"
 								>
-									<DropdownItem label="Undo" onClick={() => {
-										UndoRedoTool.undo();
-									}} />
-									<DropdownItem label="Redo" onClick={() => {
-										UndoRedoTool.redo();
-									}} />
+									<DropdownItem
+										label="Undo"
+										onClick={() => {
+											UndoRedoTool.undo();
+										}}
+									/>
+									<DropdownItem
+										label="Redo"
+										onClick={() => {
+											UndoRedoTool.redo();
+										}}
+									/>
 								</Dropdown>
 								<Dropdown
 									button={<Button>View</Button>}
@@ -141,10 +147,10 @@ const Toolbar: React.FC<Props> = (props) => {
 				</div>
 
 				{/*Lower Toolbar*/}
-				<div className="mt-0.5 stroke-gray-700 text-gray-700 flex flex-row items-center justify-start py-1 prose-p:leading-1 prose-p:text-center">
+				<div className="prose-p:leading-1 prose-p:text-center mt-0.5 flex flex-row items-center justify-start stroke-gray-700 py-1 text-gray-700">
 					{/*Undo*/}
 					<Button
-						className="!p-1 ml-4 mx-0.5"
+						className="mx-0.5 ml-4 !p-1"
 						tooltip="undo"
 						disabled={!isUndo}
 						onClick={() => {
@@ -155,7 +161,7 @@ const Toolbar: React.FC<Props> = (props) => {
 					</Button>
 					{/*Redo*/}
 					<Button
-						className="!p-1 mx-0.5"
+						className="mx-0.5 !p-1"
 						tooltip="redo"
 						disabled={!isRedo}
 						onClick={() => {
@@ -166,13 +172,13 @@ const Toolbar: React.FC<Props> = (props) => {
 					</Button>
 
 					<Seperator />
-					<Button className="!p-1 mx-0.5" tooltip="new file">
+					<Button className="mx-0.5 !p-1" tooltip="new file">
 						<DocumentAddIcon className="h-5 w-5" stroke="inherit" />
 					</Button>
-					<Button className="!p-1 mx-0.5" tooltip="open file">
+					<Button className="mx-0.5 !p-1" tooltip="open file">
 						<DocumentIcon className="h-5 w-5" stroke="inherit" />
 					</Button>
-					<Button className="!p-1 mx-0.5" tooltip="download file">
+					<Button className="mx-0.5 !p-1" tooltip="download file">
 						<DocumentDownloadIcon
 							className="h-5 w-5"
 							stroke="inherit"
@@ -185,13 +191,13 @@ const Toolbar: React.FC<Props> = (props) => {
 					<TextInput
 						setValue={setWidth}
 						value={width}
-						className="max-w-[70px] !px-0.5 !py-0 mx-0.5 !border-2 !border-opacity-100 font-mono focus:border-primary"
+						className="focus:border-primary mx-0.5 max-w-[70px] !border-2 !border-opacity-100 !px-0.5 !py-0 font-mono"
 						type={"number"}
 					></TextInput>
 					<p className="mx-0.5">mm</p>
 					<Button
 						toggled={isSizeLinked}
-						className="!p-1 mx-2"
+						className="mx-2 !p-1"
 						tooltip="maintain aspect-ratio"
 						onClick={() => {
 							setSizeLinked(!isSizeLinked);
@@ -203,13 +209,13 @@ const Toolbar: React.FC<Props> = (props) => {
 					<TextInput
 						setValue={setHeight}
 						value={height}
-						className="max-w-[70px] !px-0.5 !py-0 mx-0.5 !border-2 !border-opacity-100 font-mono focus:border-primary"
+						className="focus:border-primary mx-0.5 max-w-[70px] !border-2 !border-opacity-100 !px-0.5 !py-0 font-mono"
 						type={"number"}
 					></TextInput>
 					<p className="mx-0.5">mm</p>
 
 					<Button
-						className="!p-1 mx-0.5"
+						className="mx-0.5 !p-1"
 						tooltip="toggle outline"
 						onClick={() => {
 							setOutlineShown(!isOutlineShown);
@@ -223,7 +229,7 @@ const Toolbar: React.FC<Props> = (props) => {
 
 					<Seperator />
 					<Button
-						className="!p-1 mx-0.5"
+						className="mx-0.5 !p-1"
 						tooltip="zoom in"
 						onClick={() => {
 							let newZoom = Paper.view.zoom;
@@ -240,7 +246,7 @@ const Toolbar: React.FC<Props> = (props) => {
 						<ZoomInIcon className="h-5 w-5" stroke="inherit" />
 					</Button>
 					<Button
-						className="!p-1 mx-0.5"
+						className="mx-0.5 !p-1"
 						tooltip="zoom out"
 						onClick={() => {
 							let newZoom = Paper.view.zoom;
@@ -257,7 +263,7 @@ const Toolbar: React.FC<Props> = (props) => {
 						<ZoomOutIcon className="h-5 w-5" stroke="inherit" />
 					</Button>
 					<Button
-						className="!p-1 mx-0.5"
+						className="mx-0.5 !p-1"
 						tooltip="reset view"
 						onClick={() => {
 							eventBus.dispatch("resetView", {});
@@ -272,7 +278,7 @@ const Toolbar: React.FC<Props> = (props) => {
 					<Seperator />
 					<Button
 						filled
-						className="!py-0.5 !px-1 !mx-0.5"
+						className="!mx-0.5 !py-0.5 !px-1"
 						tooltip="convert to embroidery"
 					>
 						Convert

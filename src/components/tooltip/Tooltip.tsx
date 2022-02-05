@@ -27,7 +27,7 @@ const Tooltip: React.FC<Props> = (props) => {
 
 	return isShown ? (
 		<div
-			className="p-1 text-sm rounded-md bg-gray-600 mt-2 text-white"
+			className="mt-2 rounded-md bg-gray-600 p-1 text-sm text-white"
 			/*@ts-ignore*/
 			ref={props.setPopperElement}
 			style={props.popperStyles}

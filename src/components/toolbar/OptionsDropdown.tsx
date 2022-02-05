@@ -21,14 +21,14 @@ const OptionsDropdown: React.FC<Props> = () => {
 			align="right"
 			tooltip="conversion settings"
 		>
-			<div className="flex flex-col justify-start items-start">
-				<div className="py-1 flex flex-row w-[250px] items-center">
+			<div className="flex flex-col items-start justify-start">
+				<div className="flex w-[250px] flex-row items-center py-1">
 					<Switch
 						active={isConvertToEmbroidery}
 						setActive={setConvertToEmbroidery}
 					/>
 					<p
-						className="col-span-4 flex-nowrap mt-0.5 select-none"
+						className="col-span-4 mt-0.5 select-none flex-nowrap"
 						onClick={() =>
 							setConvertToEmbroidery(!isConvertToEmbroidery)
 						}
@@ -36,25 +36,25 @@ const OptionsDropdown: React.FC<Props> = () => {
 						Convert SVG to embroidery
 					</p>
 				</div>
-				<div className="py-1 flex flex-row w-[250px] items-center">
+				<div className="flex w-[250px] flex-row items-center py-1">
 					<Switch
 						active={isRemoveOverlap}
 						setActive={setRemoveOverlap}
 					/>
 					<p
-						className="col-span-4 flex-nowrap mt-0.5 select-none"
+						className="col-span-4 mt-0.5 select-none flex-nowrap"
 						onClick={() => setRemoveOverlap(!isRemoveOverlap)}
 					>
 						Remove overlapping paths
 					</p>
 				</div>
-				<div className="py-1 flex flex-row w-[250px] items-center">
+				<div className="flex w-[250px] flex-row items-center py-1">
 					<Switch
 						active={isAverageOutColours}
 						setActive={setAverageOutColours}
 					/>
 					<p
-						className="col-span-4 flex-nowrap mt-0.5 select-none"
+						className="col-span-4 mt-0.5 select-none flex-nowrap"
 						onClick={() =>
 							setAverageOutColours(!isAverageOutColours)
 						}
@@ -62,10 +62,10 @@ const OptionsDropdown: React.FC<Props> = () => {
 						Average colours to DMC
 					</p>
 				</div>
-				<div className="p-1 flex flex-row w-[250px] justify-start items-center">
+				<div className="flex w-[250px] flex-row items-center justify-start p-1">
 					<p className="mr-2">Stitch length</p>
 					<NumberInput
-						className="max-w-[70px] !px-0.5 !py-0 mx-0.5"
+						className="mx-0.5 max-w-[70px] !px-0.5 !py-0"
 						setValue={setStitchLength}
 						value={stitchLength}
 					></NumberInput>

@@ -29,22 +29,22 @@ const Button: React.FC<Props> = (props) => {
 				className={`
 			${
 				props.filled
-					? `bg-primary bg-opacity-100 hover:bg-opacity-90 text-white mx-2 py-1 ${
+					? `bg-primary mx-2 bg-opacity-100 py-1 text-white hover:bg-opacity-90 ${
 							props.toggled ? "bg-opacity-90" : ""
 					  }`
-					: `bg-black bg-opacity-0 hover:bg-opacity-10 text-black ${
+					: `bg-black bg-opacity-0 text-black hover:bg-opacity-10 ${
 							props.toggled ? "bg-opacity-10" : ""
 					  }`
 			}
-			disabled:text-gray-600
 			rounded-md
 			px-1.5
-			ease-in-out
 			text-center
-			transition-all duration-200 
-			disabled:!bg-opacity-0
-			disabled:hover:!bg-opacity-0
+			transition-all
+			duration-200
+			ease-in-out disabled:!bg-opacity-0 
 			disabled:!stroke-gray-400
+			disabled:text-gray-600
+			disabled:hover:!bg-opacity-0
 			${props.className}
 		`}
 				onMouseEnter={() => {

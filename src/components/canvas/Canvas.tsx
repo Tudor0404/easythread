@@ -17,7 +17,7 @@ const Canvas: React.FC<Props> = (props) => {
 	const [width, setWidth, refWidth] = useState(1);
 	const [height, setHeight, refHeight] = useState(1);
 	// prevent selection for a short while after dragging
-	const [preventSelect, setPreventSelect, refPreventSelect] = useState(false)
+	const [preventSelect, setPreventSelect, refPreventSelect] = useState(false);
 	const [timer, setTimer] = useState<NodeJS.Timeout>();
 	// get updates on the dimsenions of the encapsulating div
 	const { ref } = useResizeObserver({
@@ -177,19 +177,21 @@ const Canvas: React.FC<Props> = (props) => {
 
 	useEffect(() => {
 		if (timer) {
-			clearTimeout(timer)
+			clearTimeout(timer);
 		}
 
 		if (preventSelect) {
-			console.log("reset timer")
-			setTimer(setTimeout(() => {
-				setPreventSelect(false)
-			}, 200))
+			console.log("reset timer");
+			setTimer(
+				setTimeout(() => {
+					setPreventSelect(false);
+				}, 200)
+			);
 		}
 
-			//@ts-ignore
-		return () => clearTimeout(timer)
-	}, [preventSelect])
+		//@ts-ignore
+		return () => clearTimeout(timer);
+	}, [preventSelect]);
 
 	useEffect(() => {
 		Paper.project.layers.forEach((element) => {
@@ -199,7 +201,7 @@ const Canvas: React.FC<Props> = (props) => {
 	}, [width, height]);
 
 	return (
-		<div ref={ref} className="h-full w-full overflow-none">
+		<div ref={ref} className="overflow-none h-full w-full">
 			<canvas
 				ref={canvasRef}
 				className="h-full w-full"
