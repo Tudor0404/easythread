@@ -1,13 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Button from "../button/Button";
 import {
 	ArrowLeftIcon,
 	ArrowRightIcon,
-	LinkIcon,
 	ZoomInIcon,
 	ZoomOutIcon,
 	ArrowsExpandIcon,
-	DocumentIcon,
 	DocumentAddIcon,
 	CubeTransparentIcon,
 	DocumentDownloadIcon,
@@ -23,31 +21,38 @@ import DropdownItem from "../dropdown/DropdownItem";
 import options from "../../data/options.json";
 import eventBus from "../../lib/eventBus";
 import UndoRedoTool from "../../lib/canvas/UndoRedoTool";
+import NumberInput from "../input/NumberInput";
+import removeOverlap from "../../lib/svg/removeOverlap";
+
+//TODO: handle downloading files better, set metadata, set filename if empty, check if file ext. is correct, remove file ext. from title at start
 
 interface Props {}
 
 const Toolbar: React.FC<Props> = (props) => {
-	const [filename, setFilename] = useState("");
-	const [width, setWidth] = useState<number>(0);
-	const [height, setHeight] = useState<number>(0);
-	const [isSizeLinked, setSizeLinked] = useState(true);
-	const [isOutlineShown, setOutlineShown] = useState(false);
-	const [isUndo, setUndo] = useState(false);
-	const [isRedo, setRedo] = useState(false);
+	const [filename, setFilename] = useState<string>("");
+	const [width, setWidth] = useState<string>("");
+	const [height, setHeight] = useState<string>("");
+	const [isOutlineShown, setOutlineShown] = useState<boolean>(false);
+	const [isUndo, setUndo] = useState<boolean>(false);
+	const [isRedo, setRedo] = useState<boolean>(false);
+	const [areItemsSelected, setItemsSelected] = useState<boolean>(false);
+	const [stroke, setStroke] = useState<string>("");
+	const fileDownloadRef = useRef<HTMLAnchorElement>(null);
 
 	useEffect(() => {
 		if (Paper.project)
 			Paper.project.getItems({}).forEach((e) => {
 				e.selected = isOutlineShown;
 			});
+		eventBus.dispatch("selectedItemsChanged", {});
 	}, [isOutlineShown]);
 
 	useEffect(() => {
 		eventBus.on(
 			"initialSvgBounds",
 			({ width, height }: { width: number; height: number }) => {
-				setWidth(width);
-				setHeight(height);
+				setWidth(width.toFixed(3));
+				setHeight(height.toFixed(3));
 			}
 		);
 
@@ -59,11 +64,167 @@ const Toolbar: React.FC<Props> = (props) => {
 			setRedo(state);
 		});
 
-		return eventBus.remove(["initialSvgBounds"], () => {});
+		eventBus.on("initialFilename", (title: string) => {
+			setFilename(title);
+		});
+
+		eventBus.on("selectedItemsChanged", () => {
+			let len = Paper.project.selectedItems.length;
+
+			// update the stroke input, if multiple items with different widths are selected, leave it empty
+			if (len > 0) {
+				setItemsSelected(true);
+				let strokeWidth: string =
+					Paper.project.selectedItems[0].strokeWidth.toString();
+
+				if (len > 1) {
+					for (let i = 1; i < len; i++) {
+						if (
+							Paper.project.selectedItems[
+								i
+							].strokeWidth.toString() !== strokeWidth
+						) {
+							strokeWidth = "";
+							break;
+						}
+					}
+				}
+				setStroke(strokeWidth);
+			} else setItemsSelected(false);
+		});
+
+		return eventBus.remove(
+			[
+				"initialSvgBounds",
+				"undoAvailable",
+				"redoAvailable",
+				"selectedItemsChanged",
+				"initialFilename",
+			],
+			() => {}
+		);
 	}, []);
 
+	useEffect(() => {
+		if (stroke !== "") {
+			Paper.project.selectedItems.forEach((e) => {
+				e.strokeWidth = parseFloat(stroke);
+			});
+		}
+	}, [stroke]);
+
+	function zoom(type: "in" | "out") {
+		let newZoom = Paper.view.zoom;
+
+		if (type === "in") {
+			newZoom = Paper.view.zoom * 1.2;
+			newZoom = newZoom > options.maxZoom ? options.maxZoom : newZoom;
+		} else {
+			newZoom = Paper.view.zoom * 0.8;
+			newZoom = newZoom < options.minZoom ? options.minZoom : newZoom;
+		}
+
+		Paper.view.zoom = newZoom;
+	}
+
+	function saveFile() {
+		console.log("here");
+
+		if (Paper.project.layers.length < 0) return;
+
+		let layer = Paper.project.layers[0].clone({ insert: false });
+
+		layer.position = new Paper.Point(
+			layer.strokeBounds.width / 2,
+			layer.strokeBounds.height / 2
+		);
+
+		let markup = layer
+			.exportSVG({
+				bounds: Paper.project.layers[0].strokeBounds,
+				asString: true,
+			})
+			.toString();
+		// prepare svg file to be served as a blob
+		let markupOpt =
+			"data:image/svg+xml;utf8," +
+			markup
+				.replaceAll('"', "'")
+				.replaceAll("\t", "")
+				.replaceAll("\n", "")
+				.replaceAll("\r", "")
+				.replaceAll("></path>", "/>")
+				.replaceAll("<", "%3C")
+				.replaceAll(">", "%3E")
+				.replaceAll("#", "%23")
+				.replaceAll(",", " ")
+				.replaceAll(" -", "-")
+				.replace(/ +(?= )/g, "");
+
+		if (!fileDownloadRef.current) return;
+
+		fileDownloadRef.current.setAttribute("download", filename);
+
+		fileDownloadRef.current.href = markupOpt;
+		fileDownloadRef.current.click();
+	}
+
+	// updates the dimensions of the SVG on enter
+	function onEnterDimensions(e: KeyboardEvent) {
+		if (e.key === "Enter") {
+			try {
+				const initWidth = Paper.project.layers[0].strokeBounds.width;
+				const initHeight = Paper.project.layers[0].strokeBounds.height;
+
+				const widthMultiple =
+					Number(
+						((parseFloat(width) - initWidth) / initWidth).toFixed(
+							10
+						)
+					) + 1;
+				const heightMultiple =
+					Number(
+						(
+							(parseFloat(height) - initHeight) /
+							initHeight
+						).toFixed(10)
+					) + 1;
+
+				const newWidth = Number(
+					(
+						initWidth *
+						(widthMultiple === 1 ? heightMultiple : widthMultiple)
+					).toFixed(3)
+				);
+
+				const newHeight = Number(
+					(
+						initHeight *
+						(widthMultiple === 1 ? heightMultiple : widthMultiple)
+					).toFixed(3)
+				);
+
+				let rectBounds = new Paper.Rectangle(
+					Paper.project.view.bounds.width / 2 - newWidth / 2,
+					Paper.project.view.bounds.height / 2 - newHeight / 2,
+					newWidth,
+					newHeight
+				);
+
+				Paper.project.layers[0].fitBounds(rectBounds);
+
+				if (rectBounds) {
+					setHeight(rectBounds.height.toFixed(3));
+					setWidth(rectBounds.width.toFixed(3));
+				}
+
+				eventBus.dispatch("resetCenter", {});
+			} catch {}
+		}
+	}
+
 	const buttonStyle =
-		"ease-in-out text-center transition-all duration-200 flex justify-center items-center";
+		"bg-black bg-opacity-0 text-black hover:bg-opacity-10 rounded-md px-1.5 text-center transition-all duration-200 ease-in-out";
 
 	return (
 		<div>
@@ -92,48 +253,73 @@ const Toolbar: React.FC<Props> = (props) => {
 							</div>
 							<div className="flex flex-row ">
 								<Dropdown
-									button={<Button>File</Button>}
+									button={<p>File</p>}
 									buttonStyle={buttonStyle}
 									align="left"
 									contentStyle="min-w-[150px]"
 								>
-									<DropdownItem label="New" />
-									<DropdownItem label="Open" />
-									<DropdownItem label="Save" />
-									<DropdownItem label="export" />
+									<DropdownItem
+										label="Open SVG"
+										onClick={() => {
+											eventBus.dispatch(
+												"openLocalFile",
+												{}
+											);
+										}}
+									/>
+									<DropdownItem
+										label="Save"
+										onClick={saveFile}
+									/>
 								</Dropdown>
 								<Dropdown
-									button={<Button>Edit</Button>}
+									button={<p>Edit</p>}
 									buttonStyle={buttonStyle}
 									align="left"
 									contentStyle="min-w-[150px]"
 								>
 									<DropdownItem
 										label="Undo"
-										onClick={() => {
-											UndoRedoTool.undo();
-										}}
+										disabled={!isUndo}
+										onClick={UndoRedoTool.undo}
 									/>
 									<DropdownItem
 										label="Redo"
-										onClick={() => {
-											UndoRedoTool.redo();
-										}}
+										disabled={!isRedo}
+										onClick={UndoRedoTool.redo}
+									/>
+									<DropdownItem
+										label="Remove overlap"
+										onClick={removeOverlap}
 									/>
 								</Dropdown>
 								<Dropdown
-									button={<Button>View</Button>}
+									button={<p>View</p>}
 									buttonStyle={buttonStyle}
 									align="left"
 									contentStyle="min-w-[150px]"
 								>
-									<DropdownItem label="Zoom in" />
-									<DropdownItem label="Zoom out" />
-									<DropdownItem label="Reset zoom" />
-									<DropdownItem label="Show hoop" />
+									<DropdownItem
+										label="Zoom in"
+										onClick={() => {
+											zoom("in");
+										}}
+									/>
+									<DropdownItem
+										label="Zoom out"
+										onClick={() => {
+											zoom("out");
+										}}
+									/>
+									<DropdownItem
+										label="Reset zoom"
+										onClick={() => {
+											eventBus.dispatch("resetView", {});
+										}}
+									/>
 								</Dropdown>
 								<Dropdown
-									button={<Button>Help</Button>}
+									button={<p>Help</p>}
 									buttonStyle={buttonStyle}
 									align="left"
 									contentStyle="min-w-[150px]"
@@ -172,13 +358,20 @@ const Toolbar: React.FC<Props> = (props) => {
 					</Button>
 
 					<Seperator />
-					<Button className="mx-0.5 !p-1" tooltip="new file">
+					<Button
+						className="mx-0.5 !p-1"
+						tooltip="open file"
+						onClick={() => {
+							eventBus.dispatch("openLocalFile", {});
+						}}
+					>
 						<DocumentAddIcon className="h-5 w-5" stroke="inherit" />
 					</Button>
-					<Button className="mx-0.5 !p-1" tooltip="open file">
-						<DocumentIcon className="h-5 w-5" stroke="inherit" />
-					</Button>
-					<Button className="mx-0.5 !p-1" tooltip="download file">
+					<Button
+						className="mx-0.5 !p-1"
+						tooltip="download file"
+						onClick={saveFile}
+					>
 						<DocumentDownloadIcon
 							className="h-5 w-5"
 							stroke="inherit"
@@ -188,30 +381,20 @@ const Toolbar: React.FC<Props> = (props) => {
 					<Seperator />
 					{/*Sizing*/}
 					<p className="mx-0.5">width</p>
-					<TextInput
+					<NumberInput
 						setValue={setWidth}
 						value={width}
+						onKeyUp={onEnterDimensions}
 						className="focus:border-primary mx-0.5 max-w-[70px] !border-2 !border-opacity-100 !px-0.5 !py-0 font-mono"
-						type={"number"}
-					></TextInput>
+					></NumberInput>
 					<p className="mx-0.5">mm</p>
-					<Button
-						toggled={isSizeLinked}
-						className="mx-2 !p-1"
-						tooltip="maintain aspect-ratio"
-						onClick={() => {
-							setSizeLinked(!isSizeLinked);
-						}}
-					>
-						<LinkIcon className="h-5 w-5" stroke="inherit" />
-					</Button>
-					<p className="mx-0.5">length</p>
-					<TextInput
+					<p className="mx-0.5 ml-2">height</p>
+					<NumberInput
 						setValue={setHeight}
+						onKeyUp={onEnterDimensions}
 						value={height}
 						className="focus:border-primary mx-0.5 max-w-[70px] !border-2 !border-opacity-100 !px-0.5 !py-0 font-mono"
-						type={"number"}
-					></TextInput>
+					></NumberInput>
 					<p className="mx-0.5">mm</p>
 
 					<Button
@@ -232,15 +415,7 @@ const Toolbar: React.FC<Props> = (props) => {
 						className="mx-0.5 !p-1"
 						tooltip="zoom in"
 						onClick={() => {
-							let newZoom = Paper.view.zoom;
-
-							newZoom = Paper.view.zoom + 0.15;
-							newZoom =
-								newZoom > options.maxZoom
-									? options.maxZoom
-									: newZoom;
-
-							Paper.view.zoom = newZoom;
+							zoom("in");
 						}}
 					>
 						<ZoomInIcon className="h-5 w-5" stroke="inherit" />
@@ -249,15 +424,7 @@ const Toolbar: React.FC<Props> = (props) => {
 						className="mx-0.5 !p-1"
 						tooltip="zoom out"
 						onClick={() => {
-							let newZoom = Paper.view.zoom;
-
-							newZoom = Paper.view.zoom - 0.15;
-							newZoom =
-								newZoom < options.minZoom
-									? options.minZoom
-									: newZoom;
-
-							Paper.view.zoom = newZoom;
+							zoom("out");
 						}}
 					>
 						<ZoomOutIcon className="h-5 w-5" stroke="inherit" />
@@ -284,8 +451,28 @@ const Toolbar: React.FC<Props> = (props) => {
 						Convert
 					</Button>
 					<OptionsDropdown />
+					{areItemsSelected && (
+						<>
+							<Seperator />
+							<p className="mx-0.5">stroke</p>
+							<NumberInput
+								setValue={setStroke}
+								value={stroke}
+								className="focus:border-primary mx-0.5 max-w-[50px] !border-2 !border-opacity-100 !px-0.5 !py-0 font-mono"
+							></NumberInput>
+							<p className="mx-0.5">mm</p>
+						</>
+					)}
 				</div>
 			</div>
+			<a
+				aria-disabled
+				href=""
+				ref={fileDownloadRef}
+				className="-top-100% absolute -translate-x-96 select-none opacity-0"
+			>
+				download svg
+			</a>
 		</div>
 	);
 };

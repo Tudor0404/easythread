@@ -21,8 +21,8 @@ const Sidebar: React.FC<Props> = (props) => {
 		DMC: "",
 	};
 
-	const [currPage, setCurrPage] = useState(1);
-	const [coloursPerPage, setColoursPerPage] = useState(60);
+	const [currPage, setCurrPage] = useState<number>(1);
+	const [coloursPerPage, setColoursPerPage] = useState<number>(60);
 	const [maxPerPage, setMaxPerPage] = useState(
 		Math.ceil(DMCColours.length / coloursPerPage)
 	);

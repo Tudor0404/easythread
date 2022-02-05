@@ -1,10 +1,14 @@
 import Paper from "paper";
 import { Color } from "paper/dist/paper-core";
 import { parse } from "svgson";
+import UndoRedoTool from "../canvas/UndoRedoTool";
+import eventBus from "../eventBus";
 const toPath = require("element-to-path");
 
 async function removeOverlaps() {
 	let array: paper.Item[] = [];
+
+	UndoRedoTool.addStateDefault();
 
 	// get all leaf node items, remove items which have no fill or stroke
 	Paper.project.getItems({}).forEach((item) => {
@@ -48,19 +52,14 @@ async function removeOverlaps() {
 		newArray.push(parentPath);
 	}
 
-	// clear all elements first
-	Paper.project.clear();
-
-	// add all new elements to a layer and add it to the project
+	// add all new elements to a layer and dispatch it to be added to the project
 	let l = new Paper.Layer();
 	newArray.forEach((element) => {
 		l.addChild(element);
 		element.selected = true;
 	});
 
-	Paper.project.addLayer(l);
-
-	Paper.view.update();
+	eventBus.dispatch("setCanvasLayer", l);
 
 	return true;
 }

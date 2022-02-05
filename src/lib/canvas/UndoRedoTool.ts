@@ -1,5 +1,6 @@
 import Paper from "paper";
 import eventBus from "../eventBus";
+import options from "../../data/options.json";
 
 class UndoRedoTool {
 	static undoStack: paper.Layer[] = [];
@@ -13,7 +14,7 @@ class UndoRedoTool {
 		UndoRedoTool.undoStack.push(
 			Paper.project.layers[0].clone({ insert: false })
 		);
-		
+
 		// since state changed, must clean redo stack
 		UndoRedoTool.redoStack = [];
 
@@ -43,8 +44,13 @@ class UndoRedoTool {
 	}
 
 	static dispatchAvailability() {
-		eventBus.dispatch("undoAvailable", UndoRedoTool.undoStack.length > 0)
-		eventBus.dispatch("redoAvailable", UndoRedoTool.redoStack.length > 0)
+		eventBus.dispatch("undoAvailable", UndoRedoTool.undoStack.length > 0);
+		eventBus.dispatch("redoAvailable", UndoRedoTool.redoStack.length > 0);
+	}
+
+	static checkSize() {
+		if (UndoRedoTool.undoStack.length > options.maxUndo)
+			UndoRedoTool.undoStack.slice(0, options.maxUndo);
 	}
 }
 

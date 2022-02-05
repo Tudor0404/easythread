@@ -16,7 +16,7 @@ interface Props {
 const Button: React.FC<Props> = (props) => {
 	const [referenceElement, setReferenceElement] = useState(null);
 	const [popperElement, setPopperElement] = useState(null);
-	const [isHover, setHover, hoverRef] = useState(false);
+	const [isHover, setHover, hoverRef] = useState<boolean>(false);
 	const { styles, attributes } = usePopper(referenceElement, popperElement);
 
 	return (

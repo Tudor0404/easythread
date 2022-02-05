@@ -38,13 +38,7 @@ const Dropdown: React.FC<Props> = (props) => {
 								className={
 									props.buttonStyle
 										? props.buttonStyle
-										: `bg-black bg-opacity-0 hover:bg-opacity-10 text-black disabled:text-gray-600
-			rounded-md
-						p-1
-            mx-0.5
-			ease-in-out
-			text-center
-			transition-all duration-200 flex justify-center items-center outline-none focus:outline-none border-0`
+										: `outline-no mx-0.5 flex items-center justify-center rounded-md border-0 bg-black bg-opacity-0 p-1 text-center text-black transition-all duration-200 ease-in-out hover:bg-opacity-10 focus:outline-none disabled:text-gray-600`
 								}
 							>
 								{props.button}
@@ -73,11 +67,11 @@ const Dropdown: React.FC<Props> = (props) => {
 							leaveTo="transform opacity-0 scale-95"
 						>
 							<Menu.Items
-								className={` absolute ${
+								className={`absolute ${
 									props.align === "right"
 										? "right-0 origin-top-right"
 										: "left-0 origin-top-left"
-								} mt-2  rounded-md shadow-lg justify-start items-start ring-2 ring-black/5 bg-white ${
+								} mt-2  items-start justify-start rounded-md bg-white shadow-lg ring-2 ring-black/5 ${
 									props.contentStyle
 								}`}
 							>

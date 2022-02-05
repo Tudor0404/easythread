@@ -10,10 +10,11 @@ import NumberInput from "../input/NumberInput";
 interface Props {}
 
 const OptionsDropdown: React.FC<Props> = () => {
-	const [isConvertToEmbroidery, setConvertToEmbroidery] = useState(true);
-	const [isRemoveOverlap, setRemoveOverlap] = useState(true);
-	const [isAverageOutColours, setAverageOutColours] = useState(true);
-	const [stitchLength, setStitchLength] = useState("2.7");
+	const [isConvertToEmbroidery, setConvertToEmbroidery] =
+		useState<boolean>(true);
+	const [isRemoveOverlap, setRemoveOverlap] = useState<boolean>(true);
+	const [isAverageOutColours, setAverageOutColours] = useState<boolean>(true);
+	const [stitchLength, setStitchLength] = useState<string>("2.7");
 
 	return (
 		<Dropdown
