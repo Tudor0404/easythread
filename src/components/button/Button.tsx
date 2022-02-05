@@ -10,6 +10,7 @@ interface Props {
 	className?: string;
 	toggled?: boolean;
 	tooltip?: string;
+	disabled?: boolean;
 }
 
 const Button: React.FC<Props> = (props) => {
@@ -24,6 +25,7 @@ const Button: React.FC<Props> = (props) => {
 				onClick={props.onClick}
 				//@ts-ignore
 				ref={setReferenceElement}
+				disabled={props.disabled}
 				className={`
 			${
 				props.filled
@@ -39,7 +41,11 @@ const Button: React.FC<Props> = (props) => {
 			px-1.5
 			ease-in-out
 			text-center
-			transition-all duration-200 ${props.className}
+			transition-all duration-200 
+			disabled:!bg-opacity-0
+			disabled:hover:!bg-opacity-0
+			disabled:!stroke-gray-400
+			${props.className}
 		`}
 				onMouseEnter={() => {
 					setHover(true);

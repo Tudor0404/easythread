@@ -50,7 +50,7 @@ const Sidebar: React.FC<Props> = (props) => {
 	}, [coloursPerPage]);
 
 	return (
-		<div className="h-full flex-grow basis-1/4 shadow-inner bg-white flex flex-col justify-start items-center pt-3 overflow-y-scroll">
+		<div className="max-h-full basis-1/4 shadow-inner bg-white flex flex-col justify-start items-center pt-3 overflow-y-scroll">
 			<h1 className="text-xl border-b-2 mb-1">Colours</h1>
 			<div className="flex flex-row flex-wrap justify-start items-center w-[90%] ">
 				<div className="w-full flex flex-col justify-between p-1 shadow-xl bg-stone-200 rounded-md my-2 min-h-[100px]">
@@ -135,7 +135,7 @@ const Sidebar: React.FC<Props> = (props) => {
 					>
 						<ChevronLeftIcon className="w-5 h-5" />
 					</Button>
-					<p>
+					<p className="select-none">
 						{currPage} of {maxPerPage}
 					</p>
 					<Button

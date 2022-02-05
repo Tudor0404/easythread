@@ -14,7 +14,7 @@ const DropdownItem: React.FC<Props> = (props) => {
 				<button
 					className={`${
 						active ? "bg-black/20" : ""
-					} text-gray-900 rounded-md group flex items-center w-full px-2 py-2`}
+					} text-gray-900 rounded-md group flex items-center w-full px-2 py-1`}
 					onClick={props.onClick}
 				>
 					{props.icon || null}
