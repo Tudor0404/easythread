@@ -23,9 +23,11 @@ function App() {
 			</Head> */}
 			<main className="max-w-screen bg-repeating-pattern flex h-screen flex-col items-center justify-start overflow-x-hidden overflow-y-clip bg-stone-200">
 				<Toolbar></Toolbar>
-				<div className="flex h-full w-full flex-row ">
-					<div className="m-3 max-h-fit w-full basis-3/4 bg-white shadow-md">
-						<Canvas></Canvas>
+				<div className="bg-repeating-pattern flex h-full w-full flex-row justify-between ">
+					<div className="shadow-inset flex h-full w-full items-center justify-center shadow-md">
+						<div className=" h-[calc(100%-20px)] w-[calc(100%-20px)]  bg-white">
+							<Canvas></Canvas>
+						</div>
 					</div>
 					<Sidebar state="SVG" />
 				</div>

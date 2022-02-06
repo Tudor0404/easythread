@@ -1,32 +1,21 @@
 import React, { useRef, useEffect } from "react";
 import Paper from "paper";
-import useResizeObserver from "use-resize-observer";
 import useState from "react-usestateref";
 
 import options from "../../data/options.json";
 import eventBus from "../../lib/eventBus";
 import UndoRedoTool from "../../lib/canvas/UndoRedoTool";
 
-interface Props { }
+interface Props {}
 
 // TODO: Handle errors from uploading/downloading files etc.
 
 const Canvas: React.FC<Props> = (props) => {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 
-	// using useStateRefs for the width and height because they are not updated in passed functions, which results in the original values (1, 1) being used in functions such as the one to reset view, instead of the new dimensions
-	const [width, setWidth, refWidth] = useState<number>(1);
-	const [height, setHeight, refHeight] = useState<number>(1);
 	// prevent selection for a short while after dragging
 	const [preventSelect, setPreventSelect, refPreventSelect] = useState(false);
 	const [timer, setTimer] = useState<NodeJS.Timeout>();
-	// get updates on the dimsenions of the encapsulating div
-	const { ref } = useResizeObserver({
-		onResize: ({ width, height }) => {
-			if (width) setWidth(width);
-			if (height) setHeight(height);
-		},
-	});
 	const fileInputRef = useRef<HTMLInputElement>(null);
 
 	function onClickItemEvent(e: paper.MouseEvent) {
@@ -49,8 +38,8 @@ const Canvas: React.FC<Props> = (props) => {
 
 	function setCenter() {
 		Paper.view.center = new Paper.Point(
-			Paper.project.view.bounds.width / 2,
-			Paper.project.view.bounds.height / 2
+			Paper.project.view.viewSize.width / 2,
+			Paper.project.view.viewSize.height / 2
 		);
 	}
 
@@ -77,14 +66,17 @@ const Canvas: React.FC<Props> = (props) => {
 			e.onClick = onClickItemEvent;
 		});
 
-		l.position = new Paper.Point(width / 2, height / 2);
+		l.position = new Paper.Point(
+			Paper.view.viewSize.width / 2,
+			Paper.view.viewSize.height / 2
+		);
 
 		eventBus.dispatch("initialSvgBounds", {
 			width: l.strokeBounds.width,
 			height: l.strokeBounds.height,
 		});
 
-		console.log(l);
+		l.data = { userEditable: true };
 
 		if (title) eventBus.dispatch("initialFilename", title);
 
@@ -127,12 +119,31 @@ const Canvas: React.FC<Props> = (props) => {
 
 		new Paper.Tool().on({
 			// dragging functionality
-			mousedrag: function (event: paper.ToolEvent) {
+			mousedrag: (event: paper.ToolEvent) => {
 				event.stopPropagation();
 				event.preventDefault();
 				let pan_offset = event.point.subtract(event.downPoint);
 				Paper.view.center = Paper.view.center.subtract(pan_offset);
 				setPreventSelect(true);
+			},
+		});
+
+		Paper.view.on({
+			// resize
+			resize: () => {
+				Paper.project.layers.forEach((element) => {
+					if (element.data.userEditable === true)
+						element.position = new Paper.Point(
+							Paper.view.viewSize.width / 2,
+							Paper.view.viewSize.height / 2
+						);
+				});
+			},
+			// remove selection if not clicked anything, since view.click propagates last, and propagation is stopped when clicked on an element, this will not trigger if clicked over an element which can be selected.
+			click: () => {
+				Paper.project.selectedItems.forEach((e) => {
+					e.selected = false;
+				});
 			},
 		});
 
@@ -180,10 +191,14 @@ const Canvas: React.FC<Props> = (props) => {
 
 		eventBus.on("setCanvasLayer", (layer: paper.Layer) => {
 			if (layer) {
-				Paper.project.clear();
-				Paper.project.addLayer(layer);
+				Paper.project.layers.forEach((layer) => {
+					if (layer.data.userEditable === true) layer.remove();
+				});
+				const newLayer = Paper.project.addLayer(layer);
 
-				Paper.project.getItems({}).forEach((e) => {
+				newLayer.sendToBack();
+
+				newLayer.getItems({}).forEach((e) => {
 					if (e.hasChildren()) return;
 					//@ts-ignore
 					e.onClick = onClickItemEvent;
@@ -208,6 +223,7 @@ const Canvas: React.FC<Props> = (props) => {
 				"removeSelectedFill",
 				"setCanvasLayer",
 				"openLocalFile",
+				"resetRulers",
 			],
 			() => {}
 		);
@@ -230,19 +246,14 @@ const Canvas: React.FC<Props> = (props) => {
 		return () => clearTimeout(timer);
 	}, [preventSelect]);
 
-	useEffect(() => {
-		Paper.project.layers.forEach((element) => {
-			if (width && height)
-				element.position = new Paper.Point(width / 2, height / 2);
-		});
-	}, [width, height]);
-
 	return (
-		<div ref={ref} className="overflow-none h-full w-full">
+		<>
 			<canvas
 				ref={canvasRef}
 				className="h-full w-full"
 				id="canvas"
+				//@ts-ignore
+				resize="true"
 				onWheel={(event) => {
 					let newZoom = Paper.view.zoom;
 					let oldZoom = Paper.view.zoom;
@@ -290,7 +301,7 @@ const Canvas: React.FC<Props> = (props) => {
 				accept=".svg"
 				onChange={handleFileUploaded}
 			/>
-		</div>
+		</>
 	);
 };
 
