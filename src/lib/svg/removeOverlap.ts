@@ -3,65 +3,64 @@ import { Color } from "paper/dist/paper-core";
 import { parse } from "svgson";
 import UndoRedoTool from "../canvas/UndoRedoTool";
 import eventBus from "../eventBus";
+import getLeafItems from "./getLeafItems";
 const toPath = require("element-to-path");
 
 async function removeOverlaps() {
-	let array: paper.Item[] = [];
-
 	UndoRedoTool.addStateDefault();
 
-	// get all leaf node items, remove items which have no fill or stroke
-	Paper.project.getItems({}).forEach((item) => {
-		if (item.hasChildren()) return;
-		if (!item.hasStroke() && !item.hasFill()) return;
-		array.push(item);
-	});
-
-	let newArray: any[] = [];
+	let array: (paper.Item | paper.PathItem)[] = getLeafItems();
+	let newArray: paper.PathItem[] = [];
 
 	// goes through all items, from bottom to top, and subtracts all the items above it. All the items are first converted to PathItems to allow for svg boolean algebra
 	for (let i = 0; i < array.length; i++) {
-		if (!isValidShape(array[i])) continue;
+		let parent = await normaliseToPathItem(array[i]);
 
-		let parentPath = await itemToPathItem(array[i]);
-
-		if (parentPath === undefined) continue;
+		if (parent === undefined) continue;
 
 		for (let j = i + 1; j < array.length; j++) {
-			// checks if the shapes overlap, optimisation
-			if (
-				!array[i].intersects(array[j]) &&
-				!array[i].isInside(array[j].bounds)
-			)
-				continue;
-			if (!isValidShape(array[j])) continue;
-
 			// we do not want to remove paths without fills, since they could part of the design
 			if (!array[j].hasFill()) continue;
 
-			let childElement = await itemToPathItem(array[j]);
+			// if paths do not intersect and are not inside eachother, continue
+			if (
+				!(
+					array[j].isInside(array[i].bounds) ||
+					array[j].intersects(array[i])
+				)
+			)
+				continue;
 
-			if (childElement === undefined) continue;
+			let child = await normaliseToPathItem(array[j]);
 
-			//@ts-ignore
-			parentPath = parentPath.subtract(childElement, {
-				insert: false,
-			});
+			if (child === undefined) continue;
+
+			parent = parent.subtract(child, { insert: false });
 		}
 
-		newArray.push(parentPath);
+		newArray.push(parent);
 	}
 
 	// add all new elements to a layer and dispatch it to be added to the project
 	let l = new Paper.Layer();
-	newArray.forEach((element) => {
-		l.addChild(element);
-		element.selected = true;
-	});
+	l.addChildren(newArray);
 
 	eventBus.dispatch("setCanvasLayer", l);
+}
 
-	return true;
+async function normaliseToPathItem(
+	item: paper.Item | paper.PathItem | paper.Path | paper.CompoundPath
+) {
+	if (
+		item instanceof Paper.Path ||
+		item instanceof Paper.PathItem ||
+		item instanceof Paper.CompoundPath
+	) {
+		return item;
+	} else {
+		if (!isValidShape(item)) return undefined;
+		return await itemToPathItem(item);
+	}
 }
 
 async function itemToPathItem(item: paper.Item) {
@@ -90,6 +89,7 @@ async function itemToPathItem(item: paper.Item) {
 	)
 		pItem.strokeColor = new Color(json.children[0].attributes.stroke);
 
+	// need to check if it numeric, because if it set to nothing, it will be set to 'none'
 	if (
 		json.children[0].attributes["stroke-width"] &&
 		isNumeric(json.children[0].attributes["stroke-width"])

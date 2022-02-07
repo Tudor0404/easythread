@@ -1,11 +1,12 @@
-import type Point from "../../types/point";
+import Paper from "paper";
 
+// Points are absolutely positioned
 class Block {
-	public stitches: Point[];
+	public stitches: paper.Point[];
 	public colour: paper.Color | null;
 
 	public constructor(
-		points: Point[] = [],
+		points: paper.Point[] = [],
 		colour: paper.Color | null = null
 	) {
 		this.stitches = points;

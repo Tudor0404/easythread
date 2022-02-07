@@ -1,10 +1,12 @@
 import React, { useRef, useEffect } from "react";
 import Paper from "paper";
 import useState from "react-usestateref";
+import Ruler from "@scena/react-ruler";
 
 import options from "../../data/options.json";
 import eventBus from "../../lib/eventBus";
 import UndoRedoTool from "../../lib/canvas/UndoRedoTool";
+import getLeafItems from "../../lib/svg/getLeafItems";
 
 interface Props {}
 
@@ -12,11 +14,16 @@ interface Props {}
 
 const Canvas: React.FC<Props> = (props) => {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
-
+	const horizontalRulerRef = useRef<any>(null);
+	const verticalRulerRef = useRef<any>(null);
 	// prevent selection for a short while after dragging
 	const [preventSelect, setPreventSelect, refPreventSelect] = useState(false);
 	const [timer, setTimer] = useState<NodeJS.Timeout>();
 	const fileInputRef = useRef<HTMLInputElement>(null);
+	const [topLeftPos, setTopLeftPos] = useState<paper.Point>(
+		new Paper.Point(0, 0)
+	);
+	const [viewZoom, setViewZoom] = useState(1);
 
 	function onClickItemEvent(e: paper.MouseEvent) {
 		// prevent from selecting items below it
@@ -36,15 +43,29 @@ const Canvas: React.FC<Props> = (props) => {
 		fileInputRef.current?.click();
 	}
 
+	function updateRulerDimensions() {
+		setTopLeftPos(Paper.view.projectToView(new Paper.Point(0, 0)));
+		setViewZoom(Paper.view.zoom);
+
+		if (horizontalRulerRef.current) {
+			horizontalRulerRef.current.resize();
+		}
+		if (verticalRulerRef.current) {
+			verticalRulerRef.current.resize();
+		}
+	}
+
 	function setCenter() {
 		Paper.view.center = new Paper.Point(
 			Paper.project.view.viewSize.width / 2,
 			Paper.project.view.viewSize.height / 2
 		);
+		updateRulerDimensions();
 	}
 
-	function setZoom() {
+	function resetZoom() {
 		Paper.view.zoom = 1;
+		updateRulerDimensions();
 	}
 
 	// add SVG to screen
@@ -125,6 +146,7 @@ const Canvas: React.FC<Props> = (props) => {
 				let pan_offset = event.point.subtract(event.downPoint);
 				Paper.view.center = Paper.view.center.subtract(pan_offset);
 				setPreventSelect(true);
+				updateRulerDimensions();
 			},
 		});
 
@@ -138,6 +160,7 @@ const Canvas: React.FC<Props> = (props) => {
 							Paper.view.viewSize.height / 2
 						);
 				});
+				updateRulerDimensions();
 			},
 			// remove selection if not clicked anything, since view.click propagates last, and propagation is stopped when clicked on an element, this will not trigger if clicked over an element which can be selected.
 			click: () => {
@@ -149,7 +172,7 @@ const Canvas: React.FC<Props> = (props) => {
 
 		//#region bus events
 		eventBus.on("resetView", () => {
-			setZoom();
+			resetZoom();
 			setCenter();
 		});
 
@@ -191,16 +214,10 @@ const Canvas: React.FC<Props> = (props) => {
 
 		eventBus.on("setCanvasLayer", (layer: paper.Layer) => {
 			if (layer) {
-				Paper.project.layers.forEach((layer) => {
-					if (layer.data.userEditable === true) layer.remove();
-				});
+				Paper.project.clear();
+
 				const newLayer = Paper.project.addLayer(layer);
-
-				newLayer.sendToBack();
-
-				newLayer.getItems({}).forEach((e) => {
-					if (e.hasChildren()) return;
-					//@ts-ignore
+				newLayer.children.forEach((e) => {
 					e.onClick = onClickItemEvent;
 					e.selected = false;
 				});
@@ -211,7 +228,11 @@ const Canvas: React.FC<Props> = (props) => {
 			openFileDialog();
 		});
 
+		eventBus.on("updateRulers", updateRulerDimensions);
+
 		//#endregion
+
+		updateRulerDimensions();
 
 		return eventBus.remove(
 			[
@@ -224,6 +245,7 @@ const Canvas: React.FC<Props> = (props) => {
 				"setCanvasLayer",
 				"openLocalFile",
 				"resetRulers",
+				"updateRulers",
 			],
 			() => {}
 		);
@@ -246,54 +268,116 @@ const Canvas: React.FC<Props> = (props) => {
 		return () => clearTimeout(timer);
 	}, [preventSelect]);
 
+	useEffect(() => {
+		if (horizontalRulerRef.current) {
+			horizontalRulerRef.current.scroll(topLeftPos.x);
+		}
+		if (verticalRulerRef.current) {
+			verticalRulerRef.current.scroll(topLeftPos.y);
+		}
+	}, [topLeftPos]);
+
 	return (
-		<>
-			<canvas
-				ref={canvasRef}
-				className="h-full w-full"
-				id="canvas"
-				//@ts-ignore
-				resize="true"
-				onWheel={(event) => {
-					let newZoom = Paper.view.zoom;
-					let oldZoom = Paper.view.zoom;
-
-					if (event.deltaY < 0) {
-						newZoom = Paper.view.zoom + 0.15;
-						newZoom =
-							newZoom > options.maxZoom
-								? options.maxZoom
-								: newZoom;
-					} else {
-						newZoom = Paper.view.zoom - 0.15;
-						newZoom =
-							newZoom < options.minZoom
-								? options.minZoom
-								: newZoom;
+		<div className=" h-full w-full ">
+			<div className="flex h-5 w-full flex-row">
+				<div className="h-5 w-5 bg-gray-700"></div>
+				<Ruler
+					ref={horizontalRulerRef}
+					type="horizontal"
+					height={16}
+					segment={4}
+					zoom={viewZoom}
+					unit={
+						viewZoom < 0.2
+							? 200
+							: viewZoom < 0.6
+							? 100
+							: viewZoom > 2
+							? 10
+							: 50
 					}
+					mainLineSize={12}
+					longLineSize={6}
+					shortLineSize={6}
+					backgroundColor="#E5E7EB"
+					lineColor="#374151"
+				></Ruler>
+			</div>
+			<div className="flex h-[calc(100%-20px)] w-full flex-row">
+				<div className=" h-full w-5 ">
+					<Ruler
+						type="vertical"
+						width={16}
+						segment={4}
+						ref={verticalRulerRef}
+						zoom={viewZoom}
+						unit={
+							viewZoom < 0.2
+								? 200
+								: viewZoom < 0.6
+								? 100
+								: viewZoom > 2
+								? 10
+								: 50
+						}
+						mainLineSize={12}
+						longLineSize={6}
+						shortLineSize={6}
+						backgroundColor="#E5E7EB"
+						lineColor="#374151"
+					></Ruler>
+				</div>
+				<canvas
+					ref={canvasRef}
+					className="h-full w-full"
+					id="canvas"
+					//@ts-ignore
+					resize="true"
+					onWheel={(event) => {
+						let newZoom = Paper.view.zoom;
+						let oldZoom = Paper.view.zoom;
 
-					let beta = oldZoom / newZoom;
+						if (event.deltaY < 0) {
+							newZoom = Paper.view.zoom + 0.15;
+							newZoom =
+								newZoom > options.maxZoom
+									? options.maxZoom
+									: newZoom;
+						} else {
+							newZoom = Paper.view.zoom - 0.15;
+							newZoom =
+								newZoom < options.minZoom
+									? options.minZoom
+									: newZoom;
+						}
 
-					let mousePosition = new Paper.Point(
-						event.clientX,
-						event.clientY
-					);
+						let beta = oldZoom / newZoom;
 
-					var viewPosition = Paper.view.viewToProject(mousePosition);
+						let mousePosition = new Paper.Point(
+							event.clientX,
+							event.clientY
+						);
 
-					var mpos = viewPosition;
-					var ctr = Paper.view.center;
+						var viewPosition =
+							Paper.view.viewToProject(mousePosition);
 
-					var pc = mpos.subtract(ctr);
-					var offset = mpos.subtract(pc.multiply(beta)).subtract(ctr);
+						var mpos = viewPosition;
+						var ctr = Paper.view.center;
 
-					Paper.view.zoom = newZoom;
-					Paper.view.center = Paper.view.center.add(offset);
+						var pc = mpos.subtract(ctr);
+						var offset = mpos
+							.subtract(pc.multiply(beta))
+							.subtract(ctr);
 
-					event.preventDefault();
-					Paper.view.update();
-				}}
-			></canvas>
+						Paper.view.zoom = newZoom;
+						Paper.view.center = Paper.view.center.add(offset);
+
+						event.preventDefault();
+						updateRulerDimensions();
+						Paper.view.update();
+					}}
+				></canvas>
+			</div>
 			<input
 				ref={fileInputRef}
 				type={"file"}
@@ -301,7 +385,7 @@ const Canvas: React.FC<Props> = (props) => {
 				accept=".svg"
 				onChange={handleFileUploaded}
 			/>
-		</>
+		</div>
 	);
 };
 

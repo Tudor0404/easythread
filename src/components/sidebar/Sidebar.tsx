@@ -50,7 +50,7 @@ const Sidebar: React.FC<Props> = (props) => {
 	}, [coloursPerPage]);
 
 	return (
-		<div className="flex max-h-full basis-1/4 flex-col items-center justify-start overflow-y-scroll bg-white pt-3 shadow-inner">
+		<div className="flex h-full min-w-[300px] basis-1/4 flex-col items-center justify-start overflow-y-scroll bg-white pt-3 shadow-inner">
 			<h1 className="mb-1 border-b-2 text-xl">Colours</h1>
 			<div className="flex w-[90%] flex-row flex-wrap items-center justify-start ">
 				<div className="my-2 flex min-h-[100px] w-full flex-col justify-between rounded-md bg-stone-200 p-1 shadow-xl">
@@ -127,7 +127,7 @@ const Sidebar: React.FC<Props> = (props) => {
 					<Button
 						onClick={() => {
 							setCurrPage(
-								currPage - 1 === 0 ? maxPerPage : currPage - 1
+								currPage === 1 ? maxPerPage : currPage - 1
 							);
 						}}
 						className="border-2 p-1"
@@ -141,9 +141,7 @@ const Sidebar: React.FC<Props> = (props) => {
 					<Button
 						onClick={() => {
 							setCurrPage(
-								currPage + 1 === maxPerPage + 1
-									? 1
-									: currPage + 1
+								currPage === maxPerPage ? 1 : currPage + 1
 							);
 						}}
 						className="border-2 p-1"

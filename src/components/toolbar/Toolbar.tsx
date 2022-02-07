@@ -125,6 +125,8 @@ const Toolbar: React.FC<Props> = (props) => {
 		}
 
 		Paper.view.zoom = newZoom;
+
+		eventBus.dispatch("updateRulers", {});
 	}
 
 	function saveFile() {
