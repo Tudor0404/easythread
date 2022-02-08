@@ -16,9 +16,9 @@ The client will work on all modern browsers and will be able to be hosted on mac
 Background to Problem
 *********************
 
-Currently, there are very few options if you have limited expreience in designing embroidery graphics and want to quickly convert vector graphics which are widely available, to files that a embroidery machine can use, for free. Current alternatives can be found in the `Alternatives`_ section.
+Currently, there are very few options if you have limited experience in designing embroidery graphics and want to quickly convert vector graphics which are widely available, to files that a embroidery machine can use, for free. Current alternatives can be found in the `Alternatives`_ section.
 
-Many solutions are also dated and provide a negative UI expreience for the user due to the clutered UI which presents a high learning curve, making the user avoid the software all together if they are not willing to learn how it works. ``Figure 1`` shows the GUI of a popular embroidery software, which supports conversion of vectors, if you are willing to pay extra. As you can see, the toolbar section names are not descriptive and the icons are small, clutered and dated. This can be seen in many applications designed for professionals, where they need a high degree of customisation. However, this is not ideal for the average consumer market.
+Many solutions are also dated and provide a negative UI experience for the user due to the cluttered UI which presents a high learning curve, making the user avoid the software all together if they are not willing to learn how it works. ``Figure 1`` shows the GUI of a popular embroidery software, which supports conversion of vectors, if you are willing to pay extra. As you can see, the toolbar section names are not descriptive, and the icons are small and dated. This can be seen in many applications designed for professionals, where they need a high degree of customization. However, this is not ideal for the average consumer market.
 
 
 .. figure:: /_static/images/embird-GUI.png
@@ -42,17 +42,17 @@ Alternatives
 Research
 ********
 
-In this section, I will go through the 3 main components of the project and analyse my options and approach to accomplish the main task. I will be using javascript for the front end and back end since it is a language that I have experience in, and most frameworks use that language.
+In this section, I will go through the 3 main components of the project and analyse my options and approach to accomplish the main task. I will be using JavaScript for the front end and back end since it is a language that I have experience in, and most frameworks use that language.
 
-Front End
-=========
+Website
+=======
 
-I need a simple and clean front end framework which will be able to communicate with the back end effectively. I will not be using server-side rendering because the website will be small in size and will add to the complexion greatly. After looking over my options, here are my top choices:
+I need a simple and clean front end framework which will be able to load quickly, with features such as hooks and events available to use. Server-side rendering will not be used because the website will be small and will add to the complexion greatly. After looking over my options, here are my top choices:
 
 React.js_
 ^^^^^^^^^
 
-    Since I have used react.js before, it would save me some time because I would not have to learn a new framework. React.js is a framework developed by Facebook and holds the most market share in the industry, with a large open source community.
+    Since I have used React.js before, it would save me some time because I would not have to learn a new framework. React.js is a framework developed by Facebook and holds the most market share in the industry, with a large open source community.
 
     :Advantages: 
         * Already familiar with it
@@ -66,7 +66,7 @@ React.js_
 Angular_
 ^^^^^^^^
 
-    Anuglar is a Google-made javascript framwork which focuses on single page content. Works primarily by turning HTML dynamic by the use of directives
+    Angular is a Google-made JavaScript framework which focuses on single page content. Works primarily by turning HTML dynamic by the use of directives.
 
     :Advantages: 
         * Two-way binding
@@ -75,7 +75,7 @@ Angular_
 
     :Disadvantages:
         * Slower in performance 
-        * Steep lurning curve 
+        * Steep learning curve 
         * Confusion between the different versions of Angular
 
 Vue.js_
@@ -93,18 +93,7 @@ Vue.js_
         * Low amounts open source contributions
         * Limited resources
 
-In the end, I will be using react.js due to previous knowledge alongside with `Tailwind <https://tailwindcss.com/>`_ used for styling custom components. Tailwind is preferable over normal CSS beacause the classes provided are powerful and work together in unison, allowing for quick design work.
-
-Back End
-========
-
-`Node.js <https://nodejs.org/en/>`_ is one of the most popular platforms for server side applications and it uses javascript, and has a wide selection of community driven libraries which make the process of creating a server more abstracted. Since I have experience working with Node.js and the front end will be using javascript too, the combination of the 2 will be perfect for what I need. Because of this, I have not considered other technologies such as Flask or Django.
-
-I will be using multiple libraries alongside Node.js, the main ones being:
-
-* `Express <https://expressjs.com/>`_ - Express is a minimalistic web framework which works as a layer on top of Node. This library is useful because it makes handling HTTP requests and responses easier.
-* `MongoDB <https://www.mongodb.com/>`_ (Mongoose) - MongoDB is a document orientated database model which stores data in json, which allows for flawless integration with javascript. Mongoose is a layer on top of mongoDB which adds types, schemas and validators. These features are useful to ensure data uploaded to the database are appropiate.
-* `Passport <https://www.passportjs.org/>`_ - This middleware provides authentication for Node.js. It can use many 'strategies' to log in and register a user, but passport-local and :term:`passport-JWT<JWT>` will be used so that this project does not have to rely on cloud services.
+In the end, I will be using react.js due to previous knowledge alongside with `Tailwind <https://tailwindcss.com/>`_ used for styling custom components. Tailwind is preferable over normal CSS because the classes provided are powerful and work together in unison, allowing for quick design work.
 
 
 Conversion Algorithm
@@ -115,7 +104,7 @@ What are and why SVGs?
 
 SVGs, short for Scalable Vector Graphics are mathematically defined graphics which can be zoomed in or out as to an infinite degree without losing resolution, SVGs are used throughout design and illustration market because primarily of this feature, and because they can be easily manipulated afterwards. 
 
-Because SVGs are mathematically based and work on a coordinate grid, finding points of intersection and getting the length of a section of a path is much easier compared to bitmap images. Since bitmap images are pixel based, there is no mathematical way of finding out where two lines intersect due to the limited resol8tion. In the image below, the difference between SVG and PNG can be seen. To find the intersection coordinate of the left slope of the 'A' to the horizontal in bitmap, coordinates can only be found to an integer, in this case (0,4). However with the SVG, the exact coordinate to an appropiate amount of decimal points can be found ((0.7, 4.4) to 1 decimal points), this chain of reasoning can also be applied to why it is easier to get the distance of a section of a path in SVGs. Another problem SVGs remove, is the ambiguity of what the object in the image is. For exmaple, on the left side of the diagram, we as humans recognise the image is depiciting 2 angled slopes meeting at an acute angle with a horizontal line connecting these 2 slopes below the intersection, or an 'A', but a computer does not know that. However on the right, the computer knows the equation of each line. This means that it understands the content, but not the context, which is enough for the project to work.
+Because SVGs work on a coordinate grid, finding points of intersection and getting the length of a section of a path is much easier compared to bitmap images. Since bitmap images are pixel based, there is no mathematical way of finding out where two lines intersect due to the limited resol8tion. In the image below, the difference between SVG and PNG can be seen. To find the intersection coordinate of the left slope of the 'A' to the horizontal in bitmap, coordinates can only be found to an integer, in this case (0,4). However, with the SVG the exact coordinate to an appropriate amount of decimal points can be found ((0.7, 4.4) to 1 decimal points). This chain of reasoning can also be applied to why it is easier to get the distance of a section of a path in SVGs. Another problem SVGs remove, is the ambiguity of what the object in the image is. For example, on the left side of the diagram, we as humans recognize the image is depicting 2 angled slopes meeting at an acute angle with a horizontal line connecting these 2 slopes below the intersection, or an 'A'. But a computer does not know that. However on the right, the computer knows the equation of each line. This means that it understands the content, but not the context, which is enough for the project to work.
 
 .. figure:: /_static/images/bitmap-vs-svg.png
     :alt: bitmap vs png diagram
@@ -124,8 +113,8 @@ Because SVGs are mathematically based and work on a coordinate grid, finding poi
 
     credit: https://commons.wikimedia.org/wiki/File:Bitmap_vs_vector.svg
 
-SVGs are written in XML, and each object in the graphic is a seperate element in the XML 
-with a corresponding tag. Tags are used to indicate what type of shape is the object being shown. Some exmaples include:
+SVGs are written in XML, and each object in the graphic is a separate element in the XML 
+with a corresponding tag. Tags are used to indicate what type of shape is the object being shown. Some examples include:
 
 * ``circle`` defines a circle
 * ``ellipse`` defines an ellipse
@@ -144,7 +133,7 @@ This limited list of tags will be encountered throughout the project, the full l
 
 Since XML is made to be parsed, the shapes in the file can easily be interpreted and worked on individually.
 
-To simplify the problem, all shapes will be converted to paths to prevent writing code for intersections between themselves. Paths are described as a list of commands which are followed by a set amount of parameters. Each command comes in 2 varirants, as an uppercase which specifies absolute positioning and lower case letter which uses relative positioning. There are 4 types of commands, but we will only be using the main 3. 
+To simplify the problem, all shapes will be converted to paths to prevent writing code for intersections between themselves. Paths are described as a list of commands which are followed by a set amount of parameters. Each command comes in 2 variants, as an uppercase which specifies absolute positioning and lower case letter which uses relative positioning. There are 4 types of commands, but we will only be using the main 3. 
 
 Path commands
 ^^^^^^^^^^^^^
@@ -170,7 +159,7 @@ Lines
 Curves
 ------
 
-'Curves' are used for curvatures. SVGs use Bézier curves with 1 or 2 anchors, which take a value of *t* (0 <= *t* <= 1). Bézier curves are a parametric way of describing curves, defined by the start and end point and the anchors. Say that there is a Bézier curve with 1 anchor. First, lines are created from the start point to the anchor, and from the anchor to the end point. *t* starts at 0 and increments to 1. 2 points are obtained by using a :term:`lerp<Lerp>` function on each of the lines, using *t* as the lerp percent. From these 2 points, a new line is created. The final point is obtained from the composite line by lerping on that line, again using *t* as the lerp percent. As *t* is increased little by little, a smooth curve is obtained from the final points. The diagram below explains this. If the Bézier instead has 2 anchors, the step of getting a new line from lerping across 2 lines is repeated, this means that all quadratic (1 anchor) Bézier curves can be defined as cubics (2 anchors), and can be more complex than quadratics.
+'Curves' are used for curvatures. SVGs use Bézier curves with 1 or 2 anchors, which take a value of *t* (0 ≤ *t* ≤ 1). Bézier curves are a parametric way of describing curves, defined by the start and end point and the anchors. Say that there is a Bézier curve with 1 anchor. First, lines are created from the start point to the anchor, and from the anchor to the end point. *t* starts at 0 and increments to 1. 2 points are obtained by using a :term:`lerp<Lerp>` function on each of the lines, using *t* as the lerp percent. From these 2 points, a new line is created. The final point is obtained from the composite line by lerping on that line, again using *t* as the lerp percent. As *t* is increased little by little, a smooth curve is obtained from the final points. The diagram below explains this. If the Bézier instead has 2 anchors, the step of getting a new line from lerping across 2 lines is repeated, this means that all quadratic (1 anchor) Bézier curves can be defined as cubics (2 anchors), and can be more complex than quadratics.
 
 :Definition (quadratic): ``Q x1 y1 x y`` or ``q dx1 dy1 dx dy``
 :Definition (cubic): ``C x1 y1 x2 y2 x y`` or ``c dx1 dy1 dx2 dy2 dx dy``
@@ -191,10 +180,10 @@ Distance of a Path
 
 To find the length of a linear path, it is easy. The formula ``s = ((X1-X0)^2 - (Y1-Y0)^2)^0.5`` can be used to get the distance between point ``P0 (X0, Y0)`` and ``P1 (X1, Y1)``.
 
-However for quadratic Bézier curves or Nth Bézier curves, it is resource intensive and complex. The 2 main methods used are:
+However, for quadratic Bézier curves or Nth Bézier curves, it is resource intensive and complex. The 2 main methods used are:
 
 #. Numerical Quadrature
-	The more popular out of the 2, numerical quadrature refers to any numerical method of approximating a definite integral, in our case, a Bézier curve. Arc length parameterization is one such method, which divides the curve ``N`` times, which gives ``N + 1`` points. Then the distance between every 2 subsequent points can be found using the formula found above, to calculate the distance of a linear path. Then, all the lengths of the divisions are added together to get the total length of the path. A specific arc length can be calculated given a range of ``t`` values, where the subdivison occures between the range. This method will yeild a result much faster than the alternate method at the cost of accuracy, but accuracy to such a high degree is not needed for this project, so arc length parameterization will be used.
+	The more popular out of the 2, numerical quadrature refers to any numerical method of approximating a definite integral, in our case, a Bézier curve. Arc length parameterization is one such method, which divides the curve ``N`` times, which gives ``N + 1`` points. Then the distance between every 2 subsequent points can be found using the formula found above, to calculate the distance of a linear path. Then, all the lengths of the divisions are added together to get the total length of the path. A specific arc length can be calculated given a range of ``t`` values, where the subdivision occurs between the range. This method will yield a result much faster than the alternate method at the cost of accuracy, but accuracy to such a high degree is not needed for this project, so arc length parameterization will be used.
 
 #. Definite Integration
 	The alternate method used is definite integration of a curve, which is defined by a radical (Nth root of an expression) integral, which means that it is very hard to compute and most importantly, resource intensive. Only quadratic Bézier curves have a closed integral which limits this method only to them. The result from the integral can be found `here <https://gamedev.stackexchange.com/a/125321>`_. At the cost of high computational complexity, the length of a quadratic Bézier can be found precisely, but the costs do not outweigh the benefits to use this method.
@@ -204,15 +193,15 @@ Intersections
 
 Finding the point of intersection will be vital for the conversion to work as shown in `Transcoding SVG Fills`_. The maths behind intersections are already established.
 
-Since the equation of each path is known, substitution can be used, then the roots can be found of the combined equation. When dealing with linear equations, matrices can be used to find the soltion of system of equations.
+Since the equation of each path is known, substitution can be used, then the roots can be found of the combined equation. When dealing with linear equations, matrices can be used to find the solution of system of equations.
 
-However, to find the intersections of Bézier curves is more complex as they can be either quadratic or cubic. Bézier curves can be described in the standard form ``y = ax^2 + bx + c`` as ``B(t) = (1-t)^2P0 + 2(1-t)tP1 + t^2P2 , 0 <= t <= 1``, where ``P0`` is the starting point, ``P1`` is the anchor, and ``P2`` is the end point. Quadratic equations can be solved using the following formula:
+However, to find the intersections of Bézier curves is more complex as they can be either quadratic or cubic. Bézier curves can be described in the standard form ``y = ax^2 + bx + c`` as ``B(t) = (1-t)^2P0 + 2(1-t)tP1 + t^2P2 , 0 ≤ t ≤ 1``, where ``P0`` is the starting point, ``P1`` is the anchor, and ``P2`` is the end point. Quadratic equations can be solved using the following formula:
 
 Assuming the quadratic ``y = ax^2 + bx + c``.
 
 The amount of roots the equation has by using ``b^2-4ac``. If the result is more than 1, it has 2 solutions. It has 1 solution if it equals 0, and none if it equals less than 0.
 
-The solution of ``x`` as the roots can be found using ``x = 0.5(b +- (b^2 - 4ac)^0.5)``. The ``y`` component can then be found by substituting the solution back into the equation.
+The solution of ``x`` as the roots can be found using ``x = 0.5(b ± (b^2 - 4ac)^0.5)``. The ``y`` component can then be found by substituting the solution back into the equation.
 
 For cubics, the general formula is much more complex and can be found `here <https://math.vanderbilt.edu/schectex/courses/cubic/>`_. But, the same principal is applied.
 
@@ -270,7 +259,7 @@ These 2 methods can be seen below in ``Figure 5``.
 
     ``Firgure 5`` SVG fill steps in concave shapes
 
-Both methods seem to be complex, but method 1 could be done more easily if there is a wat to find the minimum point at which the line has more than 2 solutions, then divide the shape there. If that is hard to do, method 2 is to be used and treat the multiple branches as a tree, and use depth-first traversal to do the jump stitches. As a result, method 2 would create a cleaner result because the jump stitches would be the closest together.
+Both methods seem to be complex, but method 1 could be done more easily if there is a way to find the minimum point at which the line has more than 2 solutions, then divide the shape there. If that is hard to do, method 2 is to be used and treat the multiple branches as a tree, and use depth-first traversal to do the jump stitches. As a result, method 2 would create a cleaner result because the jump stitches would be the closest together.
 
 Transcoding SVG paths
 ---------------------
@@ -279,7 +268,7 @@ Transcoding SVG paths
 Objectives
 **********
 
-the objectives are split in 3 main parts of the project, as each of the sections will be contained in seperate frameworks. The parts are: 
+The objectives are split in 3 main parts of the project, as each of the sections will be contained in separate frameworks. The parts are: 
 
 #. Front end
 #. Back end
@@ -287,104 +276,74 @@ the objectives are split in 3 main parts of the project, as each of the sections
 
 The following objectives act as a checklist for what the final program should be able to accomplish, with extension objectives in *italics*.
 
-Front End
-=========
-#. UI/UX
-    #. The user should be able to access the website and navigate through all the pages.
-    #. Given the user enters their username and password, clicking the login button logs them in, or clicking the register button registers them with the given credentials.
-    #. The user should be able to upload their file by clicking the button.
-		#. After clicking the button, a loading spinner stage should be shown to show the file's progress before allowing the file to be downloaded.
-    	#. Capability to drag and drop files.
-    #. The user should be able to download their converted files, given they click the download button on the respective file.
-    #. The user should be able to see a preview of their uploaded and converted file.
-    #. The user should be able to login, register, modify and see their profile.
-    	#. A list of the user's files that are currently on the server should be displayed.
-    #. The user should be able to delete all information and data related to them at any point in time by logging in, and clicking the Delete User button.
-    #. The UI/UX should be optimised for all screen sizes and devices, with proper scaling of text; All the content of a page should be able to be understood without leaning in to look closer.
-    #. *A socket connection, or http calls at set intervals should be established to communicate information about the status of a conversion to the user.*
-    #. *A progress bar should be able to show to an extent how much longer the conversion will take.*
-#. Optimisation
-    #. The website should have a Google lighthouse score of at least 90.
-    #. The website should load in under half a second on a good connection.
-    #. Best practices such as minifying the bundles should be in place to reduce loading time.
-#. *Other*
-    #. *The front end should be able to be run using a Docker container easily.*
-    #. *Scripts should be created to allow for easy installation of all packages, and initialisation of developer environment tools.*
+Website
+=======
+#. The user should be able to upload SVG files.
+#. A canvas should cover the majority of the webpage.
+	#. Movement of graphics in the canvas should be facilitated by dragging in the canvas.
+	#. Zooming should be allowed if mouse wheel scrolling while the mouse is in the canvas.
+	#. The user should be able to select items in a graphic by left-clicking the item. All other selections should be removed
+	#. If the user selects another item while holding control, the other selections should not disappear.
+	#. If the user left-clicks nothing, all selections should be removed.
+	#. Selections should be displayed using an outline around the item selected.
+	#. *directional rulers should be shown at the top and left side to give an idea to the user how large the graphic is.*
+#. A side panel on the right-hand side should be shown, displaying colour information
+	#. In the panel, the user should be able to navigate a list of DMC (thread colours) threads.
+	#. Given a colour is selected, the user should be able to change the colour of the selected item's fill or stroke. 
+	#. Given the user presses a labelled button, the user should be able to normalize all the colours in the graphic to DMC colours.
+#. A toolbar at the top should be shown, where the user can run operations.
+	#. The toolbar should be similar to existing programs such as Google Docs or Microsoft Word, so that users can navigate the program easily.
+	#. All items in this toolbar should always be visible
+	#. If the user types in the filename input, the filename should change throughout to the user specified name.
+	#. Dropdowns should be shown below the filename input. Clicking the dropdown, a menu should be expanded below the corresponding button. In each menu, buttons should be shown that do a descriptive function.
+		#. The 'File' dropdown should show a menu of items which associate to the graphic that the user is working on, or will be.
+		#. The 'Edit' dropdown should show a menu of items which associate to the current graphic.
+		#. The 'View' dropdown should show a menu of items which associate to how the graphic is displayed in the canvas.
+		#. The 'Help' dropdown should show a menu of items which describe what the website is, and how to use it.
+	#. Below the dropdown, multiple buttons and inputs should be shown which change how the graphic is displayed, or that change attributes of the graphic.
+		#. Buttons should be shown that undo or redo the graphic when pressed
+		#. Inputs should be shown that change the dimensions of the graphic when submitted
+		#. Buttons should be shown that change how the canvas looks when pressed.
+		#. A button which is different from the other in the toolbar should be shown only when the graphic has not been converted yet, that converts the graphic to an embroidery graphic.
+			#. Next to this button, a dropdown should be shown which changes how the conversion process behaves
+	#. The user should be able to save any graphic displayed to their local device in whatever state it is in the conversion process (SVG or embroidery), given they click the descriptive buttons.
+	#. The user should be able to open any SVG graphic, such that it can be used in the conversion process.
+#. The size of the icons and text should be big enough that all users can see them clearly, while preventing overflow
+#. The website should have a Google lighthouse score (measure of accessibility and performance) of at least 85.
+#. The website should run smoothly (>30fps) with little to no stuttering while dragging a 500kb sized graphic around, when using most computers. 
+#. The website should load in under half a second on a good connection.
+#. The website should be able to display all elements of it and be functional, on all screens with a viewport 800x1024 or higher (standard tablet size).
+#. The website should work well on touch based devices.
+#. *tooltips should be shown on some elements, such as buttons after hovering over them after a short while, to show a descriptive message about what the element does.*
 
-Back End
-========
-#. API
-    #. The API structure should be created and documented using Swaggerhub, to allow users to understand how to use the API.
-    #. The API should not crash all together if any children tasks fail (file conversion). 
-    #. Asynchronous tasks should be spawned whenever a user requests a file to be converted
-    #. The API should have its functions split into controllers, models and routers to allow for code to be reused outside the API effectively.
-    #. A task queue should be in place to allow only a certain amount of conversions to take place at once.
-    #. *The user should be notified when a file they own has its status changed.*
-#. Database
-    #. The back end should have a connection established with a MongoDB instance
-    #. A model and schema should be created for:
-        * A user.
-        * A file.
-    #. The database should not be able to be accessed by non-admins
-    #. Mongoose should be used with MongoDB, to allow for schemas.
-#. File management
-    #. Files should be stored for a set amount of time on the server, then deleted.
-    #. Uploaded files
-        #. Must be moved to a different working directory, so that they are ready to be converted, and be renamed with a GUID.
-        #. The files should be deleted after a certain amount of time in the queue (around 1hr), alongside with the task
-    #. Converted files
-        #. The file database should be updated with the file’s new status, given the GUID.
-        #. Converted files should be stored for 24hrs for a user without an account, 48hrs for a user with an account.
-    #. Files should be able to be served to the user, and only to users with sufficient access.
-#. Authentication and Access management
-    #. Users should be able to create an account using a username and password.
-    #. JWTs should be used to keep a session alive.
-    #. Users should not be able to create duplicate accounts.
-    #. A limit should be in place to not spam conversion attempts.
-    #. There should be a limit on file sizes allowed to be uploaded to the server for conversion.
-    #. Only certain file types should be able to allowed to be saved on the server.
-    #. Users with accounts should be able to convert more files with in the same time period, compared to users without an account. 
-    #. User passwords should be stored on the database in an encrypted fassion.
-    #. Files converted should only be able to be accessed by the user/computer that uploaded the file.
-    #. *The admin should be able to access a dashboard, with the following information*
-        #. *Current task queue.*
-        #. *All files and their owner.*
-        #. *Basic statistics such as (and not limited to) user count, total file conversions, total size of files converted.*
+
 
 Conversion algorithm
 ====================
 #. Algorithms should be in place to convert between these embroidery file types:
-    * .pes (and .pec subsequently)
     * .exp
+    * *.pes (and .pec subsequently)*
     * *.dst*
     * *.xxx*
     * *.jef*
-#. Conversion should be able to take place between SVG files and .pes files. Then from pes can be used an intermediate step for other embroidery files.
-	#. The stroke of a SVG path (given it has one) should be converted to a set of points resembling a satin stitch or running stitch, with the result being affected by the stroke width of the path
+#. Conversion should be able to take place between SVG files embroidery file types, with a custom intermediary step that holds the absolute positions of all stitches/jumps/switches, such that it can encodeed to all the final file types, and be displayed to the screen using SVGs.
+	#. The stroke of an SVG path (given it has one) should be converted to a set of points resembling a satin stitch or running stitch, with the result being affected by the stroke width of the path
 	#. The fill of the SVG path (given it has one) should be filled such that when embroidered, the fabric below should be hard to be seen.
 		#. *The opacity attribute of the fill should make the stitch fill more sparse if the opacity is lower.*
 		#. *The fill should be reinforced before it is filled to prevent the stiches from coming loose.*
 	#. The colour of the stitch should be determined by the SVG path attribute, with the colours of different paths within the SVG file being done first to avoid the number of times the user has to switch the threads on the embroidery machine.
-	#. *Given the user said so, flatten the SVG so there are no underlying paths. This can prevent too many threads being on top of each other.*
+	#. *Given the user said so, flatten the SVG, so there are no underlying paths. This can prevent too many threads being on top of each other.*
 #. Conversion should be able to take place between embroidery file types and PNG, by rendering embroidery file in SVG, then rendering it to bitmap.
-#. Conversion should take place from a starting point to the end point (example: bitmap/SVG to embroidery), by converting the file multiple times in a given order. This can be modelled using a node graph and traversing it in the most efficient manner.
 #. Conversion from any step to another must resemble the original input.
-#. Conversion should take a reasonable amount of time, around 10 seconds per conversion step 
+#. Conversion should take a reasonable amount of time, maximum 10 seconds per conversion step 
 
 ***********
 Limitations
 ***********
 
-The backend will be running on a `Raspberry Pi 4 Model B (4GB)`_, and the front end on multiple devices to check for compatibility with different screen sizes and internals. The Raspberry Pi 4 was chosen to be used for the server, because it is widely available and cheap, this means that most users would be able to host it themselves. Also, it will force myself to write more efficient code, as the PC I will be developing the program on is a lot more powerful, and my perception on the efficiency of the program could be skewed.
+Since the website will contain a lot of information, only medium to large screens should be able to view the webpage (≥ 800x1024 viewport). If the viewport of the device does not suffice the requirement, another webpage should be shown that prompts the user to use another device. The website should be able to run on most devices at least 5 years old, because of this, the website must match all the objectives on my 6-year-old laptop with the tech specs given below. Also, it should be accessible to anyone who knows how to use a browser. Most of my user base will be artists and people who are not as computer-literate, so the website should be familiar to other tools that they might have used before, such as Illustrator, Google Docs or Microsoft PowerPoint.
 
-Raspberry Pi 4 Model B Tech Specs:
-
-* Broadcom BCM2711, Quad core Cortex-A72 (ARM v8) 64-bit SoC @ 1.5GHz
-* 4GB LPDDR4-3200 SDRAM
-* 2.4 GHz and 5.0 GHz IEEE 802.11ac wireless, Bluetooth 5.0, BLE Gigabit Ethernet
-* 2 USB 3.0 ports; 2 USB 2.0 ports.
-
-For the frontend, it should be accessible to anyone who knows how to use a browser. Most of my user base will be artists and people who are not as computer literate, so the website should be minimalistic.
+.. //TODO: add tech specs
 
 Other secondary limitations include:
 
@@ -394,7 +353,6 @@ Other secondary limitations include:
 
 .. Website Links
 
-.. _Raspberry Pi 4 Model B (4GB): https://www.raspberrypi.com/products/raspberry-pi-4-model-b/specifications/
 .. _React.js: https://reactjs.org/
 .. _Angular: https://angular.io/
 .. _Vue.js: https://vuejs.org/

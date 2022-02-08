@@ -1,0 +1,5 @@
+{"rule":"PASSIVE_VOICE","sentence":"^\\QMany solutions are also dated and provide a negative UI experience for the user due to the cluttered UI which presents a high learning curve, making the user avoid the software all together if they are not willing to learn how it works.\\E$"}
+{"rule":"PASSIVE_VOICE","sentence":"^\\QSVGs, short for Scalable Vector Graphics are mathematically defined graphics which can be zoomed in or out as to an infinite degree without losing resolution, SVGs are used throughout design and illustration market because primarily of this feature, and because they can be easily manipulated afterwards.\\E$"}
+{"rule":"TOO_LONG_PARAGRAPH","sentence":"^\\QThis means that it understands the content, but not the context, which is enough for the project to work.\\E$"}
+{"rule":"MORFOLOGIK_RULE_EN_GB","sentence":"^\\Q/_static/images/bitmap-vs-svg.png\r\n:alt: bitmap vs png diagram\r\n:align: center\r\n:width: 70%\\E$"}
+{"rule":"MISSING_GENITIVE","sentence":"^\\QBézier curves are a parametric way of describing curves, defined by the start and end point and the anchors.\\E$"}

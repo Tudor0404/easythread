@@ -3,14 +3,14 @@ import eventBus from "../eventBus";
 import options from "../../data/options.json";
 
 class UndoRedoTool {
-	static undoStack: paper.Layer[] = [];
-	static redoStack: paper.Layer[] = [];
+	private static undoStack: paper.Layer[] = [];
+	private static redoStack: paper.Layer[] = [];
 
-	static addState(state: paper.Layer) {
+	public static addState(state: paper.Layer) {
 		UndoRedoTool.undoStack.push(state.clone({ insert: false }));
 	}
 
-	static addStateDefault() {
+	public static addStateDefault() {
 		UndoRedoTool.undoStack.push(
 			Paper.project.layers[0].clone({ insert: false })
 		);
@@ -21,7 +21,7 @@ class UndoRedoTool {
 		UndoRedoTool.dispatchAvailability();
 	}
 
-	static undo() {
+	public static undo() {
 		if (UndoRedoTool.undoStack.length > 0) {
 			UndoRedoTool.redoStack.push(
 				Paper.project.layers[0].clone({ insert: false })
@@ -32,7 +32,7 @@ class UndoRedoTool {
 		UndoRedoTool.dispatchAvailability();
 	}
 
-	static redo() {
+	public static redo() {
 		if (UndoRedoTool.redoStack.length > 0) {
 			UndoRedoTool.undoStack.push(
 				Paper.project.layers[0].clone({ insert: false })
@@ -43,12 +43,12 @@ class UndoRedoTool {
 		UndoRedoTool.dispatchAvailability();
 	}
 
-	static dispatchAvailability() {
+	private static dispatchAvailability() {
 		eventBus.dispatch("undoAvailable", UndoRedoTool.undoStack.length > 0);
 		eventBus.dispatch("redoAvailable", UndoRedoTool.redoStack.length > 0);
 	}
 
-	static checkSize() {
+	private static checkSize() {
 		if (UndoRedoTool.undoStack.length > options.maxUndo)
 			UndoRedoTool.undoStack.slice(0, options.maxUndo);
 	}
