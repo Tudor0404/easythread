@@ -44,7 +44,7 @@ const Canvas: React.FC<Props> = (props) => {
 	}
 
 	function updateRulerDimensions() {
-		setTopLeftPos(Paper.view.projectToView(new Paper.Point(0, 0)));
+		setTopLeftPos(Paper.view.viewToProject(new Paper.Point(0, 0)));
 		setViewZoom(Paper.view.zoom);
 
 		if (horizontalRulerRef.current) {
@@ -269,6 +269,7 @@ const Canvas: React.FC<Props> = (props) => {
 	}, [preventSelect]);
 
 	useEffect(() => {
+		console.log(topLeftPos);
 		if (horizontalRulerRef.current) {
 			horizontalRulerRef.current.scroll(topLeftPos.x);
 		}
@@ -278,45 +279,22 @@ const Canvas: React.FC<Props> = (props) => {
 	}, [topLeftPos]);
 
 	return (
-		<div className=" h-full w-full ">
+		<div className="h-full w-full ">
 			<div className="flex h-5 w-full flex-row">
 				<div className="h-5 w-5 bg-gray-700"></div>
-				<Ruler
-					ref={horizontalRulerRef}
-					type="horizontal"
-					height={16}
-					segment={4}
-					zoom={viewZoom}
-					unit={
-						viewZoom < 0.2
-							? 200
-							: viewZoom < 0.6
-							? 100
-							: viewZoom > 2
-							? 10
-							: 50
-					}
-					mainLineSize={12}
-					longLineSize={6}
-					shortLineSize={6}
-					backgroundColor="#E5E7EB"
-					lineColor="#374151"
-				></Ruler>
-			</div>
-			<div className="flex h-[calc(100%-20px)] w-full flex-row">
-				<div className=" h-full w-5 ">
+				<div className="w-[calc(100%-20px)]">
 					<Ruler
-						type="vertical"
-						width={16}
+						ref={horizontalRulerRef}
+						type="horizontal"
+						height={20}
 						segment={4}
-						ref={verticalRulerRef}
 						zoom={viewZoom}
 						unit={
-							viewZoom < 0.2
-								? 200
-								: viewZoom < 0.6
+							viewZoom < 0.5
+								? 250
+								: viewZoom < 0.7
 								? 100
-								: viewZoom > 2
+								: viewZoom > 3.5
 								? 10
 								: 50
 						}
@@ -325,58 +303,99 @@ const Canvas: React.FC<Props> = (props) => {
 						shortLineSize={6}
 						backgroundColor="#E5E7EB"
 						lineColor="#374151"
+						textColor="#374151"
+						textOffset={[0, 7]}
+						textFormat={(scale: number) => {
+							if (viewZoom < 0.7)
+								return (scale / 10).toString() + "cm";
+							else return scale.toString() + "mm";
+						}}
 					></Ruler>
 				</div>
-				<canvas
-					ref={canvasRef}
-					className="h-full w-full"
-					id="canvas"
-					//@ts-ignore
-					resize="true"
-					onWheel={(event) => {
-						let newZoom = Paper.view.zoom;
-						let oldZoom = Paper.view.zoom;
-
-						if (event.deltaY < 0) {
-							newZoom = Paper.view.zoom + 0.15;
-							newZoom =
-								newZoom > options.maxZoom
-									? options.maxZoom
-									: newZoom;
-						} else {
-							newZoom = Paper.view.zoom - 0.15;
-							newZoom =
-								newZoom < options.minZoom
-									? options.minZoom
-									: newZoom;
+			</div>
+			<div className="flex h-[calc(100%-20px)] w-full flex-row">
+				<div className=" h-full w-5 ">
+					<Ruler
+						type="vertical"
+						width={20}
+						segment={4}
+						ref={verticalRulerRef}
+						zoom={viewZoom}
+						unit={
+							viewZoom < 0.5
+								? 250
+								: viewZoom < 0.7
+								? 100
+								: viewZoom > 3.5
+								? 10
+								: 50
 						}
+						mainLineSize={12}
+						longLineSize={6}
+						shortLineSize={6}
+						backgroundColor="#E5E7EB"
+						lineColor="#374151"
+						textColor="#374151"
+						textOffset={[7, 0]}
+						textFormat={(scale: number) => {
+							if (viewZoom < 0.7)
+								return (scale / 10).toString() + "cm";
+							else return scale.toString() + "mm";
+						}}
+					></Ruler>
+				</div>
+				<div className="h-full w-full">
+					<canvas
+						ref={canvasRef}
+						className="h-full w-full"
+						id="canvas"
+						//@ts-ignore
+						resize="true"
+						onWheel={(event) => {
+							let newZoom = Paper.view.zoom;
+							let oldZoom = Paper.view.zoom;
 
-						let beta = oldZoom / newZoom;
+							if (event.deltaY < 0) {
+								newZoom = Paper.view.zoom + 0.15;
+								newZoom =
+									newZoom > options.maxZoom
+										? options.maxZoom
+										: newZoom;
+							} else {
+								newZoom = Paper.view.zoom - 0.15;
+								newZoom =
+									newZoom < options.minZoom
+										? options.minZoom
+										: newZoom;
+							}
 
-						let mousePosition = new Paper.Point(
-							event.clientX,
-							event.clientY
-						);
+							let beta = oldZoom / newZoom;
 
-						var viewPosition =
-							Paper.view.viewToProject(mousePosition);
+							let mousePosition = new Paper.Point(
+								event.clientX,
+								event.clientY
+							);
 
-						var mpos = viewPosition;
-						var ctr = Paper.view.center;
+							var viewPosition =
+								Paper.view.viewToProject(mousePosition);
 
-						var pc = mpos.subtract(ctr);
-						var offset = mpos
-							.subtract(pc.multiply(beta))
-							.subtract(ctr);
+							var mpos = viewPosition;
+							var ctr = Paper.view.center;
 
-						Paper.view.zoom = newZoom;
-						Paper.view.center = Paper.view.center.add(offset);
+							var pc = mpos.subtract(ctr);
+							var offset = mpos
+								.subtract(pc.multiply(beta))
+								.subtract(ctr);
 
-						event.preventDefault();
-						updateRulerDimensions();
-						Paper.view.update();
-					}}
-				></canvas>
+							Paper.view.zoom = newZoom;
+							Paper.view.center = Paper.view.center.add(offset);
+
+							event.preventDefault();
+							updateRulerDimensions();
+							Paper.view.update();
+						}}
+					></canvas>
+				</div>
 			</div>
 			<input
 				ref={fileInputRef}

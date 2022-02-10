@@ -4,7 +4,6 @@ import Switch from "../input/Switch";
 import Dropdown from "../dropdown/Dropdown";
 
 import useState from "react-usestateref";
-import TextInput from "../input/TextInput";
 import NumberInput from "../input/NumberInput";
 
 interface Props {}

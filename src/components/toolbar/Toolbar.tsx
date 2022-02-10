@@ -469,7 +469,6 @@ const Toolbar: React.FC<Props> = (props) => {
 			</div>
 			<a
 				aria-disabled
-				href=""
 				ref={fileDownloadRef}
 				className="-top-100% absolute -translate-x-96 select-none opacity-0"
 			>

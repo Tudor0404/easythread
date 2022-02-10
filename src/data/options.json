@@ -1,6 +1,6 @@
 {
 	"maxZoom": 15,
-	"minZoom": 0.1,
+	"minZoom": 0.15,
 	"maxRedo": 10,
 	"maxUndo": 25
 }
