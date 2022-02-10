@@ -6,7 +6,6 @@ import Ruler from "@scena/react-ruler";
 import options from "../../data/options.json";
 import eventBus from "../../lib/eventBus";
 import UndoRedoTool from "../../lib/canvas/UndoRedoTool";
-import getLeafItems from "../../lib/svg/getLeafItems";
 
 interface Props {}
 
@@ -269,7 +268,6 @@ const Canvas: React.FC<Props> = (props) => {
 	}, [preventSelect]);
 
 	useEffect(() => {
-		console.log(topLeftPos);
 		if (horizontalRulerRef.current) {
 			horizontalRulerRef.current.scroll(topLeftPos.x);
 		}
@@ -390,7 +388,6 @@ const Canvas: React.FC<Props> = (props) => {
 							Paper.view.zoom = newZoom;
 							Paper.view.center = Paper.view.center.add(offset);
 
-							event.preventDefault();
 							updateRulerDimensions();
 							Paper.view.update();
 						}}

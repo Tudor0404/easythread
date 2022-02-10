@@ -6,7 +6,11 @@ import eventBus from "../eventBus";
 import getLeafItems from "./getLeafItems";
 const toPath = require("element-to-path");
 
-async function removeOverlaps() {
+/**
+ * @description removes overlapping sections which are not displayed, this prevents stitches being too thick
+ * @returns {Promise<void>}
+ */
+async function removeOverlaps(): Promise<void> {
 	UndoRedoTool.addStateDefault();
 
 	let array: (paper.Item | paper.PathItem)[] = getLeafItems();
@@ -48,9 +52,14 @@ async function removeOverlaps() {
 	eventBus.dispatch("setCanvasLayer", l);
 }
 
+/**
+ * @description converts any type of item that can be described as a Paper.PathItem, into one or one of its children classes
+ * @param item item to convert
+ * @returns {Promise<paper.Path | paper.PathItem | paper.CompoundPath | undefined>} converted item
+ */
 async function normaliseToPathItem(
 	item: paper.Item | paper.PathItem | paper.Path | paper.CompoundPath
-) {
+): Promise<paper.Path | paper.PathItem | paper.CompoundPath | undefined> {
 	if (
 		item instanceof Paper.Path ||
 		item instanceof Paper.PathItem ||
@@ -63,7 +72,14 @@ async function normaliseToPathItem(
 	}
 }
 
-async function itemToPathItem(item: paper.Item) {
+/**
+ * @description converts regular items, which may be described as shapes, into SVG command defined paths
+ * @param {paper.Item} item item to convert
+ * @returns {paper.PathItem} converted items
+ */
+async function itemToPathItem(
+	item: paper.Item
+): Promise<paper.PathItem | undefined> {
 	//@ts-ignore
 	let svg: SVGPathElement = item.exportSVG();
 
@@ -104,8 +120,12 @@ async function itemToPathItem(item: paper.Item) {
 	return pItem;
 }
 
-// check if a SVG element is a shape
-function isValidShape(item: paper.Item) {
+/**
+ * @description checks if the Item given can be visually described in SVG (this excludes groups and the such)
+ * @param item item to check
+ * @returns {boolean}
+ */
+function isValidShape(item: paper.Item): boolean {
 	//@ts-ignore
 	let svg: SVGPathElement = item.exportSVG();
 
@@ -124,8 +144,12 @@ function isValidShape(item: paper.Item) {
 	return true;
 }
 
-// converts string to number
-function isNumeric(str: string) {
+/**
+ * @description converts a string into an integer or float
+ * @param str string to parse
+ * @returns {boolean | number}
+ */
+function isNumeric(str: string): boolean | number {
 	if (str.match(/^\d+$/)) {
 		// only digits
 		return parseInt(str);

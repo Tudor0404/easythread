@@ -1,6 +1,6 @@
-import Paper from "paper";
-
-// Points are absolutely positioned
+/**
+ * @description class that encapsulates a block of points, where a jump stitch is normally formed between blocks
+ */
 class Block {
 	public stitches: paper.Point[];
 	public colour: paper.Color | null;
