@@ -1,5 +1,7 @@
 import straightSubdivision from "./straightSubdivision";
 
+// TODO: consider types of joins, prevent overlap if path goes back on top of itself
+
 /**
  * @description generates a set of points that
  * @param {paper.Point} path path that the normals will be calculated at
@@ -12,7 +14,7 @@ function satinPath(
 	path: paper.Path,
 	width: number,
 	stitchLength: number = 10,
-	spaceBetweenNormals: number = 0.5
+	spaceBetweenNormals: number = 1
 ): paper.Point[] {
 	let preBuffer: paper.Point[] = [];
 	let buffer: paper.Point[] = [];
@@ -21,12 +23,14 @@ function satinPath(
 		let vector = path.getNormalAt(spaceBetweenNormals * i);
 		// add bottom then top of the normal to make the up and down pattern
 		preBuffer.push(
-			//@ts-ignore
-			path.getPointAt(spaceBetweenNormals * i) + vector * (width / 2) * -1
+			path
+				.getPointAt(spaceBetweenNormals * i)
+				.add(vector.multiply(width / 2).multiply(-1))
 		);
 		preBuffer.push(
-			//@ts-ignore
-			path.getPointAt(spaceBetweenNormals * i) + vector * (width / 2)
+			path
+				.getPointAt(spaceBetweenNormals * i)
+				.add(vector.multiply(width / 2))
 		);
 	}
 
@@ -34,10 +38,10 @@ function satinPath(
 
 	for (let i = 0; i < preBuffer.length - 1; i += 2) {
 		let start = preBuffer[i];
-		let end = preBuffer[i];
+		let end = preBuffer[i + 1];
 
 		// add offset only if the distance is larger than the stitch length, increment offset to change it every normal
-		if (start.getDistance(end) > stitchLength) {
+		if (start.getDistance(end, false) > Math.pow(stitchLength, 2)) {
 			lastOffset = (lastOffset + 20) % 100;
 		} else {
 			lastOffset = 0;
@@ -47,7 +51,7 @@ function satinPath(
 			start,
 			end,
 			stitchLength,
-			i !== preBuffer.length - 2,
+			false,
 			lastOffset
 		).forEach((p) => buffer.push(p));
 	}

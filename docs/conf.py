@@ -45,7 +45,7 @@ latex_elements = {
     'papersize' : 'a4paper',
     'pointsize' : '11pt',
     'fontpkg': r'\usepackage[sfdefault]{roboto}\usepackage[T1]{fontenc}', # change font to roboto
-    'preamble': r'\usepackage[labelformat=empty]{caption}', # remove 'fig {}' prefix to figures
+    'preamble': r'\usepackage[labelformat=empty]{caption}\usepackage{enumitem}\setlistdepth{99}', # remove 'fig {}' prefix to figures
     'figure_align': 'H', # prevents automatic order of figures
 }
 

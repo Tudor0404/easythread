@@ -159,7 +159,7 @@ Lines
 Curves
 ------
 
-'Curves' are used for curvatures. SVGs use Bézier curves with 1 or 2 anchors, which take a value of *t* (0 ≤ *t* ≤ 1). Bézier curves are a parametric way of describing curves, defined by the start and end point and the anchors. Say that there is a Bézier curve with 1 anchor. First, lines are created from the start point to the anchor, and from the anchor to the end point. *t* starts at 0 and increments to 1. 2 points are obtained by using a :term:`lerp<Lerp>` function on each of the lines, using *t* as the lerp percent. From these 2 points, a new line is created. The final point is obtained from the composite line by lerping on that line, again using *t* as the lerp percent. As *t* is increased little by little, a smooth curve is obtained from the final points. The diagram below explains this. If the Bézier instead has 2 anchors, the step of getting a new line from lerping across 2 lines is repeated, this means that all quadratic (1 anchor) Bézier curves can be defined as cubics (2 anchors), and can be more complex than quadratics.
+'Curves' are used for curvatures. SVGs use Bézier curves with 1 or 2 anchors, which take a value of *t* (0 <= *t* <= 1). Bézier curves are a parametric way of describing curves, defined by the start and end point and the anchors. Say that there is a Bézier curve with 1 anchor. First, lines are created from the start point to the anchor, and from the anchor to the end point. *t* starts at 0 and increments to 1. 2 points are obtained by using a :term:`lerp<Lerp>` function on each of the lines, using *t* as the lerp percent. From these 2 points, a new line is created. The final point is obtained from the composite line by lerping on that line, again using *t* as the lerp percent. As *t* is increased little by little, a smooth curve is obtained from the final points. The diagram below explains this. If the Bézier instead has 2 anchors, the step of getting a new line from lerping across 2 lines is repeated, this means that all quadratic (1 anchor) Bézier curves can be defined as cubics (2 anchors), and can be more complex than quadratics.
 
 :Definition (quadratic): ``Q x1 y1 x y`` or ``q dx1 dy1 dx dy``
 :Definition (cubic): ``C x1 y1 x2 y2 x y`` or ``c dx1 dy1 dx2 dy2 dx dy``
@@ -195,13 +195,13 @@ Finding the point of intersection will be vital for the conversion to work as sh
 
 Since the equation of each path is known, substitution can be used, then the roots can be found of the combined equation. When dealing with linear equations, matrices can be used to find the solution of system of equations.
 
-However, to find the intersections of Bézier curves is more complex as they can be either quadratic or cubic. Bézier curves can be described in the standard form ``y = ax^2 + bx + c`` as ``B(t) = (1-t)^2P0 + 2(1-t)tP1 + t^2P2 , 0 ≤ t ≤ 1``, where ``P0`` is the starting point, ``P1`` is the anchor, and ``P2`` is the end point. Quadratic equations can be solved using the following formula:
+However, to find the intersections of Bézier curves is more complex as they can be either quadratic or cubic. Bézier curves can be described in the standard form ``y = ax^2 + bx + c`` as ``B(t) = (1-t)^2P0 + 2(1-t)tP1 + t^2P2 , 0 <= t <= 1``, where ``P0`` is the starting point, ``P1`` is the anchor, and ``P2`` is the end point. Quadratic equations can be solved using the following formula:
 
 Assuming the quadratic ``y = ax^2 + bx + c``.
 
 The amount of roots the equation has by using ``b^2-4ac``. If the result is more than 1, it has 2 solutions. It has 1 solution if it equals 0, and none if it equals less than 0.
 
-The solution of ``x`` as the roots can be found using ``x = 0.5(b ± (b^2 - 4ac)^0.5)``. The ``y`` component can then be found by substituting the solution back into the equation.
+The solution of ``x`` as the roots can be found using ``x = 0.5(b += (b^2 - 4ac)^0.5)``. The ``y`` component can then be found by substituting the solution back into the equation.
 
 For cubics, the general formula is much more complex and can be found `here <https://math.vanderbilt.edu/schectex/courses/cubic/>`_. But, the same principal is applied.
 
@@ -341,7 +341,7 @@ Conversion algorithm
 Limitations
 ***********
 
-Since the website will contain a lot of information, only medium to large screens should be able to view the webpage (≥ 800x1024 viewport). If the viewport of the device does not suffice the requirement, another webpage should be shown that prompts the user to use another device. The website should be able to run on most devices at least 5 years old, because of this, the website must match all the objectives on my 6-year-old laptop with the tech specs given below. Also, it should be accessible to anyone who knows how to use a browser. Most of my user base will be artists and people who are not as computer-literate, so the website should be familiar to other tools that they might have used before, such as Illustrator, Google Docs or Microsoft PowerPoint.
+Since the website will contain a lot of information, only medium to large screens should be able to view the webpage (>= 800x1024 viewport). If the viewport of the device does not suffice the requirement, another webpage should be shown that prompts the user to use another device. The website should be able to run on most devices at least 5 years old, because of this, the website must match all the objectives on my 6-year-old laptop with the tech specs given below. Also, it should be accessible to anyone who knows how to use a browser. Most of my user base will be artists and people who are not as computer-literate, so the website should be familiar to other tools that they might have used before, such as Illustrator, Google Docs or Microsoft PowerPoint.
 
 .. //TODO: add tech specs
 
