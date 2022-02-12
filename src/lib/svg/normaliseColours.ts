@@ -12,7 +12,7 @@ import { DMCColour } from "../../types/DMCColour";
  * @param fill change fill?
  * @returns {void}
  */
-function normaliseColour(
+function normaliseColours(
 	elem?: paper.Item,
 	stroke: boolean = true,
 	fill: boolean = true
@@ -81,8 +81,8 @@ function getValueHSB(e: DMCColour, c: paper.Color) {
 	// get distance between colours
 	// since saturation and brightness go from 0 to 1, I needed to normalise them to 0 to 360, the range that the Hue takes. Since humans precieve brightness better than colour, I gave brightness a slightly higher bias than saturation. I added a higher bias to hue than the rest since changing the hue is quite noticable
 	let value = Math.sqrt(
-		Math.pow(dHue * 3, 2) +
-			Math.pow(dSaturation * 360 * 1.4, 2) +
+		Math.pow(dHue * 3.5, 2) +
+			Math.pow(dSaturation * 360 * 1.3, 2) +
 			Math.pow(dBrightness * 360 * brightnessMultiple, 2)
 	);
 
@@ -107,4 +107,4 @@ function getValueRGB(e: DMCColour, c: paper.Color) {
 	return value;
 }
 
-export default normaliseColour;
+export default normaliseColours;

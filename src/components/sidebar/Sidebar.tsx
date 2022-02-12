@@ -6,7 +6,7 @@ import DMCColours from "../../data/DMCColours.json";
 import ColourBox from "./ColourBox";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/outline";
 import type { DMCColour } from "../../types/DMCColour";
-import normaliseColours from "../../lib/svg/normaliseColour";
+import normaliseColours from "../../lib/svg/normaliseColours";
 import eventBus from "../../lib/eventBus";
 import UndoRedoTool from "../../lib/canvas/UndoRedoTool";
 
@@ -166,13 +166,15 @@ const Sidebar: React.FC<Props> = (props) => {
 						filled
 						onClick={() => {
 							if (softColour["#RGB"])
-								eventBus.dispatch("setSelectedStrokeColour", {
-									hex: softColour["#RGB"],
-								});
+								eventBus.dispatch(
+									"setSelectedStrokeColour",
+									softColour["#RGB"]
+								);
 							else if (hardColour["#RGB"])
-								eventBus.dispatch("setSelectedStrokeColour", {
-									hex: hardColour["#RGB"],
-								});
+								eventBus.dispatch(
+									"setSelectedStrokeColour",
+									hardColour["#RGB"]
+								);
 						}}
 					>
 						Set stroke
@@ -182,13 +184,11 @@ const Sidebar: React.FC<Props> = (props) => {
 						filled
 						onClick={() => {
 							if (softColour["#RGB"]) {
-								console.log(softColour["#RGB"]);
 								eventBus.dispatch(
 									"setSelectedFillColour",
 									softColour["#RGB"]
 								);
 							} else if (hardColour["#RGB"]) {
-								console.log(hardColour["#RGB"]);
 								eventBus.dispatch(
 									"setSelectedFillColour",
 									hardColour["#RGB"]

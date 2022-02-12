@@ -8,9 +8,9 @@ const toPath = require("element-to-path");
 
 /**
  * @description removes overlapping sections which are not displayed, this prevents stitches being too thick
- * @returns {Promise<void>}
+ * @returns {Promise<paper.Layer>}
  */
-async function removeOverlaps(): Promise<void> {
+async function removeOverlaps(): Promise<paper.Layer> {
 	UndoRedoTool.addStateDefault();
 
 	let array: (paper.Item | paper.PathItem)[] = getLeafItems();
@@ -47,9 +47,12 @@ async function removeOverlaps(): Promise<void> {
 
 	// add all new elements to a layer and dispatch it to be added to the project
 	let l = new Paper.Layer();
+
 	l.addChildren(newArray);
 
 	eventBus.dispatch("setCanvasLayer", l);
+
+	return l;
 }
 
 /**

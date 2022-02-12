@@ -39,6 +39,12 @@ const Toolbar: React.FC<Props> = (props) => {
 	const [stroke, setStroke] = useState<string>("");
 	const fileDownloadRef = useRef<HTMLAnchorElement>(null);
 
+	const [isConvertToEmbroidery, setConvertToEmbroidery] =
+		useState<boolean>(true);
+	const [isRemoveOverlap, setRemoveOverlap] = useState<boolean>(true);
+	const [isAverageOutColours, setAverageOutColours] = useState<boolean>(true);
+	const [stitchLength, setStitchLength] = useState<string>("2.7");
+
 	useEffect(() => {
 		if (Paper.project)
 			Paper.project.getItems({}).forEach((e) => {
@@ -449,10 +455,27 @@ const Toolbar: React.FC<Props> = (props) => {
 						filled
 						className="!mx-0.5 !py-0.5 !px-1"
 						tooltip="convert to embroidery"
+						onClick={() =>
+							eventBus.dispatch("convertSvg", {
+								convertToEmbroidery: isConvertToEmbroidery,
+								removeOverlap: isRemoveOverlap,
+								averageColours: isAverageOutColours,
+								stitchLength: parseFloat(stitchLength),
+							})
+						}
 					>
 						Convert
 					</Button>
-					<OptionsDropdown />
+					<OptionsDropdown
+						isAverageOutColours={isAverageOutColours}
+						setAverageOutColours={setAverageOutColours}
+						isConvertToEmbroidery={isConvertToEmbroidery}
+						setConvertToEmbroidery={setConvertToEmbroidery}
+						isRemoveOverlap={isRemoveOverlap}
+						setRemoveOverlap={setRemoveOverlap}
+						stitchLength={stitchLength}
+						setStitchLength={setStitchLength}
+					/>
 					{areItemsSelected && (
 						<>
 							<Seperator />

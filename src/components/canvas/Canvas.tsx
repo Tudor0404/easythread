@@ -6,6 +6,9 @@ import Ruler from "@scena/react-ruler";
 import options from "../../data/options.json";
 import eventBus from "../../lib/eventBus";
 import UndoRedoTool from "../../lib/canvas/UndoRedoTool";
+import Container from "../../lib/stitch/Container";
+import removeOverlap from "../../lib/svg/removeOverlap";
+import normaliseColours from "../../lib/svg/normaliseColours";
 
 interface Props {}
 
@@ -19,6 +22,7 @@ const Canvas: React.FC<Props> = (props) => {
 	const [preventSelect, setPreventSelect, refPreventSelect] = useState(false);
 	const [timer, setTimer] = useState<NodeJS.Timeout>();
 	const fileInputRef = useRef<HTMLInputElement>(null);
+	const [convertedOutput, setConvertedOutput] = useState<Container>();
 	const [topLeftPos, setTopLeftPos] = useState<paper.Point>(
 		new Paper.Point(0, 0)
 	);
@@ -38,10 +42,6 @@ const Canvas: React.FC<Props> = (props) => {
 		eventBus.dispatch("selectedItemsChanged", {});
 	}
 
-	function openFileDialog() {
-		fileInputRef.current?.click();
-	}
-
 	function updateRulerDimensions() {
 		setTopLeftPos(Paper.view.viewToProject(new Paper.Point(0, 0)));
 		setViewZoom(Paper.view.zoom);
@@ -59,11 +59,6 @@ const Canvas: React.FC<Props> = (props) => {
 			Paper.project.view.viewSize.width / 2,
 			Paper.project.view.viewSize.height / 2
 		);
-		updateRulerDimensions();
-	}
-
-	function resetZoom() {
-		Paper.view.zoom = 1;
 		updateRulerDimensions();
 	}
 
@@ -121,16 +116,10 @@ const Canvas: React.FC<Props> = (props) => {
 		reader.readAsText(e.target.files[0]);
 	}
 
-	function setSelectedStroke(hex: string) {
-		Paper.project.selectedItems.forEach((e) => {
-			e.strokeColor = new Paper.Color(hex);
-		});
-	}
+	function convertSvg(layer: paper.Layer) {
+		if (Paper.project.layers.length === 0) return false;
 
-	function setSelectedFill(hex: string) {
-		Paper.project.selectedItems.forEach((e) => {
-			e.fillColor = new Paper.Color(hex);
-		});
+		setConvertedOutput(new Container(layer));
 	}
 
 	useEffect(() => {
@@ -171,7 +160,8 @@ const Canvas: React.FC<Props> = (props) => {
 
 		//#region bus events
 		eventBus.on("resetView", () => {
-			resetZoom();
+			Paper.view.zoom = 1;
+			updateRulerDimensions();
 			setCenter();
 		});
 
@@ -179,17 +169,21 @@ const Canvas: React.FC<Props> = (props) => {
 			setCenter();
 		});
 
-		eventBus.on("setSelectedStrokeColour", (data: any) => {
+		eventBus.on("setSelectedStrokeColour", (data: string) => {
 			if (Paper.project.selectedItems.length > 0) {
 				UndoRedoTool.addStateDefault();
-				setSelectedStroke(data);
+				Paper.project.selectedItems.forEach((e) => {
+					e.strokeColor = new Paper.Color(data);
+				});
 			}
 		});
 
-		eventBus.on("setSelectedFillColour", (data: any) => {
+		eventBus.on("setSelectedFillColour", (data: string) => {
 			if (Paper.project.selectedItems.length > 0) {
 				UndoRedoTool.addStateDefault();
-				setSelectedFill(data);
+				Paper.project.selectedItems.forEach((e) => {
+					e.fillColor = new Paper.Color(data);
+				});
 			}
 		});
 
@@ -224,8 +218,30 @@ const Canvas: React.FC<Props> = (props) => {
 		});
 
 		eventBus.on("openLocalFile", () => {
-			openFileDialog();
+			fileInputRef.current?.click();
 		});
+
+		eventBus.on(
+			"convertSvg",
+			async (options: {
+				convertToEmbroidery: boolean;
+				removeOverlap: boolean;
+				averageColours: boolean;
+				stitchLength: number;
+			}) => {
+				let layerToConvert = Paper.project.layers[0];
+
+				if (options.averageColours) {
+					normaliseColours();
+				}
+				if (options.removeOverlap) {
+					layerToConvert = await removeOverlap();
+				}
+				if (options.convertToEmbroidery) {
+					convertSvg(layerToConvert);
+				}
+			}
+		);
 
 		eventBus.on("updateRulers", updateRulerDimensions);
 
@@ -245,11 +261,13 @@ const Canvas: React.FC<Props> = (props) => {
 				"openLocalFile",
 				"resetRulers",
 				"updateRulers",
+				"convertSvg",
 			],
 			() => {}
 		);
 	}, []);
 
+	// prevent selection of items after dragging, for 200ms
 	useEffect(() => {
 		if (timer) {
 			clearTimeout(timer);
@@ -267,6 +285,7 @@ const Canvas: React.FC<Props> = (props) => {
 		return () => clearTimeout(timer);
 	}, [preventSelect]);
 
+	// scroll rulers to correct postion on canvas
 	useEffect(() => {
 		if (horizontalRulerRef.current) {
 			horizontalRulerRef.current.scroll(topLeftPos.x);

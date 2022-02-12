@@ -1,7 +1,13 @@
 import Block from "./Block";
+import { embroidery } from "../../types/embroidery.d";
+import getLeafItems from "../svg/getLeafItems";
 
 class Container {
 	public sequence: Block[] = [];
+
+	public constructor(layer: paper.Layer) {
+		this.convertToBlocks(layer);
+	}
 
 	public switchBlocks() {}
 
@@ -23,9 +29,15 @@ class Container {
 		}
 	}
 
-	public convertToEmbroidery() {}
+	public convertToBlocks(layer: paper.Layer) {
+		getLeafItems().forEach((item: paper.Item) => {
+			//console.log(item.fillColor);
+		});
+	}
 
 	public convertToSVG() {}
+
+	public convertToEmbroidery(type: embroidery) {}
 }
 
 export default Container;
