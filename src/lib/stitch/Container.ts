@@ -5,7 +5,6 @@ import Paper from "paper";
 import runningPath from "./convert/runningPath";
 import satinPath from "./convert/satinPath";
 import itemToPathItem from "../svg/itemToPathItem";
-import options from "../../data/options.json";
 
 class Container {
 	public sequence: Block[] = [];

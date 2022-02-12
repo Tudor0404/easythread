@@ -6,10 +6,6 @@ class UndoRedoTool {
 	private static undoStack: paper.Layer[] = [];
 	private static redoStack: paper.Layer[] = [];
 
-	public static addState(state: paper.Layer) {
-		UndoRedoTool.undoStack.push(state.clone({ insert: false }));
-	}
-
 	public static addStateDefault() {
 		UndoRedoTool.undoStack.push(
 			Paper.project.layers[0].clone({ insert: false })
@@ -17,6 +13,8 @@ class UndoRedoTool {
 
 		// since state changed, must clean redo stack
 		UndoRedoTool.redoStack = [];
+
+		UndoRedoTool.checkSize();
 
 		UndoRedoTool.dispatchAvailability();
 	}
@@ -29,6 +27,8 @@ class UndoRedoTool {
 			eventBus.dispatch("setCanvasLayer", UndoRedoTool.undoStack.pop());
 		}
 
+		UndoRedoTool.checkSize();
+
 		UndoRedoTool.dispatchAvailability();
 	}
 
@@ -40,6 +40,7 @@ class UndoRedoTool {
 			eventBus.dispatch("setCanvasLayer", UndoRedoTool.redoStack.pop());
 		}
 
+		UndoRedoTool.checkSize();
 		UndoRedoTool.dispatchAvailability();
 	}
 
@@ -50,7 +51,13 @@ class UndoRedoTool {
 
 	private static checkSize() {
 		if (UndoRedoTool.undoStack.length > options.maxUndo)
-			UndoRedoTool.undoStack.slice(0, options.maxUndo);
+			UndoRedoTool.undoStack.slice(
+				UndoRedoTool.undoStack.length - options.maxUndo
+			);
+		if (UndoRedoTool.redoStack.length > options.maxRedo)
+			UndoRedoTool.redoStack.slice(
+				UndoRedoTool.redoStack.length - options.maxRedo
+			);
 	}
 }
 
