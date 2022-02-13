@@ -1,4 +1,5 @@
 import straightSubdivision from "./straightSubdivision";
+const { LinkedList, Queue, Stack } = require("dsa.js");
 
 // TODO: consider types of joins, prevent overlap if path goes back on top of itself
 
