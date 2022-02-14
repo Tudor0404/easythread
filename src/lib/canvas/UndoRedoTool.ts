@@ -7,6 +7,8 @@ class UndoRedoTool {
 	private static redoStack: paper.Layer[] = [];
 
 	public static addStateDefault() {
+		if (Paper.project.layers.length === 0) return;
+
 		UndoRedoTool.undoStack.push(
 			Paper.project.layers[0].clone({ insert: false })
 		);

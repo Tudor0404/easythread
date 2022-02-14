@@ -7,6 +7,8 @@ import Canvas from "./components/canvas/Canvas";
 import UndoRedoTool from "./lib/canvas/UndoRedoTool";
 import eventBus from "./lib/eventBus";
 
+// TODO: add msg if screen is too small
+
 function App() {
 	useEffect(() => {
 		window.addEventListener("keydown", (ev: KeyboardEvent) => {
@@ -40,7 +42,7 @@ function App() {
 							<Canvas></Canvas>
 						</div>
 					</div>
-					<Sidebar state="SVG" />
+					<Sidebar />
 				</div>
 			</main>
 		</div>

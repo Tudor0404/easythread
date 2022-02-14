@@ -33,7 +33,7 @@ function runningPath(
 	}
 
 	if (buffer.length > 2) {
-		buffer.unshift(buffer[0], buffer[1], buffer[0], buffer[1]); //
+		buffer.unshift(buffer[0], buffer[1], buffer[0], buffer[1]); // tie-in
 	}
 
 	// if will not omit last, and the last point in the array is not equal to the end point, add the end point
@@ -46,7 +46,7 @@ function runningPath(
 			buffer[buffer.length - 1],
 			buffer[buffer.length - 2],
 			buffer[buffer.length - 1]
-		); //
+		); // tie-out
 	}
 
 	return buffer;

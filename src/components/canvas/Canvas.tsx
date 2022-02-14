@@ -223,6 +223,8 @@ const Canvas: React.FC<Props> = (props) => {
 
 		eventBus.on("setCanvasLayer", (layer: paper.Layer) => {
 			if (layer) {
+				UndoRedoTool.addStateDefault();
+
 				Paper.project.clear();
 
 				const newLayer = Paper.project.addLayer(layer);

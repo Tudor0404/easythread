@@ -11,6 +11,7 @@ import {
 	DocumentDownloadIcon,
 } from "@heroicons/react/outline";
 import Paper from "paper";
+import FileSaver from "file-saver";
 
 import Logo from "../../data/logo.png";
 import TextInput from "../input/TextInput";
@@ -18,7 +19,6 @@ import Seperator from "../seperator/Seperator";
 import OptionsDropdown from "./OptionsDropdown";
 import Dropdown from "../dropdown/Dropdown";
 import DropdownItem from "../dropdown/DropdownItem";
-import options from "../../data/options.json";
 import eventBus from "../../lib/eventBus";
 import UndoRedoTool from "../../lib/canvas/UndoRedoTool";
 import NumberInput from "../input/NumberInput";
@@ -122,41 +122,14 @@ const Toolbar: React.FC<Props> = (props) => {
 	function saveFile() {
 		if (Paper.project.layers.length < 0) return;
 
-		let layer = Paper.project.layers[0].clone({ insert: false });
-
-		layer.position = new Paper.Point(
-			layer.strokeBounds.width / 2,
-			layer.strokeBounds.height / 2
-		);
-
-		let markup = layer
+		let markup = Paper.project
 			.exportSVG({
-				bounds: Paper.project.layers[0].strokeBounds,
+				bounds: "content",
 				asString: true,
 			})
 			.toString();
-		// prepare svg file to be served as a blob
-		let markupOpt =
-			"data:image/svg+xml;utf8," +
-			markup
-				.replaceAll('"', "'")
-				.replaceAll("\t", "")
-				.replaceAll("\n", "")
-				.replaceAll("\r", "")
-				.replaceAll("></path>", "/>")
-				.replaceAll("<", "%3C")
-				.replaceAll(">", "%3E")
-				.replaceAll("#", "%23")
-				.replaceAll(",", " ")
-				.replaceAll(" -", "-")
-				.replace(/ +(?= )/g, "");
 
-		if (!fileDownloadRef.current) return;
-
-		fileDownloadRef.current.setAttribute("download", filename);
-
-		fileDownloadRef.current.href = markupOpt;
-		fileDownloadRef.current.click();
+		FileSaver(new Blob([markup], { type: "image/svg+xml" }), filename);
 	}
 
 	// updates the dimensions of the SVG on enter

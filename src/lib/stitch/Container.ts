@@ -20,7 +20,7 @@ class Container {
 		this.convertToBlocks(layer);
 	}
 
-	public switchBlocks() {}
+	//public switchBlocks() {}
 
 	public async convertToBlocks(layer: paper.Layer) {
 		const leafItems = getLeafItems(layer);
@@ -62,16 +62,53 @@ class Container {
 				circle.fillColor = new Color("red");
 			});
 		});
-
-		this.convertToEmbroidery(embroideryTypes.exp);
 	}
 
-	public convertToSVG() {
+	public convertToSVG(): paper.Layer | undefined {
 		if (this.sequence.length === 0) return;
+		let commands: [string, "solid" | "dashed", paper.Color][] = [];
+
+		for (let i = 0; i < this.sequence.length; i++) {
+			const block = this.sequence[i];
+			let command = `M ${block.stitches[0].x},${block.stitches[0].y}`;
+
+			// create a jump stitch path from last point
+			if (i > 0) {
+				commands.push([
+					`M ${this.sequence[i - 1].stitches[0].x},${
+						this.sequence[i - 1].stitches[0].y
+					} L ${block.stitches[0].x},${block.stitches[0].y}`,
+					"dashed",
+					block.colour || new Paper.Color("black"),
+				]);
+			}
+
+			// creates straight line to next absolute stitch position
+			for (let j = 1; j < block.stitches.length; j++) {
+				const S = block.stitches[j];
+				command += ` L ${S.x},${S.y}`;
+			}
+
+			commands.push([
+				command,
+				"solid",
+				block.colour || new Paper.Color("black"),
+			]);
+		}
+
+		let layer = new Paper.Layer({ insert: false });
+
+		commands.forEach((command) => {
+			let path = Paper.PathItem.create(command[0]);
+			path.strokeColor = command[2];
+			path.strokeWidth = 0.27;
+			layer.addChild(path);
+		});
+
+		return layer;
 	}
 
 	public convertToEmbroidery(type: embroideryTypes) {
-		// TODO: this shit
 		if (this.sequence.length === 0) return;
 		switch (type) {
 			case embroideryTypes.exp:
@@ -99,6 +136,7 @@ class Container {
 
 			// jump to new block if points not the same
 			if (cP !== block.stitches[0]) {
+				// prevent jumping too far (max 12.7mm)
 				const jumpPoints = straightSubdivision(
 					cP,
 					block.stitches[0],
@@ -140,6 +178,7 @@ class Container {
 		let bytes = new Int8Array(length);
 		let counter = 0;
 
+		// convert commands to bytes https://edutechwiki.unige.ch/en/Embroidery_format_EXP
 		preBytes.forEach((command) => {
 			switch (command[0]) {
 				case "stitch":
