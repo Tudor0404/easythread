@@ -116,6 +116,22 @@ const Canvas: React.FC<Props> = (props) => {
 		reader.readAsText(e.target.files[0]);
 	}
 
+	function zoom(type: "in" | "out") {
+		let newZoom = Paper.view.zoom;
+
+		if (type === "in") {
+			newZoom = Paper.view.zoom * 1.2;
+			newZoom = newZoom > options.maxZoom ? options.maxZoom : newZoom;
+		} else {
+			newZoom = Paper.view.zoom * 0.8;
+			newZoom = newZoom < options.minZoom ? options.minZoom : newZoom;
+		}
+
+		Paper.view.zoom = newZoom;
+
+		updateRulerDimensions();
+	}
+
 	function convertSvg(layer: paper.Layer) {
 		if (Paper.project.layers.length === 0) return false;
 
@@ -242,6 +258,10 @@ const Canvas: React.FC<Props> = (props) => {
 				}
 			}
 		);
+
+		eventBus.on("zoom", (type: "in" | "out") => {
+			zoom(type);
+		});
 
 		eventBus.on("updateRulers", updateRulerDimensions);
 

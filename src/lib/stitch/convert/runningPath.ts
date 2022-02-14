@@ -12,14 +12,42 @@ function runningPath(
 ): paper.Point[] {
 	let buffer = [];
 	const totalDistance = path.length;
+	let anchorDistances = [];
 
-	for (let i = 0; i < Math.floor(totalDistance / stitchLength); i++) {
-		buffer.push(path.getPointAt(stitchLength * i));
+	// get anchor points
+	for (let i = 0; i < path.segments.length - 1; i++) {
+		anchorDistances.push(path.getOffsetOf(path.segments[i].point));
+	}
+
+	for (let i = 0; i < Math.floor(totalDistance / stitchLength) + 1; i++) {
+		const curDistance = stitchLength * i;
+		//used a while loop just in case there are loads of anchors in a short space
+		while (anchorDistances.length > 0 && curDistance > anchorDistances[0]) {
+			console.log(curDistance, anchorDistances[0]);
+			// already checked if array is not empty with the length condition, idky typsecript did not catch it
+			//@ts-ignore
+			buffer.push(path.getPointAt(anchorDistances.shift()));
+		}
+
+		buffer.push(path.getPointAt(curDistance));
+	}
+
+	if (buffer.length > 2) {
+		buffer.unshift(buffer[0], buffer[1], buffer[0], buffer[1]); //
 	}
 
 	// if will not omit last, and the last point in the array is not equal to the end point, add the end point
 	if (!omitLast && buffer[buffer.length - 1] !== path.getPointAt(path.length))
 		buffer.push(path.getPointAt(path.length));
+
+	if (buffer.length > 2) {
+		buffer.push(
+			buffer[buffer.length - 2],
+			buffer[buffer.length - 1],
+			buffer[buffer.length - 2],
+			buffer[buffer.length - 1]
+		); //
+	}
 
 	return buffer;
 }

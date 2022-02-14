@@ -29,8 +29,8 @@ function straightSubdivision(
 		else return [start, end];
 	}
 
-	// offset the line
-	if (percentOffset % 100 === 0) {
+	// offset the line if percentage offset is not a full offset
+	if (percentOffset % 100 !== 0) {
 		buffer.push(start);
 		start = getPointDistanceAway(
 			start,

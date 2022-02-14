@@ -119,25 +119,7 @@ const Toolbar: React.FC<Props> = (props) => {
 		}
 	}, [stroke]);
 
-	function zoom(type: "in" | "out") {
-		let newZoom = Paper.view.zoom;
-
-		if (type === "in") {
-			newZoom = Paper.view.zoom * 1.2;
-			newZoom = newZoom > options.maxZoom ? options.maxZoom : newZoom;
-		} else {
-			newZoom = Paper.view.zoom * 0.8;
-			newZoom = newZoom < options.minZoom ? options.minZoom : newZoom;
-		}
-
-		Paper.view.zoom = newZoom;
-
-		eventBus.dispatch("updateRulers", {});
-	}
-
 	function saveFile() {
-		console.log("here");
-
 		if (Paper.project.layers.length < 0) return;
 
 		let layer = Paper.project.layers[0].clone({ insert: false });
@@ -310,13 +292,13 @@ const Toolbar: React.FC<Props> = (props) => {
 									<DropdownItem
 										label="Zoom in"
 										onClick={() => {
-											zoom("in");
+											eventBus.dispatch("zoom", "in");
 										}}
 									/>
 									<DropdownItem
 										label="Zoom out"
 										onClick={() => {
-											zoom("out");
+											eventBus.dispatch("zoom", "out");
 										}}
 									/>
 									<DropdownItem
@@ -423,7 +405,7 @@ const Toolbar: React.FC<Props> = (props) => {
 						className="mx-0.5 !p-1"
 						tooltip="zoom in"
 						onClick={() => {
-							zoom("in");
+							eventBus.dispatch("zoom", "in");
 						}}
 					>
 						<ZoomInIcon className="h-5 w-5" stroke="inherit" />
@@ -432,7 +414,7 @@ const Toolbar: React.FC<Props> = (props) => {
 						className="mx-0.5 !p-1"
 						tooltip="zoom out"
 						onClick={() => {
-							zoom("out");
+							eventBus.dispatch("zoom", "out");
 						}}
 					>
 						<ZoomOutIcon className="h-5 w-5" stroke="inherit" />
