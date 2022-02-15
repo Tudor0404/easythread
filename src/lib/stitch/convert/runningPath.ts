@@ -1,3 +1,5 @@
+//TODO: consider if path continues far away, jump stitch away
+
 /**
  * @description generates a set of points along a given path, with each point a stitchLength units away
  * @param {paper.Path} path path that the stitches will go across
@@ -5,11 +7,7 @@
  * @param {boolean} [omitLast] exclude the last point or not
  * @returns {paper.Point[]} points at which stitches are made at
  */
-function runningPath(
-	path: paper.Path,
-	stitchLength: number,
-	omitLast: boolean = false
-): paper.Point[] {
+function runningPath(path: paper.Path, stitchLength: number): paper.Point[] {
 	let buffer = [];
 	const totalDistance = path.length;
 	let anchorDistances = [];
@@ -23,7 +21,6 @@ function runningPath(
 		const curDistance = stitchLength * i;
 		//used a while loop just in case there are loads of anchors in a short space
 		while (anchorDistances.length > 0 && curDistance > anchorDistances[0]) {
-			console.log(curDistance, anchorDistances[0]);
 			// already checked if array is not empty with the length condition, idky typsecript did not catch it
 			//@ts-ignore
 			buffer.push(path.getPointAt(anchorDistances.shift()));
@@ -36,9 +33,10 @@ function runningPath(
 		buffer.unshift(buffer[0], buffer[1], buffer[0], buffer[1]); // tie-in
 	}
 
-	// if will not omit last, and the last point in the array is not equal to the end point, add the end point
-	if (!omitLast && buffer[buffer.length - 1] !== path.getPointAt(path.length))
+	// if the last point in the array is not equal to the end point, add the end point
+	if (buffer[buffer.length - 1] !== path.getPointAt(path.length)) {
 		buffer.push(path.getPointAt(path.length));
+	}
 
 	if (buffer.length > 2) {
 		buffer.push(

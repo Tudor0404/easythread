@@ -10,6 +10,7 @@ import straightSubdivision from "./convert/straightSubdivision";
 import { intToU8Int } from "./helpers";
 import FileSaver from "file-saver";
 import { Color } from "paper/dist/paper-core";
+import fillPath from "./convert/fillPath";
 
 // NOTE: 1 unit on the canvas is 1mm, but since most embroider file types use an arbitrary unit of max 127 and min -127, the units will be divided by 10 to give an accuracy of 1/10mm for the embroidery file types, with a maximum of 12.7mm distance between jumps and stitches.
 
@@ -23,45 +24,45 @@ class Container {
 	//public switchBlocks() {}
 
 	public async convertToBlocks(layer: paper.Layer) {
-		const leafItems = getLeafItems(layer);
+		const leafItems: paper.Item[] = getLeafItems(layer);
+		const stitchLength: number = layer.data.stitchLength || 2.7;
+		const spaceBetweenNormals: number =
+			layer.data.spaceBetweenNormals || 2.7;
+		const satinStitchLength: number = layer.data.satinStitchLength || 2.7;
 
 		for (const item of leafItems) {
+			const pathItem = await itemToPathItem(item);
+			if (pathItem === undefined) return;
+
 			if (item.hasFill()) {
+				// fillPath(stitchLength);
 			}
 			if (item.hasStroke()) {
-				if (item.strokeWidth > 4) {
-					const pathItem = await itemToPathItem(item);
-					if (pathItem === undefined) return;
-
+				if (item.strokeWidth > 4)
 					this.sequence.push(
 						new Block(
 							satinPath(
 								new Paper.Path(pathItem.pathData),
-								item.strokeWidth
+								item.strokeWidth,
+								10
 							),
 							item.strokeColor
 						)
 					);
-				} else {
-					const pathItem = await itemToPathItem(item);
-					if (pathItem === undefined) return;
-
+				else
 					this.sequence.push(
 						new Block(
-							runningPath(new Paper.Path(pathItem.pathData), 2.7),
+							runningPath(
+								new Paper.Path(pathItem.pathData),
+								stitchLength
+							),
 							item.strokeColor
 						)
 					);
-				}
 			}
 		}
 
-		this.sequence.forEach((block) => {
-			block.stitches.forEach((stitch) => {
-				const circle = new Paper.Shape.Circle(stitch, 0.5);
-				circle.fillColor = new Color("red");
-			});
-		});
+		this.convertToEmbroidery(embroideryTypes.exp);
 	}
 
 	public convertToSVG(): paper.Layer | undefined {
@@ -143,13 +144,13 @@ class Container {
 					12.7,
 					false
 				);
+
 				for (let j = 1; j < jumpPoints.length; j++) {
 					// ignore first point since starting from there
 					const S = jumpPoints[j];
 
 					let dX = S.x - cP.x;
 					let dY = -(S.y - cP.y);
-
 					preBytes.push(["jump", intToU8Int(dX), intToU8Int(dY)]);
 					cP = S;
 				}
@@ -159,7 +160,6 @@ class Container {
 				const S = block.stitches[s];
 				let dX = S.x - cP.x;
 				let dY = -(S.y - cP.y);
-
 				preBytes.push(["stitch", intToU8Int(dX), intToU8Int(dY)]);
 				cP = S;
 			}

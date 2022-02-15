@@ -40,7 +40,7 @@ function straightSubdivision(
 		totalDistance = start.getDistance(end);
 	}
 
-	for (let i = 0; i < Math.floor(totalDistance / stitchLength); i++) {
+	for (let i = 0; i < Math.floor(totalDistance / stitchLength) + 1; i++) {
 		buffer.push(getPointDistanceAway(start, end, stitchLength * i));
 	}
 

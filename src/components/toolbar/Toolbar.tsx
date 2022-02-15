@@ -44,6 +44,9 @@ const Toolbar: React.FC<Props> = (props) => {
 	const [isRemoveOverlap, setRemoveOverlap] = useState<boolean>(true);
 	const [isAverageOutColours, setAverageOutColours] = useState<boolean>(true);
 	const [stitchLength, setStitchLength] = useState<string>("2.7");
+	const [spaceBetweenNormals, setSpaceBetweenNormals] =
+		useState<string>("0.7");
+	const [stitchLengthSatin, setStitchLengthSatin] = useState<string>("10");
 
 	useEffect(() => {
 		if (Paper.project)
@@ -185,6 +188,18 @@ const Toolbar: React.FC<Props> = (props) => {
 			} catch {}
 		}
 	}
+
+	// update settings of the layer
+	useEffect(() => {
+		try {
+			Paper.project.layers[0].data = {
+				...Paper.project.layers[0].data,
+				stitchLength: parseFloat(stitchLength),
+				stitchLengthSatin: parseFloat(stitchLengthSatin),
+				spaceBetweenNormals: parseFloat(spaceBetweenNormals),
+			};
+		} catch {}
+	}, [stitchLength, stitchLengthSatin, spaceBetweenNormals]);
 
 	const buttonStyle =
 		"bg-black bg-opacity-0 text-black hover:bg-opacity-10 rounded-md px-1.5 text-center transition-all duration-200 ease-in-out";
@@ -430,6 +445,10 @@ const Toolbar: React.FC<Props> = (props) => {
 						setRemoveOverlap={setRemoveOverlap}
 						stitchLength={stitchLength}
 						setStitchLength={setStitchLength}
+						spaceBetweenNormals={spaceBetweenNormals}
+						setSpaceBetweenNormals={setSpaceBetweenNormals}
+						stitchLengthSatin={stitchLengthSatin}
+						setStitchLengthSatin={setStitchLengthSatin}
 					/>
 					{areItemsSelected && (
 						<>

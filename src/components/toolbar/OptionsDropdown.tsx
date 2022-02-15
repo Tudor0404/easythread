@@ -14,6 +14,10 @@ interface Props {
 	setAverageOutColours: React.Dispatch<React.SetStateAction<boolean>>;
 	stitchLength: string;
 	setStitchLength: React.Dispatch<React.SetStateAction<string>>;
+	spaceBetweenNormals: string;
+	setSpaceBetweenNormals: React.Dispatch<React.SetStateAction<string>>;
+	stitchLengthSatin: string;
+	setStitchLengthSatin: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const OptionsDropdown: React.FC<Props> = (props) => {
@@ -76,6 +80,24 @@ const OptionsDropdown: React.FC<Props> = (props) => {
 						className="mx-0.5 max-w-[70px] !px-0.5 !py-0"
 						setValue={props.setStitchLength}
 						value={props.stitchLength}
+					></NumberInput>
+					<p>mm</p>
+				</div>
+				<div className="flex w-[250px] flex-row items-center justify-start p-1">
+					<p className="mr-2">Satin spacing</p>
+					<NumberInput
+						className="mx-0.5 max-w-[70px] !px-0.5 !py-0"
+						setValue={props.setSpaceBetweenNormals}
+						value={props.spaceBetweenNormals}
+					></NumberInput>
+					<p>mm</p>
+				</div>
+				<div className="flex w-[250px] flex-row items-center justify-start p-1">
+					<p className="mr-2">Satin stitch length</p>
+					<NumberInput
+						className="mx-0.5 max-w-[70px] !px-0.5 !py-0"
+						setValue={props.setStitchLengthSatin}
+						value={props.stitchLengthSatin}
 					></NumberInput>
 					<p>mm</p>
 				</div>
