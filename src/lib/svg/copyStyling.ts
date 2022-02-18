@@ -5,7 +5,9 @@
  * @returns {paper.Item}
  */
 function copyStyling(reciever: paper.Item, giver: paper.Item | null = null) {
-	if (giver === null && hasParent(reciever)) {
+	if (reciever.hasFill() || reciever.hasStroke()) {
+		return reciever;
+	} else if (giver === null && hasParent(reciever)) {
 		giver = reciever.parent;
 		while (!(giver.hasFill() || giver.hasStroke())) {
 			if (hasParent(giver)) giver = giver.parent;

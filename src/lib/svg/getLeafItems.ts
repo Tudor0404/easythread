@@ -7,18 +7,37 @@ import copyStyling from "./copyStyling";
  * @returns {paper.Item[]} list fo leaf items
  */
 function getLeafItems(layer: paper.Layer | null = null): paper.Item[] {
-	if (layer === null) layer = Paper.project.layers[0];
-	return layer
-		.getItems({})
-		.filter((item) => {
-			if (item.hasChildren() || (!item.hasStroke() && !item.hasFill()))
-				return false;
+	try {
+		if (layer === null) layer = Paper.project.layers[0];
+
+		let items = layer
+			.getItems({})
+			.filter((item) => {
+				// remove all items with children apart from compound paths
+				if (
+					(item.hasChildren() &&
+						item.constructor.name !== "CompoundPath") ||
+					(!item.hasStroke() && !item.hasFill())
+				)
+					return false;
+				return true;
+			})
+			.map((item: paper.Item) => {
+				// reapply styling if it has no styling
+				copyStyling(item);
+				return item;
+			});
+
+		// remove items that have their parents still in the array (paths of compound paths)
+		items = items.filter((item) => {
+			if (items.includes(item.parent)) return false;
 			return true;
-		})
-		.map((item: paper.Item) => {
-			copyStyling(item);
-			return item;
 		});
+
+		return items;
+	} catch {
+		return [];
+	}
 }
 
 export default getLeafItems;

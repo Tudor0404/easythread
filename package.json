@@ -28,6 +28,7 @@
     "react-dom": "^17.0.2",
     "react-popper": "^2.2.5",
     "react-scripts": "5.0.0",
+    "react-storage-hooks": "^4.0.1",
     "react-usestateref": "^1.0.8",
     "resize-observer-polyfill": "^1.5.1",
     "svgson": "^5.2.1",

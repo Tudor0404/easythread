@@ -9,8 +9,8 @@ import itemToPathItem from "../svg/itemToPathItem";
 import straightSubdivision from "./convert/straightSubdivision";
 import { intToU8Int } from "./helpers";
 import FileSaver from "file-saver";
-import { Color } from "paper/dist/paper-core";
 import fillPath from "./convert/fillPath";
+import eventBus from "../eventBus";
 
 // NOTE: 1 unit on the canvas is 1mm, but since most embroider file types use an arbitrary unit of max 127 and min -127, the units will be divided by 10 to give an accuracy of 1/10mm for the embroidery file types, with a maximum of 12.7mm distance between jumps and stitches.
 
@@ -24,45 +24,97 @@ class Container {
 	//public switchBlocks() {}
 
 	public async convertToBlocks(layer: paper.Layer) {
+		this.sequence = [];
+
 		const leafItems: paper.Item[] = getLeafItems(layer);
-		const stitchLength: number = layer.data.stitchLength || 2.7;
-		const spaceBetweenNormals: number =
-			layer.data.spaceBetweenNormals || 2.7;
-		const satinStitchLength: number = layer.data.satinStitchLength || 2.7;
+		const stitchLength =
+			parseFloat(window.localStorage.getItem("stitchLength") || "2.7") ||
+			2.7;
+		const spaceBetweenNormals =
+			parseFloat(
+				window.localStorage.getItem("spaceBetweenNormals") || "1"
+			) || 1;
+		const satinStitchLength =
+			parseFloat(
+				window.localStorage.getItem("satinStitchLength") || "10"
+			) || 10;
 
 		for (const item of leafItems) {
-			const pathItem = await itemToPathItem(item);
-			if (pathItem === undefined) return;
-
 			if (item.hasFill()) {
-				// fillPath(stitchLength);
+				const pathItem = await itemToPathItem(item);
+				if (pathItem === undefined) continue;
+				const result = await fillPath(pathItem, stitchLength);
+				if (result) {
+					this.sequence.push(result);
+				}
 			}
 			if (item.hasStroke()) {
-				if (item.strokeWidth > 4)
-					this.sequence.push(
-						new Block(
-							satinPath(
-								new Paper.Path(pathItem.pathData),
+				if (item.hasChildren()) {
+					let pathDatas: string[] = [];
+
+					for (const i of item.children) {
+						let result = (await itemToPathItem(i))?.pathData;
+						if (result === undefined) continue;
+						pathDatas.push(result);
+					}
+
+					pathDatas.forEach((path) => {
+						this.sequence.push(
+							this.strokeToBlock(
+								path,
 								item.strokeWidth,
-								10
-							),
-							item.strokeColor
-						)
-					);
-				else
+								stitchLength,
+								spaceBetweenNormals,
+								satinStitchLength,
+								item.strokeColor || new Paper.Color("black")
+							)
+						);
+					});
+				} else {
+					const pathData = (await itemToPathItem(item))?.pathData;
+					if (pathData === undefined) return;
+
 					this.sequence.push(
-						new Block(
-							runningPath(
-								new Paper.Path(pathItem.pathData),
-								stitchLength
-							),
-							item.strokeColor
+						this.strokeToBlock(
+							pathData,
+							item.strokeWidth,
+							stitchLength,
+							spaceBetweenNormals,
+							satinStitchLength,
+							item.strokeColor || new Paper.Color("black")
 						)
 					);
+				}
 			}
 		}
 
 		this.convertToEmbroidery(embroideryTypes.exp);
+		eventBus.dispatch("setCanvasLayer", this.convertToSVG());
+	}
+
+	private strokeToBlock(
+		path: string,
+		width: number,
+		stitchLength: number,
+		spaceBetweenNormals: number,
+		satinStitchLength: number,
+		colour: paper.Color
+	): Block {
+		if (width > 4)
+			return new Block(
+				satinPath(
+					new Paper.Path(path),
+					width,
+					satinStitchLength,
+					spaceBetweenNormals
+				),
+				colour
+			);
+		else
+			return new Block(
+				runningPath(new Paper.Path(path), stitchLength),
+				colour
+			);
 	}
 
 	public convertToSVG(): paper.Layer | undefined {
@@ -102,10 +154,17 @@ class Container {
 		commands.forEach((command) => {
 			let path = Paper.PathItem.create(command[0]);
 			path.strokeColor = command[2];
-			path.strokeWidth = 0.27;
+			path.strokeCap = "round";
+			path.strokeJoin = "round";
+			path.strokeWidth = 0.37;
+			if (command[1] === "dashed") {
+				path.dashArray = [2, 2];
+				path.opacity = 0.7;
+			}
 			layer.addChild(path);
 		});
 
+		eventBus.dispatch("setCanvasLayer", layer);
 		return layer;
 	}
 
@@ -131,8 +190,18 @@ class Container {
 			const block = this.sequence[i];
 
 			// colour change if colour not the same
-			if (prevColour !== block.colour) {
+			if (
+				prevColour?.red !== block.colour?.red ||
+				prevColour?.green !== block.colour?.green ||
+				prevColour?.blue !== block.colour?.blue
+			) {
+				console.log(
+					"switching colours",
+					prevColour?.toString(),
+					block.colour?.toString()
+				);
 				preBytes.push(["stop", 0, 0]);
+				prevColour = block.colour;
 			}
 
 			// jump to new block if points not the same

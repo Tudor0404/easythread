@@ -12,6 +12,7 @@ import {
 } from "@heroicons/react/outline";
 import Paper from "paper";
 import FileSaver from "file-saver";
+import { useStorageState } from "react-storage-hooks";
 
 import Logo from "../../data/logo.png";
 import TextInput from "../input/TextInput";
@@ -43,10 +44,18 @@ const Toolbar: React.FC<Props> = (props) => {
 		useState<boolean>(true);
 	const [isRemoveOverlap, setRemoveOverlap] = useState<boolean>(true);
 	const [isAverageOutColours, setAverageOutColours] = useState<boolean>(true);
-	const [stitchLength, setStitchLength] = useState<string>("2.7");
+	const [stitchLength, setStitchLength] = useStorageState<string>(
+		localStorage,
+		"stitchLength",
+		"2.7"
+	);
 	const [spaceBetweenNormals, setSpaceBetweenNormals] =
-		useState<string>("0.7");
-	const [stitchLengthSatin, setStitchLengthSatin] = useState<string>("10");
+		useStorageState<string>(localStorage, "spaceBetweenNormals", "1");
+	const [satinStitchLength, setSatinStitchLength] = useStorageState<string>(
+		localStorage,
+		"satinStitchLength",
+		"10"
+	);
 
 	useEffect(() => {
 		if (Paper.project)
@@ -189,17 +198,16 @@ const Toolbar: React.FC<Props> = (props) => {
 		}
 	}
 
-	// update settings of the layer
+	// save hook data directly to local storage, allows for non-React.FC to access them
 	useEffect(() => {
-		try {
-			Paper.project.layers[0].data = {
-				...Paper.project.layers[0].data,
-				stitchLength: parseFloat(stitchLength),
-				stitchLengthSatin: parseFloat(stitchLengthSatin),
-				spaceBetweenNormals: parseFloat(spaceBetweenNormals),
-			};
-		} catch {}
-	}, [stitchLength, stitchLengthSatin, spaceBetweenNormals]);
+		window.localStorage.setItem("stitchLength", stitchLength);
+	}, [stitchLength]);
+	useEffect(() => {
+		window.localStorage.setItem("spaceBetweenNormals", spaceBetweenNormals);
+	}, [spaceBetweenNormals]);
+	useEffect(() => {
+		window.localStorage.setItem("satinStitchLength", satinStitchLength);
+	}, [satinStitchLength]);
 
 	const buttonStyle =
 		"bg-black bg-opacity-0 text-black hover:bg-opacity-10 rounded-md px-1.5 text-center transition-all duration-200 ease-in-out";
@@ -447,8 +455,8 @@ const Toolbar: React.FC<Props> = (props) => {
 						setStitchLength={setStitchLength}
 						spaceBetweenNormals={spaceBetweenNormals}
 						setSpaceBetweenNormals={setSpaceBetweenNormals}
-						stitchLengthSatin={stitchLengthSatin}
-						setStitchLengthSatin={setStitchLengthSatin}
+						satinStitchLength={satinStitchLength}
+						setSatinStitchLength={setSatinStitchLength}
 					/>
 					{areItemsSelected && (
 						<>

@@ -23,7 +23,7 @@ function straightSubdivision(
 	if (
 		totalDistance <= stitchLength &&
 		(percentOffset % 100 === 0 ||
-			totalDistance >= stitchLength * (percentOffset / 100))
+			totalDistance <= stitchLength * (percentOffset / 100))
 	) {
 		if (omitLast) return [start];
 		else return [start, end];

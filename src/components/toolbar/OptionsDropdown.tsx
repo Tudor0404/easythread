@@ -16,8 +16,8 @@ interface Props {
 	setStitchLength: React.Dispatch<React.SetStateAction<string>>;
 	spaceBetweenNormals: string;
 	setSpaceBetweenNormals: React.Dispatch<React.SetStateAction<string>>;
-	stitchLengthSatin: string;
-	setStitchLengthSatin: React.Dispatch<React.SetStateAction<string>>;
+	satinStitchLength: string;
+	setSatinStitchLength: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const OptionsDropdown: React.FC<Props> = (props) => {
@@ -96,8 +96,8 @@ const OptionsDropdown: React.FC<Props> = (props) => {
 					<p className="mr-2">Satin stitch length</p>
 					<NumberInput
 						className="mx-0.5 max-w-[70px] !px-0.5 !py-0"
-						setValue={props.setStitchLengthSatin}
-						value={props.stitchLengthSatin}
+						setValue={props.setSatinStitchLength}
+						value={props.satinStitchLength}
 					></NumberInput>
 					<p>mm</p>
 				</div>

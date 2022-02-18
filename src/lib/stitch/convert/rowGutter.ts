@@ -1,7 +1,7 @@
 import Paper from "paper";
 
 function rowGutter(
-	path: paper.Path,
+	path: paper.PathItem,
 	spacing: number = 0.5,
 	normal: paper.Point
 ) {
@@ -10,47 +10,60 @@ function rowGutter(
 	const hypotenuse = Math.sqrt(
 		Math.pow(bounding.width, 2) + Math.pow(bounding.height, 2)
 	);
-	const offset = hypotenuse / 2 - bounding.width / 2;
+	const offset = hypotenuse / 2;
 
-	const lower = Math.floor(-Math.sin(normal.angleInRadians) * hypotenuse);
+	const lower = -Math.abs(
+		Math.ceil(Math.sin(normal.angleInRadians) * hypotenuse)
+	);
 	const upper = Math.ceil(-lower + bounding.height);
 
 	let lines: paper.Path[] = [];
 
-	for (let y = lower; y < Math.ceil((upper - lower) / spacing) + 1; y++) {
-		let tempLine = new Paper.Path.Line(
-			new Paper.Point(
-				bounding.bottomLeft.x - offset,
-				y * spacing + bounding.bottomCenter.y
-			),
-			new Paper.Point(
-				bounding.bottomRight.x + offset,
-				y * spacing + bounding.bottomCenter.y
-			)
+	for (let y = 0; y < Math.ceil((upper - lower) / spacing) + 1; y++) {
+		const pStart = new Paper.Point(
+			bounding.bottomLeft.x - offset,
+			bounding.bottomCenter.y - y * spacing - lower
 		);
+		const pEnd = new Paper.Point(
+			bounding.bottomRight.x + offset,
+			bounding.bottomCenter.y - y * spacing - lower
+		);
+		let tempLine = new Paper.Path.Line(pStart, pEnd);
 
-		tempLine.rotate(normal.angle);
+		tempLine.rotate(normal.angle, bounding.center);
 		lines.push(tempLine);
 	}
 
-	let gutterLines: paper.Path[][] = [];
+	let gutterLines: paper.CurveLocation[][] = [];
 
 	lines.forEach((line) => {
-		const intersectPoints = path
-			.getIntersections(line)
-			.map((cL) => cL.point);
+		let intersectPoints: paper.CurveLocation[] =
+			path.getIntersections(line);
 
-		if (intersectPoints.length === 1) return;
+		const initialPoint = line.segments[0].point;
 
-		let linesInRow: paper.Path[] = [];
+		// sort intersection points in order by how far away they are from the inital start point of the line
+		intersectPoints.sort((a, b) => {
+			if (
+				initialPoint.getDistance(a.point, false) >
+				initialPoint.getDistance(b.point, false)
+			)
+				return 1;
+			else if (
+				initialPoint.getDistance(a.point, false) <
+				initialPoint.getDistance(b.point, false)
+			)
+				return -1;
+			return 0;
+		});
 
-		for (let i = 0; i < intersectPoints.length; i += 2) {
-			linesInRow.push(
-				new Paper.Path.Line(intersectPoints[i], intersectPoints[i + 1])
-			);
+		if (intersectPoints.length <= 1) return;
+
+		if (intersectPoints.length % 2 === 1) {
+			delete intersectPoints[intersectPoints.length - 1];
 		}
 
-		gutterLines.push(linesInRow);
+		gutterLines.push(intersectPoints);
 	});
 
 	return gutterLines;

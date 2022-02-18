@@ -2,6 +2,5 @@
 	"maxZoom": 15,
 	"minZoom": 0.15,
 	"maxRedo": 10,
-	"maxUndo": 25,
-	"limitSatinPath": 0.5
+	"maxUndo": 25
 }
