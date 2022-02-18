@@ -43,7 +43,16 @@ class Container {
 			if (item.hasFill()) {
 				const pathItem = await itemToPathItem(item);
 				if (pathItem === undefined) continue;
-				const result = await fillPath(pathItem, stitchLength);
+				const result = await fillPath(
+					pathItem,
+					stitchLength,
+					this.sequence.length > 0
+						? this.sequence[this.sequence.length - 1].stitches[
+								this.sequence[this.sequence.length - 1].stitches
+									.length - 1
+						  ]
+						: null
+				);
 				if (result) {
 					this.sequence.push(result);
 				}

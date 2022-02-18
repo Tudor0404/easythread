@@ -8,7 +8,8 @@ import straightSubdivision from "./straightSubdivision";
 
 async function fillPath(
 	path: paper.PathItem,
-	stitchLength: number = 2.7
+	stitchLength: number = 2.7,
+	carryOnPoint: paper.Point | null = null
 ): Promise<Block | false> {
 	let tempPath: string = "";
 	let tempItem;
@@ -76,7 +77,7 @@ async function fillPath(
 		}
 	}
 
-	const result = graph.getSufficientEulorianPath();
+	const result = graph.getSufficientEulorianPath(carryOnPoint);
 	let buffer = new Block();
 
 	if (!result) {
