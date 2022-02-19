@@ -2,7 +2,6 @@ import straightSubdivision from "./straightSubdivision";
 import Paper from "paper";
 
 // TODO: consider types of joins
-//TODO: consider if path continues far away, jump stitch away
 // FIXME: when doing the overlap prevention, it takes the normals in conseration, which results in the prevention being offset. Can't do reverse because same issue will come up. Can do some trig uckery to fix. Or create a bounding box of the overlapping shape and detect all points in it. Maybe even do colour analysis by making it transparent and finding all the areas which it is overlapping, then matching the points in it.
 
 /**

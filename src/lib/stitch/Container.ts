@@ -220,14 +220,7 @@ class Container {
 			.filter((block) => block.stitches.length > 1)
 			.map((block) => {
 				return new Block(
-					block.stitches
-						.filter((stitch) => stitch !== null)
-						.map((point) => {
-							return new Paper.Point(
-								parseFloat(point.x.toFixed(1)),
-								parseFloat(point.y.toFixed(1))
-							);
-						}),
+					block.stitches.filter((stitch) => stitch !== null),
 					block.colour
 				);
 			});
