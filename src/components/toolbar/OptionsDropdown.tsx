@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { CogIcon } from "@heroicons/react/outline";
 
 import Switch from "../input/Switch";
 import Dropdown from "../dropdown/Dropdown";
 import NumberInput from "../input/NumberInput";
+import { useStorageState } from "react-storage-hooks";
 
 interface Props {
 	isConvertToEmbroidery: boolean;
@@ -12,15 +13,38 @@ interface Props {
 	setRemoveOverlap: React.Dispatch<React.SetStateAction<boolean>>;
 	isAverageOutColours: boolean;
 	setAverageOutColours: React.Dispatch<React.SetStateAction<boolean>>;
-	stitchLength: string;
-	setStitchLength: React.Dispatch<React.SetStateAction<string>>;
-	spaceBetweenNormals: string;
-	setSpaceBetweenNormals: React.Dispatch<React.SetStateAction<string>>;
-	satinStitchLength: string;
-	setSatinStitchLength: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const OptionsDropdown: React.FC<Props> = (props) => {
+	const [stitchLength, setStitchLength] = useStorageState<string>(
+		localStorage,
+		"stitchLength",
+		"2.7"
+	);
+	const [spaceBetweenNormals, setSpaceBetweenNormals] =
+		useStorageState<string>(localStorage, "spaceBetweenNormals", "1");
+	const [satinStitchLength, setSatinStitchLength] = useStorageState<string>(
+		localStorage,
+		"satinStitchLength",
+		"10"
+	);
+	const [fillGutterSpacing, setFillGutterSpacing] = useStorageState<string>(
+		localStorage,
+		"fillGutterSpacing",
+		"1"
+	);
+
+	// save hook data directly to local storage, allows for non-React.FC to access them
+	useEffect(() => {
+		window.localStorage.setItem("stitchLength", stitchLength);
+	}, [stitchLength]);
+	useEffect(() => {
+		window.localStorage.setItem("spaceBetweenNormals", spaceBetweenNormals);
+	}, [spaceBetweenNormals]);
+	useEffect(() => {
+		window.localStorage.setItem("satinStitchLength", satinStitchLength);
+	}, [satinStitchLength]);
+
 	return (
 		<Dropdown
 			button={<CogIcon className="h-5 w-5 " stroke="inherit" />}
@@ -78,8 +102,8 @@ const OptionsDropdown: React.FC<Props> = (props) => {
 					<p className="mr-2">Stitch length</p>
 					<NumberInput
 						className="mx-0.5 max-w-[70px] !px-0.5 !py-0"
-						setValue={props.setStitchLength}
-						value={props.stitchLength}
+						setValue={setStitchLength}
+						value={stitchLength}
 					></NumberInput>
 					<p>mm</p>
 				</div>
@@ -87,8 +111,8 @@ const OptionsDropdown: React.FC<Props> = (props) => {
 					<p className="mr-2">Satin spacing</p>
 					<NumberInput
 						className="mx-0.5 max-w-[70px] !px-0.5 !py-0"
-						setValue={props.setSpaceBetweenNormals}
-						value={props.spaceBetweenNormals}
+						setValue={setSpaceBetweenNormals}
+						value={spaceBetweenNormals}
 					></NumberInput>
 					<p>mm</p>
 				</div>
@@ -96,8 +120,17 @@ const OptionsDropdown: React.FC<Props> = (props) => {
 					<p className="mr-2">Satin stitch length</p>
 					<NumberInput
 						className="mx-0.5 max-w-[70px] !px-0.5 !py-0"
-						setValue={props.setSatinStitchLength}
-						value={props.satinStitchLength}
+						setValue={setSatinStitchLength}
+						value={satinStitchLength}
+					></NumberInput>
+					<p>mm</p>
+				</div>
+				<div className="flex w-[250px] flex-row items-center justify-start p-1">
+					<p className="mr-2">Fill gutter spacing</p>
+					<NumberInput
+						className="mx-0.5 max-w-[70px] !px-0.5 !py-0"
+						setValue={setFillGutterSpacing}
+						value={fillGutterSpacing}
 					></NumberInput>
 					<p>mm</p>
 				</div>

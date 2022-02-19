@@ -21,8 +21,6 @@ class Container {
 		this.convertToBlocks(layer);
 	}
 
-	//public switchBlocks() {}
-
 	public async convertToBlocks(layer: paper.Layer) {
 		this.sequence = [];
 
@@ -38,26 +36,42 @@ class Container {
 			parseFloat(
 				window.localStorage.getItem("satinStitchLength") || "10"
 			) || 10;
+		const fillGutterSpacing =
+			parseFloat(
+				window.localStorage.getItem("fillGutterSpacing") || "1"
+			) || 1;
 
 		for (const item of leafItems) {
+			let strokeFlag = false;
 			if (item.hasFill()) {
 				const pathItem = await itemToPathItem(item);
 				if (pathItem === undefined) continue;
-				const result = await fillPath(
-					pathItem,
-					stitchLength,
-					this.sequence.length > 0
-						? this.sequence[this.sequence.length - 1].stitches[
-								this.sequence[this.sequence.length - 1].stitches
-									.length - 1
-						  ]
-						: null
-				);
-				if (result) {
-					this.sequence.push(result);
+				try {
+					let result = await fillPath(
+						pathItem,
+						stitchLength,
+						this.sequence.length > 0
+							? this.sequence[this.sequence.length - 1].stitches[
+									this.sequence[this.sequence.length - 1]
+										.stitches.length - 1
+							  ]
+							: null,
+						fillGutterSpacing
+					);
+					if (result) {
+						for (const section of result) {
+							this.sequence.push(
+								new Block(section, item.fillColor)
+							);
+						}
+					}
+				} catch (err) {
+					// shape probabily too small, just make the perimeter
+					strokeFlag = true;
+					console.log("error: " + err);
 				}
 			}
-			if (item.hasStroke()) {
+			if (item.hasStroke() || strokeFlag) {
 				if (item.hasChildren()) {
 					let pathDatas: string[] = [];
 
@@ -132,14 +146,20 @@ class Container {
 
 		for (let i = 0; i < this.sequence.length; i++) {
 			const block = this.sequence[i];
-			let command = `M ${block.stitches[0].x},${block.stitches[0].y}`;
+			let command = `M ${block.stitches[0].x.toFixed(
+				1
+			)},${block.stitches[0].y.toFixed(1)}`;
 
 			// create a jump stitch path from last point
 			if (i > 0) {
 				commands.push([
-					`M ${this.sequence[i - 1].stitches[0].x},${
-						this.sequence[i - 1].stitches[0].y
-					} L ${block.stitches[0].x},${block.stitches[0].y}`,
+					`M ${this.sequence[i - 1].stitches[0].x.toFixed(
+						1
+					)},${this.sequence[i - 1].stitches[0].y.toFixed(
+						1
+					)} L ${block.stitches[0].x.toFixed(
+						1
+					)},${block.stitches[0].y.toFixed(1)}`,
 					"dashed",
 					block.colour || new Paper.Color("black"),
 				]);
@@ -148,7 +168,7 @@ class Container {
 			// creates straight line to next absolute stitch position
 			for (let j = 1; j < block.stitches.length; j++) {
 				const S = block.stitches[j];
-				command += ` L ${S.x},${S.y}`;
+				command += ` L ${S.x.toFixed(1)},${S.y.toFixed(1)}`;
 			}
 
 			commands.push([
@@ -165,10 +185,10 @@ class Container {
 			path.strokeColor = command[2];
 			path.strokeCap = "round";
 			path.strokeJoin = "round";
-			path.strokeWidth = 0.37;
+			path.strokeWidth = 0.5;
 			if (command[1] === "dashed") {
 				path.dashArray = [2, 2];
-				path.opacity = 0.7;
+				path.opacity = 1;
 			}
 			layer.addChild(path);
 		});
@@ -192,11 +212,28 @@ class Container {
 	private convertToExp() {
 		let preBytes: ["stitch" | "jump" | "end" | "stop", number, number][] =
 			[];
-		let cP = this.sequence[0].stitches[0];
-		let prevColour = this.sequence[0].colour;
+		let cP: paper.Point = this.sequence[0].stitches[0];
+		let prevColour: paper.Color | null = this.sequence[0].colour;
 
-		for (let i = 0; i < this.sequence.length; i++) {
-			const block = this.sequence[i];
+		// approximate all of the of the points beforehand to prevent lines getting further and further away due to approimatiion during the encoding process, also sanitizes the sequence (removes blocks with <2 stitches)
+		let newSequence = this.sequence
+			.filter((block) => block.stitches.length > 1)
+			.map((block) => {
+				return new Block(
+					block.stitches
+						.filter((stitch) => stitch !== null)
+						.map((point) => {
+							return new Paper.Point(
+								parseFloat(point.x.toFixed(1)),
+								parseFloat(point.y.toFixed(1))
+							);
+						}),
+					block.colour
+				);
+			});
+
+		for (let i = 0; i < newSequence.length; i++) {
+			const block = newSequence[i];
 
 			// colour change if colour not the same
 			if (
@@ -204,11 +241,6 @@ class Container {
 				prevColour?.green !== block.colour?.green ||
 				prevColour?.blue !== block.colour?.blue
 			) {
-				console.log(
-					"switching colours",
-					prevColour?.toString(),
-					block.colour?.toString()
-				);
 				preBytes.push(["stop", 0, 0]);
 				prevColour = block.colour;
 			}
@@ -223,23 +255,24 @@ class Container {
 					false
 				);
 
+				// ignore first point since starting from there
 				for (let j = 1; j < jumpPoints.length; j++) {
-					// ignore first point since starting from there
-					const S = jumpPoints[j];
-
-					let dX = S.x - cP.x;
-					let dY = -(S.y - cP.y);
-					preBytes.push(["jump", intToU8Int(dX), intToU8Int(dY)]);
-					cP = S;
+					const nP = jumpPoints[j];
+					let dX = Math.trunc((nP.x - cP.x) * 10);
+					let dY = -Math.trunc((nP.y - cP.y) * 10);
+					preBytes.push(["jump", dX, dY]);
+					// adjust the new point with the difference in mind, this prevents offset
+					cP = new Paper.Point(cP.x + dX / 10, cP.y - dY / 10);
 				}
 			}
 
 			for (let s = 0; s < block.stitches.length; s++) {
-				const S = block.stitches[s];
-				let dX = S.x - cP.x;
-				let dY = -(S.y - cP.y);
-				preBytes.push(["stitch", intToU8Int(dX), intToU8Int(dY)]);
-				cP = S;
+				const nP = block.stitches[s];
+				let dX = Math.trunc((nP.x - cP.x) * 10);
+				let dY = -Math.trunc((nP.y - cP.y) * 10);
+				preBytes.push(["stitch", dX, dY]);
+				// adjust the new point with the difference in mind, this prevents offset
+				cP = new Paper.Point(cP.x + dX / 10, cP.y - dY / 10);
 			}
 		}
 

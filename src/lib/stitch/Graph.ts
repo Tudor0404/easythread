@@ -1,7 +1,6 @@
 class Graph {
 	public referenceTable: paper.CurveLocation[] = [];
 	public adjacencyList: number[][];
-	private sufficientList: [number, number][] = [];
 
 	constructor(curveLocations: paper.CurveLocation[]) {
 		this.adjacencyList = new Array(curveLocations.length);
@@ -20,8 +19,7 @@ class Graph {
 	 */
 	public addEdge(
 		cl1: paper.CurveLocation,
-		cl2: paper.CurveLocation,
-		sufficient: boolean = false
+		cl2: paper.CurveLocation
 	): boolean {
 		if (cl1 === cl2) return false;
 
@@ -38,7 +36,6 @@ class Graph {
 
 		this.adjacencyList[index1].push(index2);
 		this.adjacencyList[index2].push(index1);
-		if (sufficient) this.sufficientList.push([index1, index2]);
 		return true;
 	}
 
@@ -47,7 +44,7 @@ class Graph {
 	 * @returns 0 not eulorian; 1 eulorian cycle; 2 eulorian path
 	 */
 	private isEulorian(): number {
-		if (!this.isConnected) return 0;
+		if (!this.isConnected()) return 0;
 
 		let numOdd = 0;
 
@@ -90,10 +87,14 @@ class Graph {
 	 * @param {number} i vertex to check
 	 * @param {boolean[]} visited vertex visited status
 	 */
-	private recursionCheck(i: number, visited: boolean[]) {
+	public recursionCheck(
+		i: number,
+		visited: boolean[],
+		adj: number[][] = this.adjacencyList
+	) {
 		visited[i] = true;
 
-		for (let node of this.adjacencyList[i]) {
+		for (let node of adj[i]) {
 			if (!visited[node]) this.recursionCheck(node, visited);
 		}
 	}
@@ -103,44 +104,27 @@ class Graph {
 	 * @param closestPoint choose the vertex closest to this point, to start at with a eulorian cycle
 	 * @returns {number[]} path to take
 	 */
-	public getSufficientEulorianPath(
-		closestPoint: paper.Point | null = null
-	): paper.CurveLocation[] | false {
+	public getEulorianPath(startingVertex = 0): paper.CurveLocation[] | false {
 		const eulroianResult = this.isEulorian();
-		let curVertex = -1;
+		let curVertex = startingVertex;
 
-		// copy the list to delete edges as they are found
-		let sufficientListClone = [...this.sufficientList];
-
-		// get point to start at
-		if (eulroianResult === 1) {
-			// eulorian cycle, can start from anywhere
-			if (closestPoint !== null) {
-				let d_ = Number.MAX_VALUE;
-				let v_ = -1;
-
-				this.referenceTable.forEach((vertex, index) => {
-					if (vertex.point.getDistance(closestPoint, false) < d_) {
-						v_ = index;
-						d_ = vertex.point.getDistance(closestPoint, false);
-					}
-				});
-
-				curVertex = v_;
-			} else {
-				curVertex = 0;
-			}
-		} else if (eulroianResult === 2) {
-			// if its a eulorian path, must choose one of the 2 odd vertecies
-			for (let i = 0; i < this.adjacencyList.length; i++) {
-				if (this.adjacencyList[i].length % 2 === 1) {
-					curVertex = i;
-					break;
-				}
-			}
-		} else {
-			return false;
-		}
+		// TODO: fix eurlorian result for custom starting point
+		// // get point to start at closest point
+		// if (eulroianResult === 1) {
+		// 	// eulorian cycle, can start from anywhere
+		// 	curVertex = startingVertex;
+		// } else if (eulroianResult === 2) {
+		// 	// if its a eulorian path, must choose one of the 2 odd vertecies
+		// 	for (let i = 0; i < this.adjacencyList.length; i++) {
+		// 		if (this.adjacencyList[i].length % 2 === 1) {
+		// 			curVertex = i;
+		// 			break;
+		// 		}
+		// 	}
+		// } else {
+		// 	console.log("reached here");
+		// 	return false;
+		// }
 
 		let cPath: number[] = [];
 		let ePath: number[] = [];
@@ -153,39 +137,50 @@ class Graph {
 			// all edges are visited
 			if (this.adjacencyList[u].length === 0) {
 				ePath.push(u);
-
-				// if (this.checkSufficiency(ePath, sufficientListClone)) break;
-
 				cPath.pop();
 			} else {
 				cPath.push(this.adjacencyList[u][0]);
-				this.adjacencyList[u].shift();
+				const index1 = u;
+				const index2 = this.adjacencyList[u][0];
+				this.removeEdge(index1, index2);
 			}
 		}
 
 		return ePath.map((e) => this.referenceTable[e]);
 	}
 
-	private checkSufficiency(
-		path: number[],
-		edges: [number, number][]
-	): boolean {
-		for (let i = 0; i < path.length - 1; i++) {
-			let indexFound: number =
-				edges.indexOf([path[i], path[i + 1]]) !== -1
-					? edges.indexOf([path[i], path[i + 1]])
-					: edges.indexOf([path[i + 1], path[i]]);
-
-			if (indexFound !== -1) {
-				edges.splice(indexFound);
-			}
-		}
-
-		if (edges.length === 0) {
-			return true;
-		}
-		return false;
+	private removeEdge(
+		u: number,
+		v: number,
+		adj: number[][] = this.adjacencyList
+	) {
+		if (adj[u].includes(v)) adj[u].splice(adj[u].indexOf(v), 1);
+		if (adj[v].includes(u)) adj[v].splice(adj[v].indexOf(u), 1);
 	}
+
+	// private removeVertex(
+	// 	i: number,
+	// 	adj: number[][] = this.adjacencyList,
+	// 	ref: paper.CurveLocation[] = this.referenceTable
+	// ) {
+	// 	// remove vertex from vertex list
+	// 	adj.splice(i, 1);
+	// 	ref.splice(i, 1);
+
+	// 	// remove vertex from edge list
+	// 	for (let i = 0; i < adj.length; i++) {
+	// 		for (let j = 0; j < adj[i].length; j++) {
+	// 			if (adj[i][j] === i) adj[i].splice(j, 1);
+	// 		}
+	// 	}
+
+	// 	// decrease all edge index references by 1 if above i
+	// 	for (let i = 0; i < adj.length; i++) {
+	// 		for (let j = 0; j < adj[i].length; j++) {
+	// 			if (adj[i][j] > i) adj[i][j]--;
+	// 		}
+	// 	}
+	// }
 }
 
 export default Graph;

@@ -9,8 +9,9 @@ import straightSubdivision from "./straightSubdivision";
 async function fillPath(
 	path: paper.PathItem,
 	stitchLength: number = 2.7,
-	carryOnPoint: paper.Point | null = null
-): Promise<Block | false> {
+	carryOnPoint: paper.Point | null = null,
+	fillGutterSpacing: number = 1
+): Promise<paper.Point[][] | false> {
 	let tempPath: string = "";
 	let tempItem;
 	if (path.hasChildren()) tempItem = path.children[0];
@@ -24,7 +25,7 @@ async function fillPath(
 
 	const directionVector = getDirectionVector(tempPath);
 
-	const rows = rowGutter(path, 1, directionVector);
+	const rows = rowGutter(path, fillGutterSpacing, directionVector);
 	const flattenedCL = ([] as paper.CurveLocation[]).concat(...rows);
 
 	let graph = new Graph(flattenedCL);
@@ -32,7 +33,7 @@ async function fillPath(
 	// add gutter edges
 	for (const row of rows) {
 		for (let i = 0; i < row.length; i += 2) {
-			graph.addEdge(row[i], row[i + 1], true);
+			graph.addEdge(row[i], row[i + 1]);
 		}
 	}
 
@@ -77,26 +78,97 @@ async function fillPath(
 		}
 	}
 
-	const result = graph.getSufficientEulorianPath(carryOnPoint);
-	let buffer = new Block();
+	let pointBlocks: paper.Point[][] = [];
 
-	if (!result) {
-		return false;
-	} else {
-		buffer.stitches.push(result[0].point);
-		for (let i = 0; i < result.length - 1; i++) {
-			buffer.stitches.push(
-				...straightSubdivision(
+	/*
+public getConnectedSubGraphs(): Graph[] {
+		create a copy of the variables
+		let adj = [...this.adjacencyList];
+		let ref = [...this.referenceTable];
+		let graphs: Graph[] = [];
+
+		while (adj.length > 0) {
+			let visited: boolean[] = new Array(adj.length);
+
+			visited.fill(false);
+
+			this.recursionCheck(0, visited, adj);
+
+			let G = new Graph(ref.filter((_val, i) => visited[i] === true));
+
+			add edges in new graph
+			visited.forEach((e, i) => {
+				if (e) {
+					adj[i]
+						.map((e, i) => ref[e])
+						.forEach((e) => {
+							console.log(G.addEdge(ref[i], e));
+						});
+				}
+			});
+
+			remove edges in current graph
+			for (let i = visited.length - 1; i > -1; i--) {
+				if (visited[i]) this.removeVertex(i);
+			}
+
+			console.log(G.adjacencyList, adj);
+
+			graphs.push(G);
+		}
+
+		return graphs;
+	}
+	*/
+
+	// get connected subgraphs
+	let visitedIndexed: number[] = new Array(graph.adjacencyList.length);
+	visitedIndexed.fill(0);
+	let counter = 1;
+	while (visitedIndexed.includes(0)) {
+		const startIndex = visitedIndexed.indexOf(0);
+		if (startIndex === -1) break;
+
+		let curVisited: boolean[] = new Array(graph.adjacencyList.length);
+		curVisited.fill(false);
+
+		graph.recursionCheck(startIndex, curVisited);
+
+		for (let i = 0; i < curVisited.length; i++) {
+			if (curVisited[i]) {
+				visitedIndexed[i] = counter;
+			}
+		}
+
+		counter++;
+	}
+
+	for (let i = 1; i < counter; i++) {
+		let availableVertices: number[] = [];
+
+		for (let j = 0; j < visitedIndexed.length; j++) {
+			if (visitedIndexed[j] === i) availableVertices.push(j);
+		}
+
+		const result = graph.getEulorianPath(availableVertices[0]);
+		let buffer: paper.Point[] = [];
+
+		if (result) {
+			for (let i = 0; i < result.length - 1; i++) {
+				const divisons = straightSubdivision(
 					result[i].point,
 					result[i + 1].point,
 					stitchLength,
-					false
-				).slice(1)
-			);
+					true
+				);
+				buffer.push(...divisons);
+			}
+			buffer.push(result[result.length - 1].point);
+			pointBlocks.push(buffer);
 		}
 	}
 
-	return buffer;
+	return pointBlocks;
 }
 
 function getDirectionVector(pathData: string): paper.Point {

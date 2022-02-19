@@ -245,7 +245,6 @@ const Canvas: React.FC<Props> = (props) => {
 				convertToEmbroidery: boolean;
 				removeOverlap: boolean;
 				averageColours: boolean;
-				stitchLength: number;
 			}) => {
 				let layerToConvert = Paper.project.layers[0];
 

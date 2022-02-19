@@ -44,18 +44,6 @@ const Toolbar: React.FC<Props> = (props) => {
 		useState<boolean>(true);
 	const [isRemoveOverlap, setRemoveOverlap] = useState<boolean>(true);
 	const [isAverageOutColours, setAverageOutColours] = useState<boolean>(true);
-	const [stitchLength, setStitchLength] = useStorageState<string>(
-		localStorage,
-		"stitchLength",
-		"2.7"
-	);
-	const [spaceBetweenNormals, setSpaceBetweenNormals] =
-		useStorageState<string>(localStorage, "spaceBetweenNormals", "1");
-	const [satinStitchLength, setSatinStitchLength] = useStorageState<string>(
-		localStorage,
-		"satinStitchLength",
-		"10"
-	);
 
 	useEffect(() => {
 		if (Paper.project)
@@ -188,6 +176,11 @@ const Toolbar: React.FC<Props> = (props) => {
 
 				Paper.project.layers[0].fitBounds(rectBounds);
 
+				Paper.project.layers[0].position = new Paper.Point(
+					Paper.view.viewSize.width / 2,
+					Paper.view.viewSize.height / 2
+				);
+
 				if (rectBounds) {
 					setHeight(rectBounds.height.toFixed(3));
 					setWidth(rectBounds.width.toFixed(3));
@@ -197,17 +190,6 @@ const Toolbar: React.FC<Props> = (props) => {
 			} catch {}
 		}
 	}
-
-	// save hook data directly to local storage, allows for non-React.FC to access them
-	useEffect(() => {
-		window.localStorage.setItem("stitchLength", stitchLength);
-	}, [stitchLength]);
-	useEffect(() => {
-		window.localStorage.setItem("spaceBetweenNormals", spaceBetweenNormals);
-	}, [spaceBetweenNormals]);
-	useEffect(() => {
-		window.localStorage.setItem("satinStitchLength", satinStitchLength);
-	}, [satinStitchLength]);
 
 	const buttonStyle =
 		"bg-black bg-opacity-0 text-black hover:bg-opacity-10 rounded-md px-1.5 text-center transition-all duration-200 ease-in-out";
@@ -438,7 +420,6 @@ const Toolbar: React.FC<Props> = (props) => {
 								convertToEmbroidery: isConvertToEmbroidery,
 								removeOverlap: isRemoveOverlap,
 								averageColours: isAverageOutColours,
-								stitchLength: parseFloat(stitchLength),
 							})
 						}
 					>
@@ -451,12 +432,6 @@ const Toolbar: React.FC<Props> = (props) => {
 						setConvertToEmbroidery={setConvertToEmbroidery}
 						isRemoveOverlap={isRemoveOverlap}
 						setRemoveOverlap={setRemoveOverlap}
-						stitchLength={stitchLength}
-						setStitchLength={setStitchLength}
-						spaceBetweenNormals={spaceBetweenNormals}
-						setSpaceBetweenNormals={setSpaceBetweenNormals}
-						satinStitchLength={satinStitchLength}
-						setSatinStitchLength={setSatinStitchLength}
 					/>
 					{areItemsSelected && (
 						<>
