@@ -215,9 +215,9 @@ class Container {
 		let cP: paper.Point = this.sequence[0].stitches[0];
 		let prevColour: paper.Color | null = this.sequence[0].colour;
 
-		// approximate all of the of the points beforehand to prevent lines getting further and further away due to approimatiion during the encoding process, also sanitizes the sequence (removes blocks with <2 stitches)
+		// sanitizes the sequence (removes blocks with <3 stitches, removes null points)
 		let newSequence = this.sequence
-			.filter((block) => block.stitches.length > 1)
+			.filter((block) => block.stitches.length > 2)
 			.map((block) => {
 				return new Block(
 					block.stitches.filter((stitch) => stitch !== null),

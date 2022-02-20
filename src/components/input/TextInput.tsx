@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 
 interface Props {
-	value: any;
-	setValue: any;
+	value: string;
+	setValue: React.Dispatch<React.SetStateAction<string>>;
 	placeholder?: string;
 	className?: string;
 	disabled?: boolean;

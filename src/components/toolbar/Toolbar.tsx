@@ -12,7 +12,7 @@ import {
 } from "@heroicons/react/outline";
 import Paper from "paper";
 import FileSaver from "file-saver";
-import { useStorageState } from "react-storage-hooks";
+import { Oval } from "react-loader-spinner";
 
 import Logo from "../../data/logo.png";
 import TextInput from "../input/TextInput";
@@ -24,6 +24,7 @@ import eventBus from "../../lib/eventBus";
 import UndoRedoTool from "../../lib/canvas/UndoRedoTool";
 import NumberInput from "../input/NumberInput";
 import removeOverlap from "../../lib/svg/removeOverlap";
+import Modal from "../modal/Modal";
 
 //TODO: handle downloading files better, set metadata, set filename if empty, check if file ext. is correct, remove file ext. from title at start
 
@@ -38,7 +39,7 @@ const Toolbar: React.FC<Props> = (props) => {
 	const [isRedo, setRedo] = useState<boolean>(false);
 	const [areItemsSelected, setItemsSelected] = useState<boolean>(false);
 	const [stroke, setStroke] = useState<string>("");
-	const fileDownloadRef = useRef<HTMLAnchorElement>(null);
+	const [isModalOpen, setModalOpen] = useState<boolean>(false);
 
 	const [isConvertToEmbroidery, setConvertToEmbroidery] =
 		useState<boolean>(true);
@@ -134,6 +135,7 @@ const Toolbar: React.FC<Props> = (props) => {
 
 	// updates the dimensions of the SVG on enter
 	function onEnterDimensions(e: KeyboardEvent) {
+		setModalOpen(!isModalOpen);
 		if (e.key === "Enter") {
 			try {
 				const initWidth = Paper.project.layers[0].strokeBounds.width;
@@ -447,13 +449,21 @@ const Toolbar: React.FC<Props> = (props) => {
 					)}
 				</div>
 			</div>
-			<a
-				aria-disabled
-				ref={fileDownloadRef}
-				className="-top-100% absolute -translate-x-96 select-none opacity-0"
+			<Modal
+				isOpen={isModalOpen}
+				setOpen={setModalOpen}
+				title="Converting"
+				preventAutoClose
 			>
-				download svg
-			</a>
+				<div className="place-items-center place-self-center">
+					<Oval
+						color="#3279dd"
+						secondaryColor="#286fd3"
+						height={80}
+						width={80}
+					/>
+				</div>
+			</Modal>
 		</div>
 	);
 };
