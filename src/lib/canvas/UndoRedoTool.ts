@@ -1,6 +1,7 @@
 import Paper from "paper";
 import eventBus from "../eventBus";
 import options from "../../data/options.json";
+import Container from "../stitch/Container";
 
 class UndoRedoTool {
 	private static undoStack: paper.Layer[] = [];

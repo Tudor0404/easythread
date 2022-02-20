@@ -9,10 +9,6 @@ import UndoRedoTool from "./lib/canvas/UndoRedoTool";
 import eventBus from "./lib/eventBus";
 
 // TODO: add msg if screen is too small
-// TODO: loading msg when processing
-// TODO: state management of conversion result
-// TODO: handle different save types (svg vs embroidery)
-// TODO: sidebar not scrolling
 
 function App() {
 	useEffect(() => {

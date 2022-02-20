@@ -7,7 +7,6 @@ import runningPath from "./convert/runningPath";
 import satinPath from "./convert/satinPath";
 import itemToPathItem from "../svg/itemToPathItem";
 import straightSubdivision from "./convert/straightSubdivision";
-import { intToU8Int } from "./helpers";
 import FileSaver from "file-saver";
 import fillPath from "./convert/fillPath";
 import eventBus from "../eventBus";
@@ -16,10 +15,6 @@ import eventBus from "../eventBus";
 
 class Container {
 	public sequence: Block[] = [];
-
-	public constructor(layer: paper.Layer) {
-		this.convertToBlocks(layer);
-	}
 
 	public async convertToBlocks(layer: paper.Layer) {
 		this.sequence = [];
@@ -111,7 +106,6 @@ class Container {
 			}
 		}
 
-		this.convertToEmbroidery(embroideryTypes.exp);
 		eventBus.dispatch("setCanvasLayer", this.convertToSVG());
 	}
 
@@ -197,11 +191,11 @@ class Container {
 		return layer;
 	}
 
-	public convertToEmbroidery(type: embroideryTypes) {
+	public convertToEmbroidery(type: embroideryTypes, filename: string) {
 		if (this.sequence.length === 0) return;
 		switch (type) {
 			case embroideryTypes.exp:
-				this.convertToExp();
+				this.convertToExp(filename.replace(" ", "_"));
 				break;
 
 			default:
@@ -209,7 +203,7 @@ class Container {
 		}
 	}
 
-	private convertToExp() {
+	private convertToExp(filename: string) {
 		let preBytes: ["stitch" | "jump" | "end" | "stop", number, number][] =
 			[];
 		let cP: paper.Point = this.sequence[0].stitches[0];
@@ -307,7 +301,7 @@ class Container {
 			}
 		});
 
-		FileSaver(new Blob([bytes]), "test.exp");
+		FileSaver(new Blob([bytes]), filename + ".exp");
 	}
 }
 

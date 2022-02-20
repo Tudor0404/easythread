@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import Button from "../button/Button";
 
@@ -29,15 +29,27 @@ const Modal: React.FC<Props> = (props) => {
 				}}
 			>
 				<Dialog.Overlay className="fixed inset-0 bg-black opacity-5" />
-				<div className="z-40 flex min-h-[200px] min-w-[300px] flex-col items-center justify-between gap-4 rounded-md bg-white bg-opacity-100 p-3 shadow-lg outline-black/30">
+				<div
+					className={`z-40 flex min-h-[200px] min-w-[300px] flex-col items-center ${
+						!(props.children && props.description)
+							? "justify-center"
+							: "justify-start"
+					} gap-4 rounded-md bg-white bg-opacity-100 p-3 shadow-lg outline-black/30`}
+				>
 					<div>
 						{props.title && (
-							<Dialog.Title className="place-self-start text-xl">
+							<Dialog.Title className="text-xl">
 								{props.title}
 							</Dialog.Title>
 						)}
 					</div>
-					<div className="flex flex-grow flex-col items-center justify-center">
+					<div
+						className={`flex ${
+							!(props.children && props.description)
+								? ""
+								: "flex-grow"
+						} justify-cente flex-col items-center`}
+					>
 						{props.description && (
 							<Dialog.Description>
 								This will permanently deactivate your account

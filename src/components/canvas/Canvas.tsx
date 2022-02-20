@@ -2,6 +2,7 @@ import React, { useRef, useEffect } from "react";
 import Paper from "paper";
 import useState from "react-usestateref";
 import Ruler from "@scena/react-ruler";
+import { useWorker } from "@koale/useworker";
 
 import options from "../../data/options.json";
 import eventBus from "../../lib/eventBus";
@@ -9,6 +10,7 @@ import UndoRedoTool from "../../lib/canvas/UndoRedoTool";
 import Container from "../../lib/stitch/Container";
 import removeOverlap from "../../lib/svg/removeOverlap";
 import normaliseColours from "../../lib/svg/normaliseColours";
+import { embroideryTypes } from "../../types/embroideryTypes.d";
 
 interface Props {}
 
@@ -86,14 +88,17 @@ const Canvas: React.FC<Props> = (props) => {
 			Paper.view.viewSize.height / 2
 		);
 
-		eventBus.dispatch("initialSvgBounds", {
+		eventBus.dispatch("setSvgBounds", {
 			width: l.strokeBounds.width,
 			height: l.strokeBounds.height,
 		});
 
 		l.data = { userEditable: true };
 
-		if (title) eventBus.dispatch("initialFilename", title);
+		eventBus.dispatch(
+			"initialFilename",
+			title ? title.replace(/\.[^/.]+$/, "") : "newFile"
+		);
 
 		Paper.view.update();
 	}
@@ -132,10 +137,24 @@ const Canvas: React.FC<Props> = (props) => {
 		updateRulerDimensions();
 	}
 
-	function convertSvg(layer: paper.Layer) {
+	async function convertSvg(layer: paper.Layer) {
 		if (Paper.project.layers.length === 0) return false;
 
-		setConvertedOutput(new Container(layer));
+		let container = new Container();
+		await container.convertToBlocks(layer);
+
+		setConvertedOutput(container);
+	}
+
+	function checkIfHasSequence(): Container | false {
+		try {
+			if (Paper.project.layers.length === 0) return false;
+			if (Paper.project.layers[0].data.sequence.length > 0)
+				return Paper.project.layers[0].data.sequence;
+			else return false;
+		} catch {
+			return false;
+		}
 	}
 
 	useEffect(() => {
@@ -232,6 +251,11 @@ const Canvas: React.FC<Props> = (props) => {
 					e.onClick = onClickItemEvent;
 					e.selected = false;
 				});
+
+				eventBus.dispatch("setSvgBounds", {
+					width: newLayer.strokeBounds.width,
+					height: newLayer.strokeBounds.height,
+				});
 			}
 		});
 
@@ -246,6 +270,12 @@ const Canvas: React.FC<Props> = (props) => {
 				removeOverlap: boolean;
 				averageColours: boolean;
 			}) => {
+				if (checkIfHasSequence()) {
+					eventBus.dispatch("conversionFinished", {});
+					return;
+				}
+
+				UndoRedoTool.addStateDefault();
 				let layerToConvert = Paper.project.layers[0];
 
 				if (options.averageColours) {
@@ -255,8 +285,9 @@ const Canvas: React.FC<Props> = (props) => {
 					layerToConvert = await removeOverlap();
 				}
 				if (options.convertToEmbroidery) {
-					convertSvg(layerToConvert);
+					await convertSvg(layerToConvert);
 				}
+				eventBus.dispatch("conversionFinished", {});
 			}
 		);
 
@@ -265,6 +296,16 @@ const Canvas: React.FC<Props> = (props) => {
 		});
 
 		eventBus.on("updateRulers", updateRulerDimensions);
+
+		eventBus.on("saveExp", (filename: string) => {
+			console.log(checkIfHasSequence());
+			if (checkIfHasSequence()) {
+				let temp = new Container();
+				//@ts-ignore
+				temp.sequence = checkIfHasSequence();
+				temp.convertToEmbroidery(embroideryTypes.exp, filename);
+			}
+		});
 
 		//#endregion
 
@@ -315,6 +356,20 @@ const Canvas: React.FC<Props> = (props) => {
 			verticalRulerRef.current.scroll(topLeftPos.y);
 		}
 	}, [topLeftPos]);
+
+	useEffect(() => {
+		try {
+			if (
+				Paper.project.layers.length > 0 &&
+				convertedOutput &&
+				convertedOutput?.sequence.length > 0
+			) {
+				Paper.project.layers[0].data = {
+					sequence: convertedOutput.sequence,
+				};
+			}
+		} catch {}
+	}, [convertedOutput]);
 
 	return (
 		<div className="h-full w-full ">

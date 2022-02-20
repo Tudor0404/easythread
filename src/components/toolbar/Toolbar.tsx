@@ -56,7 +56,7 @@ const Toolbar: React.FC<Props> = (props) => {
 
 	useEffect(() => {
 		eventBus.on(
-			"initialSvgBounds",
+			"setSvgBounds",
 			({ width, height }: { width: number; height: number }) => {
 				setWidth(width.toFixed(3));
 				setHeight(height.toFixed(3));
@@ -100,13 +100,18 @@ const Toolbar: React.FC<Props> = (props) => {
 			} else setItemsSelected(false);
 		});
 
+		eventBus.on("conversionFinished", () => {
+			setModalOpen(false);
+		});
+
 		return eventBus.remove(
 			[
-				"initialSvgBounds",
+				"setSvgBounds",
 				"undoAvailable",
 				"redoAvailable",
 				"selectedItemsChanged",
 				"initialFilename",
+				"conversionFinished",
 			],
 			() => {}
 		);
@@ -120,7 +125,7 @@ const Toolbar: React.FC<Props> = (props) => {
 		}
 	}, [stroke]);
 
-	function saveFile() {
+	function saveFileSvg() {
 		if (Paper.project.layers.length < 0) return;
 
 		let markup = Paper.project
@@ -135,9 +140,9 @@ const Toolbar: React.FC<Props> = (props) => {
 
 	// updates the dimensions of the SVG on enter
 	function onEnterDimensions(e: KeyboardEvent) {
-		setModalOpen(!isModalOpen);
 		if (e.key === "Enter") {
 			try {
+				UndoRedoTool.addStateDefault();
 				const initWidth = Paper.project.layers[0].strokeBounds.width;
 				const initHeight = Paper.project.layers[0].strokeBounds.height;
 
@@ -193,6 +198,20 @@ const Toolbar: React.FC<Props> = (props) => {
 		}
 	}
 
+	useEffect(() => {
+		if (isModalOpen) {
+			setTimeout(
+				() =>
+					eventBus.dispatch("convertSvg", {
+						convertToEmbroidery: isConvertToEmbroidery,
+						removeOverlap: isRemoveOverlap,
+						averageColours: isAverageOutColours,
+					}),
+				500
+			);
+		}
+	}, [isModalOpen]);
+
 	const buttonStyle =
 		"bg-black bg-opacity-0 text-black hover:bg-opacity-10 rounded-md px-1.5 text-center transition-all duration-200 ease-in-out";
 
@@ -238,8 +257,17 @@ const Toolbar: React.FC<Props> = (props) => {
 										}}
 									/>
 									<DropdownItem
-										label="Save"
-										onClick={saveFile}
+										label="Save SVG"
+										onClick={saveFileSvg}
+									/>
+									<DropdownItem
+										label="Save EXP"
+										onClick={() => {
+											eventBus.dispatch(
+												"saveExp",
+												filename
+											);
+										}}
 									/>
 								</Dropdown>
 								<Dropdown
@@ -340,7 +368,7 @@ const Toolbar: React.FC<Props> = (props) => {
 					<Button
 						className="mx-0.5 !p-1"
 						tooltip="download file"
-						onClick={saveFile}
+						onClick={saveFileSvg}
 					>
 						<DocumentDownloadIcon
 							className="h-5 w-5"
@@ -417,13 +445,10 @@ const Toolbar: React.FC<Props> = (props) => {
 						filled
 						className="!mx-0.5 !py-0.5 !px-1"
 						tooltip="convert to embroidery"
-						onClick={() =>
-							eventBus.dispatch("convertSvg", {
-								convertToEmbroidery: isConvertToEmbroidery,
-								removeOverlap: isRemoveOverlap,
-								averageColours: isAverageOutColours,
-							})
-						}
+						disabled={isModalOpen}
+						onClick={() => {
+							setModalOpen(true);
+						}}
 					>
 						Convert
 					</Button>
@@ -452,18 +477,9 @@ const Toolbar: React.FC<Props> = (props) => {
 			<Modal
 				isOpen={isModalOpen}
 				setOpen={setModalOpen}
-				title="Converting"
+				title="Converting..."
 				preventAutoClose
-			>
-				<div className="place-items-center place-self-center">
-					<Oval
-						color="#3279dd"
-						secondaryColor="#286fd3"
-						height={80}
-						width={80}
-					/>
-				</div>
-			</Modal>
+			></Modal>
 		</div>
 	);
 };

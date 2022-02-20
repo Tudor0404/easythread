@@ -5,6 +5,7 @@
   "dependencies": {
     "@headlessui/react": "^1.4.3",
     "@heroicons/react": "^1.0.5",
+    "@koale/useworker": "^4.0.2",
     "@popperjs/core": "^2.11.2",
     "@scena/react-ruler": "^0.9.1",
     "@tailwindcss/typography": "^0.5.1",
