@@ -26,8 +26,6 @@ import NumberInput from "../input/NumberInput";
 import removeOverlap from "../../lib/svg/removeOverlap";
 import Modal from "../modal/Modal";
 
-//TODO: handle downloading files better, set metadata, set filename if empty, check if file ext. is correct, remove file ext. from title at start
-
 interface Props {}
 
 const Toolbar: React.FC<Props> = (props) => {

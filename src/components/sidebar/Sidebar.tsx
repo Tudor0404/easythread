@@ -10,8 +10,6 @@ import normaliseColours from "../../lib/svg/normaliseColours";
 import eventBus from "../../lib/eventBus";
 import UndoRedoTool from "../../lib/canvas/UndoRedoTool";
 
-// TODO: add layers section where layers can be rearranged (SVG and embroidery), this would allow to select paths
-
 const Sidebar: React.FC = () => {
 	const defaultDMC: DMCColour = {
 		"#RGB": "",

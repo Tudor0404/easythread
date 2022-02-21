@@ -1,9 +1,6 @@
 import straightSubdivision from "./straightSubdivision";
 import Paper from "paper";
 
-// TODO: consider types of joins
-// FIXME: when doing the overlap prevention, it takes the normals in conseration, which results in the prevention being offset. Can't do reverse because same issue will come up. Can do some trig uckery to fix. Or create a bounding box of the overlapping shape and detect all points in it. Maybe even do colour analysis by making it transparent and finding all the areas which it is overlapping, then matching the points in it.
-
 /**
  * @description generates a set of points that
  * @param {paper.Point} path path that the normals will be calculated at
@@ -20,8 +17,6 @@ function satinPath(
 ): paper.Point[] {
 	let preBuffer: [paper.Point, paper.Point, number][] = [];
 	let buffer: paper.Point[] = [];
-
-	//let ranges = getExclusionRanges(path, width);
 
 	for (
 		let i = 0;
@@ -84,6 +79,11 @@ function satinPath(
 	return buffer;
 }
 
+//#region delete this in project hand in
+
+// todo: consider types of joins
+// fixme: when doing the overlap prevention, it takes the normals in conseration, which results in the prevention being offset. Can't do reverse because same issue will come up. Can do some trig uckery to fix. Or create a bounding box of the overlapping shape and detect all points in it. Maybe even do colour analysis by making it transparent and finding all the areas which it is overlapping, then matching the points in it.
+
 /**
  * @description checks for places at which a curve self touches, and returns ranges at which satin stitches should not occur.
  * @param path path to check against
@@ -100,7 +100,7 @@ function getExclusionRanges(
 	const accuracy = 5; // check every ___ mm. Lower number reduces chances of path intersections not being found, but increases computation time
 	let intersectPoints: paper.Point[] = [];
 
-	// FIXME: pathClone.divideAt() divides original path too, although cloning it, maybe shallow copy?
+	// fix: pathClone.divideAt() divides original path too, although cloning it, maybe shallow copy?
 	for (let i = 1; i < Math.floor(pathClone.length / accuracy); i++) {
 		let newSegment = pathClone.divideAt(accuracy * i);
 		trailingPath = new Paper.Path(
@@ -146,5 +146,7 @@ function isInRanges(distance: number, ranges: [number, number][]): boolean {
 	}
 	return false;
 }
+
+//#endregion
 
 export default satinPath;

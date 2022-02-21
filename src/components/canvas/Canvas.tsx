@@ -2,7 +2,6 @@ import React, { useRef, useEffect } from "react";
 import Paper from "paper";
 import useState from "react-usestateref";
 import Ruler from "@scena/react-ruler";
-import { useWorker } from "@koale/useworker";
 
 import options from "../../data/options.json";
 import eventBus from "../../lib/eventBus";
@@ -14,8 +13,6 @@ import { embroideryTypes } from "../../types/embroideryTypes.d";
 
 interface Props {}
 
-// TODO: Handle errors from uploading/downloading files etc.
-
 const Canvas: React.FC<Props> = (props) => {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 	const horizontalRulerRef = useRef<any>(null);
@@ -24,7 +21,6 @@ const Canvas: React.FC<Props> = (props) => {
 	const [preventSelect, setPreventSelect, refPreventSelect] = useState(false);
 	const [timer, setTimer] = useState<NodeJS.Timeout>();
 	const fileInputRef = useRef<HTMLInputElement>(null);
-	const [convertedOutput, setConvertedOutput] = useState<Container>();
 	const [topLeftPos, setTopLeftPos] = useState<paper.Point>(
 		new Paper.Point(0, 0)
 	);
@@ -143,7 +139,9 @@ const Canvas: React.FC<Props> = (props) => {
 		let container = new Container();
 		await container.convertToBlocks(layer);
 
-		setConvertedOutput(container);
+		Paper.project.layers[0].data = {
+			sequence: container.sequence,
+		};
 	}
 
 	function checkIfHasSequence(): Container | false {
@@ -356,20 +354,6 @@ const Canvas: React.FC<Props> = (props) => {
 			verticalRulerRef.current.scroll(topLeftPos.y);
 		}
 	}, [topLeftPos]);
-
-	useEffect(() => {
-		try {
-			if (
-				Paper.project.layers.length > 0 &&
-				convertedOutput &&
-				convertedOutput?.sequence.length > 0
-			) {
-				Paper.project.layers[0].data = {
-					sequence: convertedOutput.sequence,
-				};
-			}
-		} catch {}
-	}, [convertedOutput]);
 
 	return (
 		<div className="h-full w-full ">

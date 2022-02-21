@@ -3,8 +3,6 @@ import DMCColours from "../../data/DMCColours.json";
 import { Color } from "paper/dist/paper-core";
 import { DMCColour } from "../../types/DMCColour";
 
-// TODO: allows the user to switch between conversion models
-
 /**
  * @description gets the closest DMC colour available given its colour
  * @param elem element to change the style of
@@ -85,24 +83,6 @@ function getValueHSB(e: DMCColour, c: paper.Color) {
 			Math.pow(dSaturation * 360 * 1.3, 2) +
 			Math.pow(dBrightness * 360 * brightnessMultiple, 2)
 	);
-
-	return value;
-}
-
-/**
- * @description compares two colours using the RGB colour model, and gets a relative value of closeness
- * @param {DMCColour} e DMC colour
- * @param {paper.Color} c other colour
- * @returns {number} relative value
- */
-function getValueRGB(e: DMCColour, c: paper.Color) {
-	const c1 = new Color(e["#RGB"]);
-	const dR = c.red - c1.red;
-	const dG = c.green - c1.green;
-	const dB = c.blue - c1.blue;
-
-	// get distance between colours using the red, green, blue colour space
-	let value = Math.sqrt(Math.pow(dR, 2) + Math.pow(dG, 2) + Math.pow(dB, 2));
 
 	return value;
 }
