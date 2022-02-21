@@ -44,6 +44,9 @@ const OptionsDropdown: React.FC<Props> = (props) => {
 	useEffect(() => {
 		window.localStorage.setItem("satinStitchLength", satinStitchLength);
 	}, [satinStitchLength]);
+	useEffect(() => {
+		window.localStorage.setItem("fillGutterSpacing", fillGutterSpacing);
+	}, [fillGutterSpacing]);
 
 	return (
 		<Dropdown

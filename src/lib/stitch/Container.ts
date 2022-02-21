@@ -36,6 +36,8 @@ class Container {
 				window.localStorage.getItem("fillGutterSpacing") || "1"
 			) || 1;
 
+		console.log(fillGutterSpacing);
+
 		for (const item of leafItems) {
 			let strokeFlag = false;
 			if (item.hasFill()) {
@@ -105,6 +107,8 @@ class Container {
 				}
 			}
 		}
+
+		this.sequenceSanitise();
 
 		eventBus.dispatch("setCanvasLayer", this.convertToSVG());
 	}
@@ -207,30 +211,9 @@ class Container {
 		let preBytes: ["stitch" | "jump" | "end" | "stop", number, number][] =
 			[];
 		let cP: paper.Point = this.sequence[0].stitches[0];
-		let prevColour: paper.Color | null = this.sequence[0].colour;
 
-		// sanitizes the sequence (removes blocks with <3 stitches, removes null points)
-		let newSequence = this.sequence
-			.filter((block) => block.stitches.length > 2)
-			.map((block) => {
-				return new Block(
-					block.stitches.filter((stitch) => stitch !== null),
-					block.colour
-				);
-			});
-
-		for (let i = 0; i < newSequence.length; i++) {
-			const block = newSequence[i];
-
-			// colour change if colour not the same
-			if (
-				prevColour?.red !== block.colour?.red ||
-				prevColour?.green !== block.colour?.green ||
-				prevColour?.blue !== block.colour?.blue
-			) {
-				preBytes.push(["stop", 0, 0]);
-				prevColour = block.colour;
-			}
+		for (let i = 0; i < this.sequence.length; i++) {
+			const block = this.sequence[i];
 
 			// jump to new block if points not the same
 			if (cP !== block.stitches[0]) {
@@ -260,6 +243,18 @@ class Container {
 				preBytes.push(["stitch", dX, dY]);
 				// adjust the new point with the difference in mind, this prevents offset
 				cP = new Paper.Point(cP.x + dX / 10, cP.y - dY / 10);
+			}
+
+			// colour change if colour not the same as the next one
+			if (
+				i + 1 < this.sequence.length &&
+				this.sequence[i + 1].colour &&
+				(this.sequence[i + 1].colour?.red !== block.colour?.red ||
+					this.sequence[i + 1].colour?.green !==
+						block.colour?.green ||
+					this.sequence[i + 1].colour?.blue !== block.colour?.blue)
+			) {
+				preBytes.push(["stop", 0, 0]);
 			}
 		}
 
@@ -302,6 +297,18 @@ class Container {
 		});
 
 		FileSaver(new Blob([bytes]), filename + ".exp");
+	}
+
+	private sequenceSanitise() {
+		// sanitizes the sequence (removes blocks with <3 stitches, removes null points)
+		this.sequence = this.sequence
+			.filter((block) => block.stitches.length > 2)
+			.map((block) => {
+				return new Block(
+					block.stitches.filter((stitch) => stitch !== null),
+					block.colour
+				);
+			});
 	}
 }
 

@@ -1,75 +1,79 @@
 {
-  "name": "easythread",
-  "version": "0.1.0",
-  "private": true,
-  "dependencies": {
-    "@headlessui/react": "^1.4.3",
-    "@heroicons/react": "^1.0.5",
-    "@koale/useworker": "^4.0.2",
-    "@popperjs/core": "^2.11.2",
-    "@scena/react-ruler": "^0.9.1",
-    "@tailwindcss/typography": "^0.5.1",
-    "@testing-library/jest-dom": "^5.16.1",
-    "@testing-library/react": "^12.1.2",
-    "@testing-library/user-event": "^13.5.0",
-    "@types/jest": "^27.4.0",
-    "@types/node": "^16.11.21",
-    "@types/react": "^17.0.38",
-    "@types/react-dom": "^17.0.11",
-    "@types/underscore": "^1.11.4",
-    "core-js": "^3.20.3",
-    "dsa.js": "^2.7.6",
-    "element-to-path": "^1.2.1",
-    "file-saver": "^2.0.5",
-    "paper": "^0.12.15",
-    "path-data-polyfill": "^1.0.3",
-    "path-that-svg": "^1.2.4",
-    "react": "^17.0.2",
-    "react-app-polyfill": "^3.0.0",
-    "react-dom": "^17.0.2",
-    "react-loader-spinner": "^5.1.4",
-    "react-popper": "^2.2.5",
-    "react-scripts": "5.0.0",
-    "react-storage-hooks": "^4.0.1",
-    "react-usestateref": "^1.0.8",
-    "resize-observer-polyfill": "^1.5.1",
-    "svgson": "^5.2.1",
-    "typescript": "^4.5.5",
-    "underscore": "^1.13.2",
-    "use-resize-observer": "^8.0.0",
-    "util": "^0.12.4",
-    "web-vitals": "^2.1.4"
-  },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  },
-  "devDependencies": {
-    "@types/file-saver": "^2.0.5",
-    "autoprefixer": "^10.4.2",
-    "postcss": "^8.4.5",
-    "prettier": "^2.5.1",
-    "prettier-plugin-tailwindcss": "^0.1.5",
-    "tailwindcss": "^3.0.18"
-  }
+	"name": "easythread",
+	"version": "0.1.0",
+	"private": true,
+	"homepage": "https://tudor0404.github.io/easythread",
+	"dependencies": {
+		"@headlessui/react": "^1.4.3",
+		"@heroicons/react": "^1.0.5",
+		"@koale/useworker": "^4.0.2",
+		"@popperjs/core": "^2.11.2",
+		"@scena/react-ruler": "^0.9.1",
+		"@tailwindcss/typography": "^0.5.1",
+		"@testing-library/jest-dom": "^5.16.1",
+		"@testing-library/react": "^12.1.2",
+		"@testing-library/user-event": "^13.5.0",
+		"@types/jest": "^27.4.0",
+		"@types/node": "^16.11.21",
+		"@types/react": "^17.0.38",
+		"@types/react-dom": "^17.0.11",
+		"@types/underscore": "^1.11.4",
+		"core-js": "^3.20.3",
+		"dsa.js": "^2.7.6",
+		"element-to-path": "^1.2.1",
+		"file-saver": "^2.0.5",
+		"paper": "^0.12.15",
+		"path-data-polyfill": "^1.0.3",
+		"path-that-svg": "^1.2.4",
+		"react": "^17.0.2",
+		"react-app-polyfill": "^3.0.0",
+		"react-dom": "^17.0.2",
+		"react-loader-spinner": "^5.1.4",
+		"react-popper": "^2.2.5",
+		"react-scripts": "5.0.0",
+		"react-storage-hooks": "^4.0.1",
+		"react-usestateref": "^1.0.8",
+		"resize-observer-polyfill": "^1.5.1",
+		"svgson": "^5.2.1",
+		"typescript": "^4.5.5",
+		"underscore": "^1.13.2",
+		"use-resize-observer": "^8.0.0",
+		"util": "^0.12.4",
+		"web-vitals": "^2.1.4"
+	},
+	"scripts": {
+		"predeploy": "npm run build",
+		"deploy": "gh-pages -d build",
+		"start": "react-scripts start",
+		"build": "react-scripts build",
+		"test": "react-scripts test",
+		"eject": "react-scripts eject"
+	},
+	"eslintConfig": {
+		"extends": [
+			"react-app",
+			"react-app/jest"
+		]
+	},
+	"browserslist": {
+		"production": [
+			">0.2%",
+			"not dead",
+			"not op_mini all"
+		],
+		"development": [
+			"last 1 chrome version",
+			"last 1 firefox version",
+			"last 1 safari version"
+		]
+	},
+	"devDependencies": {
+		"@types/file-saver": "^2.0.5",
+		"autoprefixer": "^10.4.2",
+		"gh-pages": "^3.2.3",
+		"postcss": "^8.4.5",
+		"prettier": "^2.5.1",
+		"prettier-plugin-tailwindcss": "^0.1.5",
+		"tailwindcss": "^3.0.18"
+	}
 }
