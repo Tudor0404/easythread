@@ -183,7 +183,7 @@ class Container {
 			path.strokeColor = command[2];
 			path.strokeCap = "round";
 			path.strokeJoin = "round";
-			path.strokeWidth = 0.5;
+			path.strokeWidth = 0.27;
 			if (command[1] === "dashed") {
 				path.dashArray = [2, 2];
 				path.opacity = 1;
@@ -243,18 +243,6 @@ class Container {
 				preBytes.push(["stitch", dX, dY]);
 				// adjust the new point with the difference in mind, this prevents offset
 				cP = new Paper.Point(cP.x + dX / 10, cP.y - dY / 10);
-			}
-
-			// colour change if colour not the same as the next one
-			if (
-				i + 1 < this.sequence.length &&
-				this.sequence[i + 1].colour &&
-				(this.sequence[i + 1].colour?.red !== block.colour?.red ||
-					this.sequence[i + 1].colour?.green !==
-						block.colour?.green ||
-					this.sequence[i + 1].colour?.blue !== block.colour?.blue)
-			) {
-				preBytes.push(["stop", 0, 0]);
 			}
 		}
 
