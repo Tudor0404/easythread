@@ -215,6 +215,11 @@ class Container {
 		for (let i = 0; i < this.sequence.length; i++) {
 			const block = this.sequence[i];
 
+			// change colour if the colours coming up are not the same
+			if (i > 0 && this.sequence[i - 1].colour !== block.colour) {
+				preBytes.push(["stop", 0, 0]);
+			}
+
 			// jump to new block if points not the same
 			if (cP !== block.stitches[0]) {
 				// prevent jumping too far (max 12.7mm)

@@ -5,6 +5,7 @@ import itemToPathItem from "../../svg/itemToPathItem";
 import Graph from "../Graph";
 import straightSubdivision from "./straightSubdivision";
 import runningPath from "./runningPath";
+import { getClosestPoint } from "../helpers";
 
 async function fillPath(
 	path: paper.PathItem,
@@ -109,8 +110,68 @@ async function fillPath(
 			if (visitedIndexed[j] === i) availableVertices.push(j);
 		}
 
+		let startPoint = 0;
+
+		// get point closest to last for smaller jump distances
+		if (i > 1) {
+			const potentialClosestPoint = getClosestPoint(
+				pointBlocks[pointBlocks.length - 1][
+					pointBlocks[pointBlocks.length - 1].length - 1
+				],
+				graph.referenceTable
+					.filter((e, c) => availableVertices.includes(c))
+					.map((e) => e.point)
+			);
+
+			if (potentialClosestPoint !== null)
+				startPoint = potentialClosestPoint;
+
+			console.log(
+				pointBlocks[pointBlocks.length - 1][
+					pointBlocks[pointBlocks.length - 1].length - 1
+				],
+				potentialClosestPoint,
+				graph.referenceTable[startPoint].point,
+				graph.referenceTable
+					.filter((e, c) => availableVertices.includes(c))
+					.map((e) => e.point)
+			);
+		}
+
+		/*
+
+
+for (let i = 1; i < counter; i++) {
+		let availableVertices: number[] = [];
+
+		for (let j = 0; j < visitedIndexed.length; j++) {
+			if (visitedIndexed[j] === i) availableVertices.push(j);
+		}
+
 		const result = graph.getEulorianPath(availableVertices[0]);
 		let buffer: paper.Point[] = [];
+
+		if (result) {
+			for (let i = 0; i < result.length - 1; i++) {
+				const divisons = straightSubdivision(
+					result[i].point,
+					result[i + 1].point,
+					stitchLength,
+					true
+				);
+				buffer.push(...divisons);
+			}
+			buffer.push(result[result.length - 1].point);
+			pointBlocks.push(buffer);
+		}
+	}
+
+		*/
+
+		const result = graph.getEulorianPath(availableVertices[startPoint]);
+		let buffer: paper.Point[] = [];
+
+		console.log(result);
 
 		if (result) {
 			for (let i = 0; i < result.length - 1; i++) {

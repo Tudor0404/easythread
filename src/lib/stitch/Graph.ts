@@ -101,7 +101,7 @@ class Graph {
 
 	/**
 	 * @description hierholzer's algorithm to find the an eulorian path, with a sufficiency of the edges between the intersections
-	 * @param closestPoint choose the vertex closest to this point, to start at with a eulorian cycle
+	 * @param {number} startingVertex vertex index to start from
 	 * @returns {number[]} path to take
 	 */
 	public getEulorianPath(startingVertex = 0): paper.CurveLocation[] | false {
