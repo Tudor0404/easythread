@@ -17,6 +17,8 @@ class Container {
 	public sequence: Block[] = [];
 
 	public async convertToBlocks(layer: paper.Layer) {
+		// TODO: reduce jump stitches between blocks
+		// TODO: reduce jump stitches to closed running paths by start offset from the start
 		this.sequence = [];
 
 		const leafItems: paper.Item[] = getLeafItems(layer);
