@@ -36,6 +36,8 @@ class Container {
 				window.localStorage.getItem("fillGutterSpacing") || "1"
 			) || 1;
 
+		console.log(fillGutterSpacing);
+
 		for (const item of leafItems) {
 			let strokeFlag = false;
 			if (item.hasFill()) {
@@ -105,6 +107,8 @@ class Container {
 				}
 			}
 		}
+
+		this.sequenceSanitise();
 
 		eventBus.dispatch("setCanvasLayer", this.convertToSVG());
 	}
@@ -179,7 +183,7 @@ class Container {
 			path.strokeColor = command[2];
 			path.strokeCap = "round";
 			path.strokeJoin = "round";
-			path.strokeWidth = 0.5;
+			path.strokeWidth = 0.27;
 			if (command[1] === "dashed") {
 				path.dashArray = [2, 2];
 				path.opacity = 1;
@@ -207,30 +211,9 @@ class Container {
 		let preBytes: ["stitch" | "jump" | "end" | "stop", number, number][] =
 			[];
 		let cP: paper.Point = this.sequence[0].stitches[0];
-		let prevColour: paper.Color | null = this.sequence[0].colour;
 
-		// sanitizes the sequence (removes blocks with <3 stitches, removes null points)
-		let newSequence = this.sequence
-			.filter((block) => block.stitches.length > 2)
-			.map((block) => {
-				return new Block(
-					block.stitches.filter((stitch) => stitch !== null),
-					block.colour
-				);
-			});
-
-		for (let i = 0; i < newSequence.length; i++) {
-			const block = newSequence[i];
-
-			// colour change if colour not the same
-			if (
-				prevColour?.red !== block.colour?.red ||
-				prevColour?.green !== block.colour?.green ||
-				prevColour?.blue !== block.colour?.blue
-			) {
-				preBytes.push(["stop", 0, 0]);
-				prevColour = block.colour;
-			}
+		for (let i = 0; i < this.sequence.length; i++) {
+			const block = this.sequence[i];
 
 			// jump to new block if points not the same
 			if (cP !== block.stitches[0]) {
@@ -302,6 +285,18 @@ class Container {
 		});
 
 		FileSaver(new Blob([bytes]), filename + ".exp");
+	}
+
+	private sequenceSanitise() {
+		// sanitizes the sequence (removes blocks with <3 stitches, removes null points)
+		this.sequence = this.sequence
+			.filter((block) => block.stitches.length > 2)
+			.map((block) => {
+				return new Block(
+					block.stitches.filter((stitch) => stitch !== null),
+					block.colour
+				);
+			});
 	}
 }
 

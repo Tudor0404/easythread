@@ -30,13 +30,12 @@ const Sidebar: React.FC = () => {
 	});
 	const { ref } = useResizeObserver({
 		onResize: ({ width }) => {
-			setColoursPerPage(
-				//@ts-ignore
-				Math.floor((width / 26) * 11) < 10
-					? 10
-					: //@ts-ignore
-					  Math.floor((width / 26) * 11)
-			);
+			if (width !== undefined)
+				setColoursPerPage(
+					Math.floor((width / 26) * 7) < 10
+						? 10
+						: Math.floor((width / 26) * 7)
+				);
 			setCurrPage(1);
 		},
 	});
@@ -96,7 +95,7 @@ const Sidebar: React.FC = () => {
 						</p>
 					</div>
 				</div>
-				<div ref={ref} className="h-[300px] items-start justify-center">
+				<div ref={ref} className="h-[200px] items-start justify-center">
 					<div className="flex w-full flex-row flex-wrap items-start justify-center">
 						{DMCColours.slice(
 							(currPage - 1) * coloursPerPage,

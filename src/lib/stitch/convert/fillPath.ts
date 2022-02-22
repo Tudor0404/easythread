@@ -3,8 +3,8 @@ import Paper from "paper";
 import rowGutter from "./rowGutter";
 import itemToPathItem from "../../svg/itemToPathItem";
 import Graph from "../Graph";
-import Block from "../Block";
 import straightSubdivision from "./straightSubdivision";
+import runningPath from "./runningPath";
 
 async function fillPath(
 	path: paper.PathItem,
@@ -79,47 +79,6 @@ async function fillPath(
 	}
 
 	let pointBlocks: paper.Point[][] = [];
-
-	/*
-public getConnectedSubGraphs(): Graph[] {
-		create a copy of the variables
-		let adj = [...this.adjacencyList];
-		let ref = [...this.referenceTable];
-		let graphs: Graph[] = [];
-
-		while (adj.length > 0) {
-			let visited: boolean[] = new Array(adj.length);
-
-			visited.fill(false);
-
-			this.recursionCheck(0, visited, adj);
-
-			let G = new Graph(ref.filter((_val, i) => visited[i] === true));
-
-			add edges in new graph
-			visited.forEach((e, i) => {
-				if (e) {
-					adj[i]
-						.map((e, i) => ref[e])
-						.forEach((e) => {
-							console.log(G.addEdge(ref[i], e));
-						});
-				}
-			});
-
-			remove edges in current graph
-			for (let i = visited.length - 1; i > -1; i--) {
-				if (visited[i]) this.removeVertex(i);
-			}
-
-			console.log(G.adjacencyList, adj);
-
-			graphs.push(G);
-		}
-
-		return graphs;
-	}
-	*/
 
 	// get connected subgraphs
 	let visitedIndexed: number[] = new Array(graph.adjacencyList.length);
