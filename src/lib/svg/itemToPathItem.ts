@@ -6,7 +6,7 @@ const toPath = require("element-to-path");
 
 /**
  * @description converts any item into a pathItem if it can be
- * @param item item to convert
+ * @param {paper.Item} item item to convert
  * @returns {Promise<paper.Path | paper.PathItem | paper.CompoundPath | undefined>}
  */
 async function itemToPathItem(

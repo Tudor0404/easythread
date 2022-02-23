@@ -1,3 +1,9 @@
+/**
+ * @description gets the closest point from one to a set of others, returning the index in the list, or null is none are found
+ * @param {paper.Point} start point to compare against
+ * @param {paper.Point[]} points  list of available point to choose from
+ * @returns {number | null} closest index
+ */
 function getClosestPoint(
 	start: paper.Point,
 	points: paper.Point[]

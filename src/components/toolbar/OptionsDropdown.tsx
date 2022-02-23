@@ -33,6 +33,11 @@ const OptionsDropdown: React.FC<Props> = (props) => {
 		"fillGutterSpacing",
 		"1"
 	);
+	const [fillStitchLength, setFillStitchLength] = useStorageState<string>(
+		localStorage,
+		"fillStitchLength",
+		"4"
+	);
 
 	// save hook data directly to local storage, allows for non-React.FC to access them
 	useEffect(() => {
@@ -47,6 +52,9 @@ const OptionsDropdown: React.FC<Props> = (props) => {
 	useEffect(() => {
 		window.localStorage.setItem("fillGutterSpacing", fillGutterSpacing);
 	}, [fillGutterSpacing]);
+	useEffect(() => {
+		window.localStorage.setItem("fillStitchLength", fillStitchLength);
+	}, [fillStitchLength]);
 
 	return (
 		<Dropdown
@@ -134,6 +142,15 @@ const OptionsDropdown: React.FC<Props> = (props) => {
 						className="mx-0.5 max-w-[70px] !px-0.5 !py-0"
 						setValue={setFillGutterSpacing}
 						value={fillGutterSpacing}
+					></NumberInput>
+					<p>mm</p>
+				</div>
+				<div className="flex w-[250px] flex-row items-center justify-start p-1">
+					<p className="mr-2">Fill stitch length</p>
+					<NumberInput
+						className="mx-0.5 max-w-[70px] !px-0.5 !py-0"
+						setValue={setFillStitchLength}
+						value={fillStitchLength}
 					></NumberInput>
 					<p>mm</p>
 				</div>

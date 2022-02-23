@@ -1,3 +1,6 @@
+/**
+ * @description creates event listeners between multiple endpoints, this allows for seperate components to communicate
+ */
 const eventBus = {
 	on(event: any, callback: any) {
 		document.addEventListener(event, (e) => callback(e.detail));
