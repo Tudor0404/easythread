@@ -16,7 +16,7 @@ import { getClosestPoint } from "../helpers";
  */
 async function fillPath(
 	path: paper.PathItem,
-	stitchLength: number = 4,
+	stitchLength: number = 2.7,
 	carryOnPoint: paper.Point | null = null,
 	fillGutterSpacing: number = 1
 ): Promise<paper.Point[][] | false> {
@@ -120,15 +120,11 @@ async function fillPath(
 		let startPoint = 0;
 
 		// get point closest to last for smaller jump distances
-		if (carryOnPoint || i > 1) {
+		if (i > 1) {
 			const potentialClosestPoint = getClosestPoint(
-				// already checked if carryOnPoint is null or not
-				//@ts-ignore
-				i > 1
-					? pointBlocks[pointBlocks.length - 1][
-							pointBlocks[pointBlocks.length - 1].length - 1
-					  ]
-					: carryOnPoint,
+				pointBlocks[pointBlocks.length - 1][
+					pointBlocks[pointBlocks.length - 1].length - 1
+				],
 				graph.referenceTable
 					.filter((e, c) => availableVertices.includes(c))
 					.map((e) => e.point)

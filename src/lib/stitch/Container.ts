@@ -53,7 +53,7 @@ class Container {
 				try {
 					let result = await fillPath(
 						pathItem,
-						fillStitchLength,
+						stitchLength,
 						this.sequence.length > 0
 							? this.sequence[this.sequence.length - 1].stitches[
 									this.sequence[this.sequence.length - 1]
