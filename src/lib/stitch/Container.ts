@@ -16,6 +16,11 @@ import eventBus from "../eventBus";
 class Container {
 	public sequence: Block[] = [];
 
+	/**
+	 * @description converts SVGs into stitch blocks
+	 * @param layer layer to convert
+	 * @returns {void}
+	 */
 	public async convertToBlocks(layer: paper.Layer) {
 		this.sequence = [];
 
@@ -35,8 +40,10 @@ class Container {
 			parseFloat(
 				window.localStorage.getItem("fillGutterSpacing") || "1"
 			) || 1;
-
-		console.log(fillGutterSpacing);
+		const fillStitchLength =
+			parseFloat(
+				window.localStorage.getItem("fillStitchLength") || "4"
+			) || 4;
 
 		for (const item of leafItems) {
 			let strokeFlag = false;
@@ -46,7 +53,7 @@ class Container {
 				try {
 					let result = await fillPath(
 						pathItem,
-						stitchLength,
+						fillStitchLength,
 						this.sequence.length > 0
 							? this.sequence[this.sequence.length - 1].stitches[
 									this.sequence[this.sequence.length - 1]
@@ -113,6 +120,16 @@ class Container {
 		eventBus.dispatch("setCanvasLayer", this.convertToSVG());
 	}
 
+	/**
+	 * @description generates a path of the outline of path,
+	 * @param path path
+	 * @param width width of the stroke
+	 * @param stitchLength maximum stitch length
+	 * @param spaceBetweenNormals space between the normals of satin stitching
+	 * @param satinStitchLength maximum subsection length of satin stitches
+	 * @param colour colour of the block
+	 * @returns {Block} generated path
+	 */
 	private strokeToBlock(
 		path: string,
 		width: number,
@@ -289,6 +306,7 @@ class Container {
 			}
 		});
 
+		// saves file
 		FileSaver(new Blob([bytes]), filename + ".exp");
 	}
 

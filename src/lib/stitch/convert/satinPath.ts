@@ -86,8 +86,8 @@ function satinPath(
 
 /**
  * @description checks for places at which a curve self touches, and returns ranges at which satin stitches should not occur.
- * @param path path to check against
- * @param width total width of the path
+ * @param {paper.Path} path path to check against
+ * @param {number} width total width of the path
  * @returns {[number, number][]} ranges at which satin should not occur
  */
 function getExclusionRanges(
@@ -137,6 +137,12 @@ function getExclusionRanges(
 	});
 }
 
+/**
+ * @description checks if an offset is between a set of ranges
+ * @param {number} distance distance away from start
+ * @param {[number, number][]} ranges ranges at which the distance away would be true
+ * @returns {boolean}
+ */
 function isInRanges(distance: number, ranges: [number, number][]): boolean {
 	for (let i = 0; i < ranges.length; i++) {
 		const range = ranges[i];

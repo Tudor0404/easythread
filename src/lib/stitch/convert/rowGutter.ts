@@ -1,5 +1,12 @@
 import Paper from "paper";
 
+/**
+ * @description slices through a path at given intervals ata given angle to generate points at which thread should go across a shape
+ * @param {paper.Path} pathpath to check intersects at
+ * @param {number} spacing spacing between gutters
+ * @param {paper.Point} normal unit vector normal
+ * @returns
+ */
 function rowGutter(
 	path: paper.PathItem,
 	spacing: number = 0.5,

@@ -4,12 +4,19 @@ import rowGutter from "./rowGutter";
 import itemToPathItem from "../../svg/itemToPathItem";
 import Graph from "../Graph";
 import straightSubdivision from "./straightSubdivision";
-import runningPath from "./runningPath";
 import { getClosestPoint } from "../helpers";
 
+/**
+ * @description generates a path of points to fill a shape without leaving any empty spaces
+ * @param path path
+ * @param stitchLength maximum length of the stitches
+ * @param carryOnPoint point from which to start closest to
+ * @param fillGutterSpacing space between gutters
+ * @returns {Promise<paper.Point[][] | false>}
+ */
 async function fillPath(
 	path: paper.PathItem,
-	stitchLength: number = 2.7,
+	stitchLength: number = 4,
 	carryOnPoint: paper.Point | null = null,
 	fillGutterSpacing: number = 1
 ): Promise<paper.Point[][] | false> {
@@ -50,8 +57,8 @@ async function fillPath(
 		}
 	}
 
+	// sort all curve locations by the path offset
 	for (const key of Object.keys(clByOutline)) {
-		// sort all curve locations by the path offset
 		clByOutline[key].sort((a, b) => {
 			const d1 =
 				a.path.getOffsetOf(a.point) ||
@@ -74,7 +81,7 @@ async function fillPath(
 				clByOutline[key][(i + 1) % clByOutline[key].length];
 
 			graph.addEdge(e1, e2);
-			// add edge every other one to ensure even verteces
+			// add edge every other one to ensure all even verteces
 			if (i % 2 === 1) graph.addEdge(e1, e2);
 		}
 	}
@@ -113,11 +120,15 @@ async function fillPath(
 		let startPoint = 0;
 
 		// get point closest to last for smaller jump distances
-		if (i > 1) {
+		if (carryOnPoint || i > 1) {
 			const potentialClosestPoint = getClosestPoint(
-				pointBlocks[pointBlocks.length - 1][
-					pointBlocks[pointBlocks.length - 1].length - 1
-				],
+				// already checked if carryOnPoint is null or not
+				//@ts-ignore
+				i > 1
+					? pointBlocks[pointBlocks.length - 1][
+							pointBlocks[pointBlocks.length - 1].length - 1
+					  ]
+					: carryOnPoint,
 				graph.referenceTable
 					.filter((e, c) => availableVertices.includes(c))
 					.map((e) => e.point)
@@ -125,53 +136,11 @@ async function fillPath(
 
 			if (potentialClosestPoint !== null)
 				startPoint = potentialClosestPoint;
-
-			console.log(
-				pointBlocks[pointBlocks.length - 1][
-					pointBlocks[pointBlocks.length - 1].length - 1
-				],
-				potentialClosestPoint,
-				graph.referenceTable[startPoint].point,
-				graph.referenceTable
-					.filter((e, c) => availableVertices.includes(c))
-					.map((e) => e.point)
-			);
 		}
 
-		/*
-
-
-for (let i = 1; i < counter; i++) {
-		let availableVertices: number[] = [];
-
-		for (let j = 0; j < visitedIndexed.length; j++) {
-			if (visitedIndexed[j] === i) availableVertices.push(j);
-		}
-
-		const result = graph.getEulorianPath(availableVertices[0]);
-		let buffer: paper.Point[] = [];
-
-		if (result) {
-			for (let i = 0; i < result.length - 1; i++) {
-				const divisons = straightSubdivision(
-					result[i].point,
-					result[i + 1].point,
-					stitchLength,
-					true
-				);
-				buffer.push(...divisons);
-			}
-			buffer.push(result[result.length - 1].point);
-			pointBlocks.push(buffer);
-		}
-	}
-
-		*/
-
+		// generate path then create sub divisons to prevent stitch lengths being too far apart
 		const result = graph.getEulorianPath(availableVertices[startPoint]);
 		let buffer: paper.Point[] = [];
-
-		console.log(result);
 
 		if (result) {
 			for (let i = 0; i < result.length - 1; i++) {
@@ -191,6 +160,11 @@ for (let i = 1; i < counter; i++) {
 	return pointBlocks;
 }
 
+/**
+ * @description calculates the average normal across half of the shape
+ * @param pathData path
+ * @returns {paper.Point} the unit vector of the normal
+ */
 function getDirectionVector(pathData: string): paper.Point {
 	//already made sure the item cannot be a CompoundPath
 	//@ts-ignore

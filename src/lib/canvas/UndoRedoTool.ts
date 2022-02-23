@@ -1,12 +1,15 @@
 import Paper from "paper";
 import eventBus from "../eventBus";
 import options from "../../data/options.json";
-import Container from "../stitch/Container";
 
 class UndoRedoTool {
 	private static undoStack: paper.Layer[] = [];
 	private static redoStack: paper.Layer[] = [];
 
+	/**
+	 * @description grabs the 1st layer of the project and saves it to a stack
+	 * @returns {void}
+	 */
 	public static addStateDefault() {
 		if (Paper.project.layers.length === 0) return;
 
@@ -22,6 +25,9 @@ class UndoRedoTool {
 		UndoRedoTool.dispatchAvailability();
 	}
 
+	/**
+	 * @description gets the previous state saved in the undo stack
+	 */
 	public static undo() {
 		if (UndoRedoTool.undoStack.length > 0) {
 			UndoRedoTool.redoStack.push(
@@ -35,6 +41,9 @@ class UndoRedoTool {
 		UndoRedoTool.dispatchAvailability();
 	}
 
+	/**
+	 * @description gets the previous state saved in the redo stack
+	 */
 	public static redo() {
 		if (UndoRedoTool.redoStack.length > 0) {
 			UndoRedoTool.undoStack.push(
@@ -52,6 +61,9 @@ class UndoRedoTool {
 		eventBus.dispatch("redoAvailable", UndoRedoTool.redoStack.length > 0);
 	}
 
+	/**
+	 * @description checks and reduces the size of the stacks if they are getting too big
+	 */
 	private static checkSize() {
 		if (UndoRedoTool.undoStack.length > options.maxUndo)
 			UndoRedoTool.undoStack.slice(
