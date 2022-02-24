@@ -18,5 +18,10 @@ Glossary
   Lerp
     Given 2 points (start and end) and a parameter (0 <= *x* <= 100), a lerp function returns the point *x%* away from the start point towards the end point.
 
-  JWT
-	JSON web tokens are composed of an encoded string which can only be decoded using a secret key. These tokens are normally issued to users so that they can pass these tokens with their requests to a server, to prove their identity. 
+  Eulerian graph
+	A graph in which all edges can be visited exactly once
+
+  Eulerian circuit
+	A path starting at any point on a graph where all edges are visited once, and it ends up where it started
+
+

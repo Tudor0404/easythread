@@ -1,8 +1,8 @@
 /**
  * @description copies the styling of one item to another, or from its parent. Returns the item
- * @param reciever item that will recieve the styling
- * @param giver item that will give the styling, if left out, will get the first parent that has valid styling
- * @returns {paper.Item}
+ * @param {paper.Item} reciever item that will recieve the styling
+ * @param {paper.Item | null} giver item that will give the styling, if left out, will get the first parent that has valid styling
+ * @returns {paper.Item} reciever with the new styling
  */
 function copyStyling(reciever: paper.Item, giver: paper.Item | null = null) {
 	if (reciever.hasFill() || reciever.hasStroke()) {

@@ -2,3 +2,6 @@ Embird
 lerping
 lerp
 alt
+Hierholzer
+eulerian
+Eulerian

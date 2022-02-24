@@ -3,8 +3,8 @@ import Paper from "paper";
 
 /**
  * @description generates a set of points that
- * @param {paper.Point} path path that the normals will be calculated at
- * @param {number} width width of the satin (bottom to top)
+ * @param {paper.Path} path path to check against
+ * @param {number} width total width of the path
  * @param {number} stitchLength maximum length of a stitch in a satin stitch, a higher number is normally used because of the straightness
  * @param {number} spaceBetweenNormals distance at which the normals are calculated at
  * @returns {paper.Point[]} points at which stitches are made at

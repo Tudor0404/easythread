@@ -1,5 +1,3 @@
-//TODO: consider if path continues far away, jump stitch away
-
 /**
  * @description generates a set of points along a given path, with each point a stitchLength units away
  * @param {paper.Path} path path that the stitches will go across

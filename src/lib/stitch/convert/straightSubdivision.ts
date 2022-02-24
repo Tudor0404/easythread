@@ -1,7 +1,7 @@
 import Paper from "paper";
 
 /**
- * @description
+ * @description generates intermediate points on a start line between 2 point given a maximum length between each point
  * @param {paper.Point} start start point of the stitch block
  * @param {paper.Point} end end point of the stitch block
  * @param {number} stitchLength maximum length between stitches
@@ -56,11 +56,10 @@ function straightSubdivision(
 }
 
 /**
- * @description Gets the point
- * @param start start point
- * @param end end point
- * @param distance desired distance away from the start point
- * @returns
+ * @description gets the closest point from one to a set of others, returning the index in the list, or null is none are found
+ * @param {paper.Point} start point to compare against
+ * @param {paper.Point[]} points  list of available point to choose from
+ * @returns {number | null} closest index
  */
 function getPointDistanceAway(
 	start: paper.Point,

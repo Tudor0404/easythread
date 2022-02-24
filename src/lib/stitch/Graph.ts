@@ -5,16 +5,14 @@ class Graph {
 	constructor(curveLocations: paper.CurveLocation[]) {
 		this.adjacencyList = new Array(curveLocations.length);
 		this.referenceTable = curveLocations;
-		for (let i = 0; i < curveLocations.length; i++) {
-			this.adjacencyList[i] = [];
-		}
+		this.adjacencyList.fill([]);
 	}
 
 	/**
 	 *
-	 * @param cl1 vertex 1
-	 * @param cl2 vertex 2
-	 * @param sufficient whether the path finding algorithm will stop once all of the sufficient edges have been visited
+	 * @param {paper.CurveLocation} cl1 vertex 1
+	 * @param {paper.CurveLocation} cl2 vertex 2
+	 * @param {boolean} sufficient whether the path finding algorithm will stop once all of the sufficient edges have been visited
 	 * @returns {boolean} if the edge has been added
 	 */
 	public addEdge(
@@ -105,26 +103,7 @@ class Graph {
 	 * @returns {number[]} path to take
 	 */
 	public getEulorianPath(startingVertex = 0): paper.CurveLocation[] | false {
-		const eulroianResult = this.isEulorian();
 		let curVertex = startingVertex;
-
-		// TODO: fix eurlorian result for custom starting point
-		// // get point to start at closest point
-		// if (eulroianResult === 1) {
-		// 	// eulorian cycle, can start from anywhere
-		// 	curVertex = startingVertex;
-		// } else if (eulroianResult === 2) {
-		// 	// if its a eulorian path, must choose one of the 2 odd vertecies
-		// 	for (let i = 0; i < this.adjacencyList.length; i++) {
-		// 		if (this.adjacencyList[i].length % 2 === 1) {
-		// 			curVertex = i;
-		// 			break;
-		// 		}
-		// 	}
-		// } else {
-		// 	console.log("reached here");
-		// 	return false;
-		// }
 
 		let cPath: number[] = [];
 		let ePath: number[] = [];
@@ -149,6 +128,12 @@ class Graph {
 		return ePath.map((e) => this.referenceTable[e]);
 	}
 
+	/**
+	 * @description removes the edge of an undirected graph, given 2 vertices
+	 * @param u start vertex
+	 * @param v end vertex
+	 * @param adj adjacency list
+	 */
 	private removeEdge(
 		u: number,
 		v: number,

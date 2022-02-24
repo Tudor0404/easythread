@@ -16,6 +16,11 @@ import eventBus from "../eventBus";
 class Container {
 	public sequence: Block[] = [];
 
+	/**
+	 * @description converts SVGs into stitch blocks
+	 * @param layer layer to convert
+	 * @returns {void}
+	 */
 	public async convertToBlocks(layer: paper.Layer) {
 		this.sequence = [];
 
@@ -35,8 +40,6 @@ class Container {
 			parseFloat(
 				window.localStorage.getItem("fillGutterSpacing") || "1"
 			) || 1;
-
-		console.log(fillGutterSpacing);
 
 		for (const item of leafItems) {
 			let strokeFlag = false;
@@ -113,6 +116,16 @@ class Container {
 		eventBus.dispatch("setCanvasLayer", this.convertToSVG());
 	}
 
+	/**
+	 * @description generates a path of the outline of path,
+	 * @param path path
+	 * @param width width of the stroke
+	 * @param stitchLength maximum stitch length
+	 * @param spaceBetweenNormals space between the normals of satin stitching
+	 * @param satinStitchLength maximum subsection length of satin stitches
+	 * @param colour colour of the block
+	 * @returns {Block} generated path
+	 */
 	private strokeToBlock(
 		path: string,
 		width: number,

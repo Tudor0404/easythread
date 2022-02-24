@@ -247,10 +247,10 @@ Blocks of :term:`stitches<Stitch>` are more or less aligned to the normal at whi
 
 However, this method does not work if during the 2nd step, there are more than 2 solutions to the line intersecting with the path. There are multiple approaches to this problem, them being:,
 
-#.  Seperate the SVG path into multiple individual ones, where each shape will not encounter the issue
-#.  Or, branch out and carry out the same method in each branch, then do a :term:`jump stitch<Jump stitch>` to the other branch. 
+#.  Branch out and carry out the same method in each branch, then do a :term:`jump stitch<Jump stitch>` to the other branch. 
+#.  Or, create gutters (slicing using multiple parallel equidistant lines) in the shape to create an eulerian graph, then visit each edge.
 
-These 2 methods can be seen below in ``Figure 5``.
+The first 2 methods can be seen below in ``Figure 5``.
 
 .. figure:: /_static/images/complex-fill-diagram.png
     :alt: complex fill diagram
@@ -259,7 +259,11 @@ These 2 methods can be seen below in ``Figure 5``.
 
     ``Firgure 5`` SVG fill steps in concave shapes
 
-Both methods seem to be complex, but method 1 could be done more easily if there is a way to find the minimum point at which the line has more than 2 solutions, then divide the shape there. If that is hard to do, method 2 is to be used and treat the multiple branches as a tree, and use depth-first traversal to do the jump stitches. As a result, method 2 would create a cleaner result because the jump stitches would be the closest together.
+For the last method, to create a :term:`eulerian graph<Eulerian graph>` all vertices in a graph must be even (even number of edges connecting to it). And from that, a :term:`eulerian circuit<Eulerian circuit>` can be created using Hierholzer's algorithm. After guttering, all vertices will have an odd degree of edges (gutter edge, and 2 edges to the adjacent points on the outline of the shape), to make them all even, edges can be added between every other outline connection, following this, all vertices will either have 2 or 4 edges, allowing for an eulerian circuit. This can be seen in ``Figure 6``
+
+.. todo add graph exmaple FIGURE 6
+
+Since there is ambiguity in how to achieve a good result with the first 2 methods, the third method will be used, where the main challenge will be to create the gutter lines and generate the graph using the intersections of the gutter lines.
 
 Transcoding SVG paths
 ---------------------
