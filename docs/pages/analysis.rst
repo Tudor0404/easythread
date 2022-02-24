@@ -6,7 +6,7 @@ Analysis
 Brief Introduction
 ******************
 
-Currently there are very few options to consider when you want to convert vector images such as SVGs into embroidery file types (eg. PES). Most of the solutions require you to download a paid program, pay for a person to do it for you, or pay on a per file basis. 
+Currently, there are very few options to consider when you want to convert vector images such as SVGs into embroidery file types (e.g. PES). Most of the solutions require you to download a paid program, pay for a person to do it for you, or pay on a per-file basis. 
 
 This project targets this gap in the market. EasyThread is a client-server model which transcodes between SVG and embroidery file types. The target audience is people with embroidery machines who want to embroider SVGs easily and quickly.
 
@@ -32,11 +32,77 @@ Many solutions are also dated and provide a negative UI experience for the user 
 Target Audience
 ***************
 
-Anyone with an embroidery machine which allows for automatic embroidery should be able to use this software. This means that the level of 
+Anyone with an embroidery machine which allows for automatic embroidery should be able to use this software. This means that the level of technology literacy will vary widely, so a minimalistic approach, with the option to expand upon the initial abilities of the program would be favourable.
+
+I will work directly with Mrs Popescu, to gain an understanding of what a potential end user would want in such a program.
+
+Interview
+=========
+
+* Interviewer = I
+* User = U
+
+| **I What are some of the issues that you have faced with software which already exists?**
+| **U** They are all very expensive, or have a short trial. Also, most of the conversion processes do not even work with my machine, the stitches get very tight | or very loose, I have not been able to get a good result on any so far
+| 
+| **I On what type of device would you use the software?**
+| **U** A desktop or laptop.
+| 
+| **I What embroidery file type do you need the software to export to?**
+| **U** .ART files preferably since I have a Bernina machine, but .EXP files would work well too.
+| 
+| **I What features are you looking for in this project?**
+| **U** First of all, if the program creates a design that works with my machine, I will be very happy. Apart from that, I would like access to some tools to | see how the design might look like as a finished product.
+| 
+| **I What type of stitches/patterns would you need?**
+| **U** Satin, running and fill stitching
+| 
+| **I How much level of control do you want in such a program?**
+| **U** As much as possible in a clean way, most of the programs that already exist look very old
+| 
+| **I How comfortable are you with technology?**
+| **U** I wouldn't say that I am very capable, but I know the basics
+
+
+From this interview, I will adapt the `Objectives`_ to fit the needs of Mrs. Popescu.
+
 
 ************
 Alternatives
 ************
+
+Since most of the alternatives cost money, I was not able to test the conversion algorithms of them, however, there are some exmaple videos which show how they work 
+
+InkStitch_
+==========
+**Price** 
+	Free
+**Use** 
+	It is mainly used to convert vector files into embroidery files, and embroidery files between them.
+**Platform** 
+	Inkscape (Windows/Mac/Linux)
+**Pros**
+	* Free
+	* 
+	*
+**Cons**
+	* conversion 
+
+Wilcom_
+=======
+**Price**
+	Need to enquire
+**Use** 
+	An all-round tool used to create embroidery files, including digitising
+**Platform** 
+	Windows/Mac/Linux
+**Pros**
+	* Very mature
+	* Professional-grade
+	* Works with most file types
+**Cons**
+	* Very costly
+	* Not aimed at hobbyists 
 
 ********
 Research
@@ -81,7 +147,7 @@ Angular_
 Vue.js_
 ^^^^^^^
 
-    Vue.js is the least popular amongst them. It is a progressive web interface for one page applications, and can be used on multiple platforms.
+    Vue.js is the least popular amongst them. It is a progressive web interface for one-page applications, and can be used on multiple platforms.
 
     :Advantages: 
         * Tiny size allows for fast client loading 
@@ -347,7 +413,9 @@ Limitations
 
 Since the website will contain a lot of information, only medium to large screens should be able to view the webpage (>= 800x1024 viewport). If the viewport of the device does not suffice the requirement, another webpage should be shown that prompts the user to use another device. The website should be able to run on most devices at least 5 years old, because of this, the website must match all the objectives on my 6-year-old laptop with the tech specs given below. Also, it should be accessible to anyone who knows how to use a browser. Most of my user base will be artists and people who are not as computer-literate, so the website should be familiar to other tools that they might have used before, such as Illustrator, Google Docs or Microsoft PowerPoint.
 
-.. //TODO: add tech specs
+* CPU: Intel i5-6200U 
+* RAM: 8GB
+* Main storage: 256GB SSD
 
 Other secondary limitations include:
 
@@ -360,3 +428,5 @@ Other secondary limitations include:
 .. _React.js: https://reactjs.org/
 .. _Angular: https://angular.io/
 .. _Vue.js: https://vuejs.org/
+.. _InkStitch: https://inkstitch.org/
+.. _Wilcom: https://www.wilcom.com/Products/EmbroideryStudioe4Designing.aspx

@@ -5,3 +5,5 @@ alt
 Hierholzer
 eulerian
 Eulerian
+EasyThread
+Popescu
