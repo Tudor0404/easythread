@@ -71,29 +71,38 @@ From this interview, I will adapt the `Objectives`_ to fit the needs of Mrs. Pop
 Alternatives
 ************
 
-Since most of the alternatives cost money, I was not able to test the conversion algorithms of them, however, there are some exmaple videos which show how they work 
+Since most of the alternatives cost money, I was not able to test the conversion algorithms of them, however, there are some example videos which show how they work 
 
 InkStitch_
 ==========
 **Price** 
 	Free
 **Use** 
-	It is mainly used to convert vector files into embroidery files, and embroidery files between them.
+	It is mainly used to convert vector files into embroidery files, and embroidery files between them. It also allows the adjusting of particular stitches. This combined with the powerful tool that is Inkscape (vector illustration software), makes it a comparable choice. 
 **Platform** 
 	Inkscape (Windows/Mac/Linux)
 **Pros**
 	* Free
-	* 
-	*
+	* Can convert easily between embroidery file types
 **Cons**
-	* conversion 
+	* When converting, stitch direction is always the same
+	* Unintuitive design
+	* Hard to learn
+
+.. figure:: /_static/images/inkstitch_conversion_example.jpg
+    :alt: inkstitch conversion example
+    :align: center
+    :width: 50%
+
+    InkStitch example
+
 
 Wilcom_
 =======
 **Price**
 	Need to enquire
 **Use** 
-	An all-round tool used to create embroidery files, including digitising
+	An all-round tool used to create embroidery files, including digitizing. It mainly focuses on B2B sales, which means that the tools that it offers are directly for that target demographic. Separate modules can be purchased to expand on top of the main product.
 **Platform** 
 	Windows/Mac/Linux
 **Pros**
@@ -103,6 +112,13 @@ Wilcom_
 **Cons**
 	* Very costly
 	* Not aimed at hobbyists 
+
+.. figure:: /_static/images/wilcom_conversion_example.png
+    :alt: Wilcom conversion example
+    :align: center
+    :width: 50%
+
+    Wilcom example
 
 ********
 Research
@@ -271,10 +287,6 @@ The solution of ``x`` as the roots can be found using ``x = 0.5(b += (b^2 - 4ac)
 
 For cubics, the general formula is much more complex and can be found `here <https://math.vanderbilt.edu/schectex/courses/cubic/>`_. But, the same principal is applied.
 
-Understanding the problem
-^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. todo
 
 To gain an understanding on how embroidery files are made, `Embird <https://www.embird.net/>`_ was used to view an example file and analyse it.
 
@@ -283,21 +295,24 @@ To gain an understanding on how embroidery files are made, `Embird <https://www.
     :align: center
     :width: 70%
 
-    ``Firgure 1`` 3D render of squirrel.dst 
+    ``Figure 1`` 3D render of squirrel.dst 
 
 .. figure:: /_static/images/squirrel-Stitches.png
     :alt: squirrel stitch render
     :align: center
     :width: 70%
 
-    ``Firgure 2`` stitches in squirrel.dst 
+    ``Figure 2`` stitches in squirrel.dst 
 
 .. figure:: /_static/images/squirrel-density.png
     :alt: squirrel density render
     :align: center
     :width: 70%
 
-    ``Firgure 3`` Denisty map of squirrel.dst 
+    ``Figure 3`` Denisty map of squirrel.dst 
+
+Encoding SVGs to Embroidery
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Transcoding SVG fills
 ---------------------
@@ -309,7 +324,7 @@ Blocks of :term:`stitches<Stitch>` are more or less aligned to the normal at whi
     :align: center
     :width: 60%
 
-    ``Firgure 4`` SVG fill steps
+    ``Figure 4`` SVG fill steps
 
 However, this method does not work if during the 2nd step, there are more than 2 solutions to the line intersecting with the path. There are multiple approaches to this problem, them being:,
 
@@ -323,16 +338,45 @@ The first 2 methods can be seen below in ``Figure 5``.
     :align: center
     :width: 60%
 
-    ``Firgure 5`` SVG fill steps in concave shapes
+    ``Figure 5`` SVG fill steps in concave shapes
 
-For the last method, to create a :term:`eulerian graph<Eulerian graph>` all vertices in a graph must be even (even number of edges connecting to it). And from that, a :term:`eulerian circuit<Eulerian circuit>` can be created using Hierholzer's algorithm. After guttering, all vertices will have an odd degree of edges (gutter edge, and 2 edges to the adjacent points on the outline of the shape), to make them all even, edges can be added between every other outline connection, following this, all vertices will either have 2 or 4 edges, allowing for an eulerian circuit. This can be seen in ``Figure 6``
+For the last method, to create a :term:`eulerian graph<Eulerian graph>` all vertices in a graph must be even (even number of edges connecting to it). And from that, a :term:`eulerian circuit<Eulerian circuit>` can be created using Hierholzer's algorithm. After guttering, all vertices will have an odd degree of edges (gutter edge, and 2 edges to the adjacent points on the outline of the shape), to make them all even, edges can be added between every other outline connection, following this, all vertices will either have 2 or 4 edges, allowing for an eulerian circuit. This can be seen in ``Figure 6``.
 
-.. todo add graph exmaple FIGURE 6
+.. figure:: /_static/images/graph_diagram.png
+    :alt: example of constructed graph
+    :align: center
+    :width: 60%
+
+    ``Figure 6`` example of constructed graph
 
 Since there is ambiguity in how to achieve a good result with the first 2 methods, the third method will be used, where the main challenge will be to create the gutter lines and generate the graph using the intersections of the gutter lines.
 
 Transcoding SVG paths
 ---------------------
+
+SVG paths will be easier to encode. After a certain stroke width, the algorithm should encode a satin stitch to give the outline a width, otherwise a running stitch should be used.
+
+Running Stitch
+""""""""""""""
+
+To achieve a running stitch, the path can be sampled at set intervals in order from start to finish.
+
+Satin Stitch
+""""""""""""
+
+For satin stitches (zigzag along a path), the normal of the path can be sampled at a dense rate, much like a running stitch. The normal is then stored as a unit vector. From that vector, 2 are created:
+
+#. `Normal * stroke_width/2`
+#. `-Normal * stroke_width/2`
+
+Each of the vector is then added to the point at which the normal was sampled to create 2 points. The first point is connected to the second point, while the second point is connected to the first point of the next sample. This can be seen in `Figure 7`.
+
+.. figure:: /_static/images/satin_path.png
+    :alt: satin path explanation
+    :align: center
+    :width: 60%
+
+    ``Figure 7`` satin path explanation
 
 **********
 Objectives
