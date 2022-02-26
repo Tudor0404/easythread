@@ -5,14 +5,16 @@ class Graph {
 	constructor(curveLocations: paper.CurveLocation[]) {
 		this.adjacencyList = new Array(curveLocations.length);
 		this.referenceTable = curveLocations;
-		this.adjacencyList.fill([]);
+		for (let i = 0; i < curveLocations.length; i++) {
+			this.adjacencyList[i] = [];
+		}
 	}
 
 	/**
 	 *
-	 * @param {paper.CurveLocation} cl1 vertex 1
-	 * @param {paper.CurveLocation} cl2 vertex 2
-	 * @param {boolean} sufficient whether the path finding algorithm will stop once all of the sufficient edges have been visited
+	 * @param cl1 vertex 1
+	 * @param cl2 vertex 2
+	 * @param sufficient whether the path finding algorithm will stop once all of the sufficient edges have been visited
 	 * @returns {boolean} if the edge has been added
 	 */
 	public addEdge(
@@ -38,7 +40,7 @@ class Graph {
 	}
 
 	/**
-	 * @description helper function to depth-first fill a graph
+	 * @description helper function for the isConnected() function
 	 * @param {number} i vertex to check
 	 * @param {boolean[]} visited vertex visited status
 	 */
@@ -85,12 +87,6 @@ class Graph {
 		return ePath.map((e) => this.referenceTable[e]);
 	}
 
-	/**
-	 * @description removes the edge of an undirected graph, given 2 vertices
-	 * @param u start vertex
-	 * @param v end vertex
-	 * @param adj adjacency list
-	 */
 	private removeEdge(
 		u: number,
 		v: number,
