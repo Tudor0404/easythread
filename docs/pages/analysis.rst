@@ -2,6 +2,10 @@
 Analysis
 ########
 
+.. |br| raw:: html
+
+   <br />
+
 ******************
 Brief Introduction
 ******************
@@ -409,42 +413,32 @@ Website
 	#. The toolbar should be similar to existing programs such as Google Docs or Microsoft Word, so that users can navigate the program easily.
 	#. All items in this toolbar should always be visible
 	#. If the user types in the filename input, the filename should change throughout to the user specified name.
-	#. Dropdowns should be shown below the filename input. Clicking the dropdown, a menu should be expanded below the corresponding button. In each menu, buttons should be shown that do a descriptive function.
-		#. The 'File' dropdown should show a menu of items which associate to the graphic that the user is working on, or will be.
+	#. Dropdowns should open when clicking on the menu buttons, which are:
+		#. The 'File' dropdown should show a menu of items which associate to the graphic that the user is working on, or will be. This includes saving and opening files.
 		#. The 'Edit' dropdown should show a menu of items which associate to the current graphic.
 		#. The 'View' dropdown should show a menu of items which associate to how the graphic is displayed in the canvas.
-		#. The 'Help' dropdown should show a menu of items which describe what the website is, and how to use it.
 	#. Below the dropdown, multiple buttons and inputs should be shown which change how the graphic is displayed, or that change attributes of the graphic.
 		#. Buttons should be shown that undo or redo the graphic when pressed
 		#. Inputs should be shown that change the dimensions of the graphic when submitted
 		#. Buttons should be shown that change how the canvas looks when pressed.
 		#. A button which is different from the other in the toolbar should be shown only when the graphic has not been converted yet, that converts the graphic to an embroidery graphic.
-			#. Next to this button, a dropdown should be shown which changes how the conversion process behaves
+		#. A settings button which opens a list of inputs in a dropdown should be shown which changes how the conversion process behaves
 	#. The user should be able to save any graphic displayed to their local device in whatever state it is in the conversion process (SVG or embroidery), given they click the descriptive buttons.
 	#. The user should be able to open any SVG graphic, such that it can be used in the conversion process.
 #. The size of the icons and text should be big enough that all users can see them clearly, while preventing overflow
-#. The website should have a Google lighthouse score (measure of accessibility and performance) of at least 85.
 #. The website should run smoothly (>30fps) with little to no stuttering while dragging a 500kb sized graphic around, when using most computers. 
 #. The website should load in under half a second on a good connection.
 #. The website should be able to display all elements of it and be functional, on all screens with a viewport 800x1024 or higher (standard tablet size).
-#. The website should work well on touch based devices.
+#. *The website should work well on touch based devices.*
 #. *tooltips should be shown on some elements, such as buttons after hovering over them after a short while, to show a descriptive message about what the element does.*
-
 
 
 Conversion algorithm
 ====================
-#. Algorithms should be in place to convert between these embroidery file types:
-    * .exp
-    * *.pes (and .pec subsequently)*
-    * *.dst*
-    * *.xxx*
-    * *.jef*
-#. Conversion should be able to take place between SVG files embroidery file types, with a custom intermediary step that holds the absolute positions of all stitches/jumps/switches, such that it can encodeed to all the final file types, and be displayed to the screen using SVGs.
+#. The conversion should output an .exp file
+#. A Conversion should be able to take place between SVG files to embroidery file types
 	#. The stroke of an SVG path (given it has one) should be converted to a set of points resembling a satin stitch or running stitch, with the result being affected by the stroke width of the path
 	#. The fill of the SVG path (given it has one) should be filled such that when embroidered, the fabric below should be hard to be seen.
-		#. *The opacity attribute of the fill should make the stitch fill more sparse if the opacity is lower.*
-		#. *The fill should be reinforced before it is filled to prevent the stitches from coming loose.*
 	#. The colour of the stitch should be determined by the SVG path attribute, with the colours of different paths within the SVG file being done first to avoid the number of times the user has to switch the threads on the embroidery machine.
 	#. *Given the user said so, flatten the SVG, so there are no underlying paths. This can prevent too many threads being on top of each other.*
 #. Conversion should be able to take place between embroidery file types and PNG, by rendering embroidery file in SVG, then rendering it to bitmap.

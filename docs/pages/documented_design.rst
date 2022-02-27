@@ -547,11 +547,57 @@ Implementation
 .. code-block:: none
 	:linenos:
 
-	
+	procedure satinPath(path, width, stitchLength, spaceBetweenNormals) {
+		preBuffer ← new Array of tuple (point, point, number)
+		buffer ← new Array of point
+		
+		For i=0 to floor(path.length / spaceBetweenNormals)
+			offset ← spaceBetweenNormals * i
+			vector ← normal of path at offset
+			
+			preBuffer.push(
+				(point on path at offset) + (vector * -width/2),
+				(point on path at offset) + (vector * width/2),
+				offset
+			)
+		Endfor
+		
+		lastOffset ← 0
+		
+		For entry in preBuffer
+			start ← entry[0]
+			end ← entry[1]
+			
+			If distance from start to end > stitchLength Then 
+				lastOffset ← (lastOffset + 20) % 100
+			Else 
+				lastOffset ← 0
+			Endif
+			
+			buffer.push(points in straightSubdivision(start, end, stitchLength, false, lastOffset))
+		Endfor
+		
+		If buffer.length > 8 Then 
+			buffer.unshift(buffer[0], buffer[1],buffer[0], buffer[1])
+			buffer.push(buffer[buffer.length - 2],
+				buffer[buffer.length - 1],
+				buffer[buffer.length - 2],
+				buffer[buffer.length - 1])
+		Endif
+		
+		Return buffer
+	}
+
 
 **************
 Class Diagrams
 **************
+
+
+**************************
+Maintaining Data Integrity
+**************************
+
 
 **************
 User Interface

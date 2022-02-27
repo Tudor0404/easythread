@@ -23,6 +23,7 @@ author = 'Tudor Popescu'
 
 
 # -- General configuration ---------------------------------------------------
+from tokenize import tabsize
 import sphinx_rtd_theme
 
 # Add any Sphinx extension module names here, as strings. They can be
@@ -43,9 +44,9 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 # latex customisation
 latex_elements = {
     'papersize' : 'a4paper',
-    'pointsize' : '11pt',
+    'pointsize' : '12pt',
     'fontpkg': r'\usepackage[sfdefault]{roboto}\usepackage[T1]{fontenc}', # change font to roboto
-    'preamble': r'\usepackage[labelformat=empty]{caption}\usepackage{enumitem}\setlistdepth{99}', # remove 'fig {}' prefix to figures
+    'preamble': r'\usepackage[labelformat=empty]{caption}\usepackage{enumitem}\setlistdepth{99}\usepackage[utf8]{inputenc}\usepackage{pmboxdraw}\fvset{fontsize=auto}', # remove 'fig {}' prefix to figures
     'figure_align': 'H', # prevents automatic order of figures
 }
 
@@ -60,3 +61,5 @@ html_theme = "sphinx_rtd_theme"
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
+
+tabsize = 4

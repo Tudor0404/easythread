@@ -42,12 +42,6 @@ function satinPath(
 		const start = preBuffer[i][0];
 		const end = preBuffer[i][1];
 
-		// if (isInRanges(preBuffer[i][2], ranges)) {
-		// 	let c = new Paper.Shape.Circle(start, 1);
-		// 	c.fillColor = new Paper.Color("red");
-		// }
-
-		// add offset only if the distance is larger than the stitch length, increment offset to change it every normal
 		if (start.getDistance(end, false) > Math.pow(stitchLength, 2)) {
 			lastOffset = (lastOffset + 20) % 100;
 		} else {
@@ -63,11 +57,11 @@ function satinPath(
 		).forEach((p) => buffer.push(p));
 	}
 
-	if (buffer.length > 2) {
+	if (buffer.length > 8) {
 		buffer.unshift(buffer[0], buffer[1], buffer[0], buffer[1]); // tie-in
 	}
 
-	if (buffer.length > 2) {
+	if (buffer.length > 8) {
 		buffer.push(
 			buffer[buffer.length - 2],
 			buffer[buffer.length - 1],

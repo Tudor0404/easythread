@@ -15,7 +15,7 @@ import FileSaver from "file-saver";
 
 import Logo from "../../data/logo.png";
 import TextInput from "../input/TextInput";
-import Seperator from "../seperator/Seperator";
+import Seperator from "../separator/Separator";
 import OptionsDropdown from "./OptionsDropdown";
 import Dropdown from "../dropdown/Dropdown";
 import DropdownItem from "../dropdown/DropdownItem";
@@ -312,15 +312,6 @@ const Toolbar: React.FC<Props> = (props) => {
 											eventBus.dispatch("resetView", {});
 										}}
 									/>
-								</Dropdown>
-								<Dropdown
-									button={<p>Help</p>}
-									buttonStyle={buttonStyle}
-									align="left"
-									contentStyle="min-w-[150px]"
-								>
-									<DropdownItem label="About" />
-									<DropdownItem label="Credits" />
 								</Dropdown>
 							</div>
 						</div>
