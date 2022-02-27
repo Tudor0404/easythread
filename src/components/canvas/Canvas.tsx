@@ -26,6 +26,7 @@ const Canvas: React.FC<Props> = (props) => {
 	);
 	const [viewZoom, setViewZoom] = useState(1);
 
+	// click event for paper items
 	function onClickItemEvent(e: paper.MouseEvent) {
 		// prevent from selecting items below it
 		e.stopPropagation();
@@ -52,6 +53,7 @@ const Canvas: React.FC<Props> = (props) => {
 		}
 	}
 
+	// re-centre view
 	function setCenter() {
 		Paper.view.center = new Paper.Point(
 			Paper.project.view.viewSize.width / 2,
@@ -60,7 +62,7 @@ const Canvas: React.FC<Props> = (props) => {
 		updateRulerDimensions();
 	}
 
-	// add SVG to screen
+	// add SVG to paper project
 	function addSvg(svg: string, title?: string) {
 		Paper.project.clear();
 
@@ -133,6 +135,7 @@ const Canvas: React.FC<Props> = (props) => {
 		updateRulerDimensions();
 	}
 
+	// convert project into point blocks
 	async function convertSvg(layer: paper.Layer) {
 		if (Paper.project.layers.length === 0) return false;
 
@@ -144,6 +147,7 @@ const Canvas: React.FC<Props> = (props) => {
 		};
 	}
 
+	// checks if the project has already been converted
 	function checkIfHasSequence(): Container | false {
 		try {
 			if (Paper.project.layers.length === 0) return false;

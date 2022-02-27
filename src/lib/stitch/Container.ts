@@ -50,12 +50,6 @@ class Container {
 					let result = await fillPath(
 						pathItem,
 						stitchLength,
-						this.sequence.length > 0
-							? this.sequence[this.sequence.length - 1].stitches[
-									this.sequence[this.sequence.length - 1]
-										.stitches.length - 1
-							  ]
-							: null,
 						fillGutterSpacing
 					);
 					if (result) {
@@ -82,31 +76,35 @@ class Container {
 					}
 
 					pathDatas.forEach((path) => {
-						this.sequence.push(
-							this.strokeToBlock(
-								path,
-								item.strokeWidth,
-								stitchLength,
-								spaceBetweenNormals,
-								satinStitchLength,
-								item.strokeColor || new Paper.Color("black")
-							)
-						);
-					});
-				} else {
-					const pathData = (await itemToPathItem(item))?.pathData;
-					if (pathData === undefined) return;
-
-					this.sequence.push(
-						this.strokeToBlock(
-							pathData,
+						const result = this.strokeToBlock(
+							path,
 							item.strokeWidth,
 							stitchLength,
 							spaceBetweenNormals,
 							satinStitchLength,
 							item.strokeColor || new Paper.Color("black")
-						)
+						);
+
+						if (result.stitches.length > 4) {
+							this.sequence.push(result);
+						}
+					});
+				} else {
+					const pathData = (await itemToPathItem(item))?.pathData;
+					if (pathData === undefined) continue;
+
+					const result = this.strokeToBlock(
+						pathData,
+						item.strokeWidth,
+						stitchLength,
+						spaceBetweenNormals,
+						satinStitchLength,
+						item.strokeColor || new Paper.Color("black")
 					);
+
+					if (result.stitches.length > 4) {
+						this.sequence.push(result);
+					}
 				}
 			}
 		}
@@ -134,7 +132,7 @@ class Container {
 		satinStitchLength: number,
 		colour: paper.Color
 	): Block {
-		if (width > 4)
+		if (width >= 2)
 			return new Block(
 				satinPath(
 					new Paper.Path(path),

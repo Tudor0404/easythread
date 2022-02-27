@@ -19,10 +19,12 @@ const Tooltip: React.FC<Props> = (props) => {
 
 	useEffect(() => {
 		setShown(false);
-		setTimeout(() => {
+		const timeout = setTimeout(() => {
 			if (props.hoverRef.current) setShown(true);
 			else setShown(false);
 		}, 1000);
+
+		return clearTimeout(timeout);
 	}, [props.isHover]);
 
 	return isShown ? (

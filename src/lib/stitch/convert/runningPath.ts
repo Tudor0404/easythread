@@ -6,9 +6,9 @@
  * @returns {paper.Point[]} points at which stitches are made at
  */
 function runningPath(path: paper.Path, stitchLength: number): paper.Point[] {
-	let buffer = [];
-	const totalDistance = path.length;
-	let anchorDistances = [];
+	let buffer: paper.Point[] = [];
+	const totalDistance: number = path.length;
+	let anchorDistances: number[] = [];
 
 	// get anchor points
 	for (let i = 0; i < path.segments.length - 1; i++) {
@@ -31,9 +31,11 @@ function runningPath(path: paper.Path, stitchLength: number): paper.Point[] {
 		buffer.unshift(buffer[0], buffer[1], buffer[0], buffer[1]); // tie-in
 	}
 
+	console.log(anchorDistances);
+
 	// if the last point in the array is not equal to the end point, add the end point
-	if (buffer[buffer.length - 1] !== path.getPointAt(path.length)) {
-		buffer.push(path.getPointAt(path.length));
+	if (buffer[buffer.length - 1] !== path.getPointAt(totalDistance)) {
+		buffer.push(path.getPointAt(totalDistance));
 	}
 
 	if (buffer.length > 2) {

@@ -34,6 +34,17 @@ function getLeafItems(layer: paper.Layer | null = null): paper.Item[] {
 			return true;
 		});
 
+		// remove very small shapes
+		items = items.filter((e) => {
+			if (e.hasChildren()) return true;
+
+			//@ts-ignore
+			const item: paper.Path = e;
+			if (item.closed && !item.hasStroke() && Math.abs(item.area) < 5)
+				return false;
+			return true;
+		});
+
 		return items;
 	} catch {
 		return [];

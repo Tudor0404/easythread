@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import Button from "../button/Button";
 import {
 	ArrowLeftIcon,
@@ -12,7 +12,6 @@ import {
 } from "@heroicons/react/outline";
 import Paper from "paper";
 import FileSaver from "file-saver";
-import { Oval } from "react-loader-spinner";
 
 import Logo from "../../data/logo.png";
 import TextInput from "../input/TextInput";

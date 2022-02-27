@@ -32,7 +32,7 @@ const Modal: React.FC<Props> = (props) => {
 				<div
 					className={`z-40 flex min-h-[200px] min-w-[300px] flex-col items-center ${
 						!(props.children && props.description)
-							? "justify-center"
+							? "justify-between"
 							: "justify-start"
 					} gap-4 rounded-md bg-white bg-opacity-100 p-3 shadow-lg outline-black/30`}
 				>
@@ -46,27 +46,31 @@ const Modal: React.FC<Props> = (props) => {
 					<div
 						className={`flex ${
 							!(props.children && props.description)
-								? ""
-								: "flex-grow"
-						} justify-cente flex-col items-center`}
+								? "flex-grow"
+								: ""
+						} flex-col items-center justify-center`}
 					>
-						{props.description && (
-							<Dialog.Description>
-								This will permanently deactivate your account
-							</Dialog.Description>
-						)}
+						<div className="flex flex-grow items-center justify-center">
+							{props.description && (
+								<Dialog.Description>
+									{props.description}
+								</Dialog.Description>
+							)}
+						</div>
 
 						{props.children}
 
-						{!props.preventAutoClose && (
-							<Button
-								onClick={() => props.setOpen(false)}
-								filled
-								className="place-self-end"
-							>
-								Cancel
-							</Button>
-						)}
+						<div className="flex flex-grow items-end justify-end">
+							{!props.preventAutoClose && (
+								<Button
+									onClick={() => props.setOpen(false)}
+									filled
+									className="place-self-end"
+								>
+									Cancel
+								</Button>
+							)}
+						</div>
 					</div>
 				</div>
 			</Dialog>

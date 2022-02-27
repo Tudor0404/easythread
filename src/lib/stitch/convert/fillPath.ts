@@ -4,7 +4,6 @@ import rowGutter from "./rowGutter";
 import itemToPathItem from "../../svg/itemToPathItem";
 import Graph from "../Graph";
 import straightSubdivision from "./straightSubdivision";
-import runningPath from "./runningPath";
 import { getClosestPoint } from "../helpers";
 
 /**
@@ -18,7 +17,6 @@ import { getClosestPoint } from "../helpers";
 async function fillPath(
 	path: paper.PathItem,
 	stitchLength: number = 2.7,
-	carryOnPoint: paper.Point | null = null,
 	fillGutterSpacing: number = 1
 ): Promise<paper.Point[][] | false> {
 	let tempPath: string = "";

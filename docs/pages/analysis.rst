@@ -444,7 +444,7 @@ Conversion algorithm
 	#. The stroke of an SVG path (given it has one) should be converted to a set of points resembling a satin stitch or running stitch, with the result being affected by the stroke width of the path
 	#. The fill of the SVG path (given it has one) should be filled such that when embroidered, the fabric below should be hard to be seen.
 		#. *The opacity attribute of the fill should make the stitch fill more sparse if the opacity is lower.*
-		#. *The fill should be reinforced before it is filled to prevent the stiches from coming loose.*
+		#. *The fill should be reinforced before it is filled to prevent the stitches from coming loose.*
 	#. The colour of the stitch should be determined by the SVG path attribute, with the colours of different paths within the SVG file being done first to avoid the number of times the user has to switch the threads on the embroidery machine.
 	#. *Given the user said so, flatten the SVG, so there are no underlying paths. This can prevent too many threads being on top of each other.*
 #. Conversion should be able to take place between embroidery file types and PNG, by rendering embroidery file in SVG, then rendering it to bitmap.
@@ -455,7 +455,7 @@ Conversion algorithm
 Limitations
 ***********
 
-Since the website will contain a lot of information, only medium to large screens should be able to view the webpage (>= 800x1024 viewport). If the viewport of the device does not suffice the requirement, another webpage should be shown that prompts the user to use another device. The website should be able to run on most devices at least 5 years old, because of this, the website must match all the objectives on my 6-year-old laptop with the tech specs given below. Also, it should be accessible to anyone who knows how to use a browser. Most of my user base will be artists and people who are not as computer-literate, so the website should be familiar to other tools that they might have used before, such as Illustrator, Google Docs or Microsoft PowerPoint.
+Since the website will contain a lot of information, only medium to large screens should be able to view the webpage (>= 800x650 viewport). If the viewport of the device does not suffice the requirement, another webpage should be shown that prompts the user to use another device. The website should be able to run on most devices at least 5 years old, because of this, the website must match all the objectives on my 6-year-old laptop with the tech specs given below. Also, it should be accessible to anyone who knows how to use a browser. Most of my user base will be artists and people who are not as computer-literate, so the website should be familiar to other tools that they might have used before, such as Illustrator, Google Docs or Microsoft PowerPoint.
 
 * CPU: Intel i5-6200U 
 * RAM: 8GB

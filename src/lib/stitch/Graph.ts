@@ -5,9 +5,7 @@ class Graph {
 	constructor(curveLocations: paper.CurveLocation[]) {
 		this.adjacencyList = new Array(curveLocations.length);
 		this.referenceTable = curveLocations;
-		for (let i = 0; i < curveLocations.length; i++) {
-			this.adjacencyList[i] = [];
-		}
+		this.adjacencyList.fill([]);
 	}
 
 	/**

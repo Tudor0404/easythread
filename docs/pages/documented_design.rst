@@ -10,11 +10,60 @@ Flow Charts
     :align: center 
     
     Abstracted general system flowchart
-    
+
+**************
+Libraries used
+**************
+
+Libraries in web development are essential, a lot of edge cases and standards exist which need to be abstracted.
+
+User Interface
+==============
+
+react
+	Framework to create user interfaces
+
+react-popper
+	Helper module to obtain correct absolute positioning for tooltips
+
+react-storage-hooks
+	Saves data in a key key-value, which is easily accessible with react hooks 
+
+react-usestateref
+	Extension of the default use-state hook offered by react, which allows for immediate access of the data
+
+use-resize-observer
+	observer for when the window size changes, easily accessible with react hooks
+
+tailwindcss
+	Utility CSS framework, allows for quick designing of elements
+
+headlessui
+	Small collection of react tailwind components which abstracts some data handling
+
+Conversion Algorithm
+====================
+
+element-to-path
+	Converts any type of SVG shape into its path alternative
+
+svgson 
+	Transforms SVGs into a JSON object
+
+file-saver
+	Allows downloading files to a user's local drive with wide browser support 
+
+Both 
+====
+
+paper
+	Essential module which handles SVGs
 
 **********
 Algorithms
 **********
+
+The algorithms described below are the more complicated ones which make up the conversion process. Algorithms which ensure data integrity for react.js are not included, but rather in the diagrams.
 
 Hierholzer's algorithm
 ======================
@@ -36,7 +85,7 @@ Implementation
 		While cPath.length > 0 Then
 			u ← cPath[cPath.length - 1]
 			
-			# this.adjacencyList represents the adjacencyList of a graph in the current object
+			# this.adjacencyList represents the adjacency list of a graph in the current object
 			# this.adjacencyList is in the form of a 2D array of int
 
 			If this.adjacencyList[u].length === 0 Then
@@ -50,6 +99,70 @@ Implementation
 				delete index1 from this.adjacencyList[index2] if exists 
 			Endif
 		Endwhile
+	}
+
+
+Graph
+=====
+
+Description
+	The graph data structure is an essential part of being able to convert fills into stitches. Most of the functions and properties are public because immediate access is needed to them from outside the object, where it would not make sense to implement that logic inside the object.
+
+Implementation
+	src/lib/stitch/Graph.ts
+
+.. code-block:: none
+	:linenos:
+
+	Class Graph {
+		public referenceTable
+		public adjacencyList
+		
+		# Constructor
+		public procedure new (points) {
+			adjacencyList ← new 2D Array of int of length points.length
+			referenceTable ← points
+			fill adjacencyList with []
+		}
+		
+		# Adds edges between 2 points
+		public procedure addEdge(point1, point2) {
+			If point1 = point2 Then
+				Return False
+			Endif
+			
+			index1 ← index of point1 in referenceTable
+			index2 ← index of point2 in referenceTable
+			
+			If not index1 or not index2 Then
+				Return False
+			Endif
+			
+			adjacencyList[index1].push(index2)
+			adjacencyList[index2].push(index1)
+			
+			Return True
+		}
+		
+		# Helper function to check for sub-graphs
+		public recursionCheck(i, visited, adjList) {
+			visited[i] ← True
+			
+			For node in adjList[i] 
+				If not visited[node] Then
+					recursionCheck(node, visited, adjList)
+				Endif
+			Endfor 
+		}
+		
+		public getEulorianPath(startingVertex=0) {
+			# defined before in pseudocode undder `Hierholzer's algorithm`
+		}
+		
+		private removeEdge(index1, index2) {
+			remove index1 from adjacencyList[index2] if exists
+			remove index2 from adjacencyList[index1] if exists
+		}
 	}
 
 Row Guttering
@@ -106,7 +219,7 @@ Implementation
 			gutterLines.push(line)
 		Endfor
 		
-		return gutterLines
+		Return gutterLines
 	}
 
 Straight Subdivison
@@ -128,9 +241,9 @@ Implementation
 		If totalDistance <= stitchLength and 
 			(percentOffset mod 100 = 0 || totalDistance <= stitchLength * (percentOffset/100)) Then
 			If omitLast Then
-				return [start]
+				Return [start]
 			Else 
-				return [start, end]
+				Return [start, end]
 			EndIf
 		EndIf
 		
@@ -149,21 +262,21 @@ Implementation
 			buffer.push(end);
 		Endif
 		
-		return buffer
+		Return buffer
 	}
 
 	procedure getPointDistanceAway(start, end, distance) {
 		totalDistance ← distance from start to end
 		
 		If totalDistance = 0 or distance = 0 Then
-			return start
+			Return start
 		Endif
 		
 		point ← new point
 		point.x ← start.x + (distance / totalDistance) * (end.x - start.x)
 		point.y ← start.y + (distance / totalDistance) * (end.y - start.y)
 		
-		return point
+		Return point
 	}
 
 Colour Normalization
@@ -188,6 +301,7 @@ Implementation
 				elem.strokeColor ← getClosestColour(elem.strokeColor)
 			Endif
 		Else 
+			# project represents the root item, it contains all of the items dispalyed
 			For element in project
 				If fill and element.fillColor Then
 					element.fillColor ← getClosestColour(element.fillColor)
@@ -225,28 +339,215 @@ Implementation
 			Endif
 		Endfor
 		
-		return closestColour
+		Return closestColour
 	}
 
 
-Path encoding
+Fill Encoding
 =============
 
 Description
-	aaa
+	Converts SVG paths into a set of points which can be easily converted into embroidery files.
 
 Implementation
 	src/lib/stitch/convert/fillPath.ts
 
-Stroke Fill
-===========
+.. code-block:: none 
+	:linenos:
+
+	procedure fillPath(path, stitchLength, fillGutterSpacing) {
+		normal ← getDirectionVector(path)
+		
+		# rowGutter defined as pseudocode before
+		rows ← rowGutter(path, fillGutterSpacing, normal)
+		flattenedRows ← flatten rows to 1D Array
+		
+		# Graph defined as pseudocode before
+		graph ← new Graph(flattenedRows)
+		
+		# add vertices to graph
+		For row in rows
+			For i=0 to row.length
+				If i mod 2 = 1 Then
+					Continue
+				Endif
+				graph.addEdge(row[i], row[i + 1])
+			Endfor
+		Endfor
+		
+		clByOutline ← new Dictionary
+		
+		# Categorize vertices by what curve they intersected with
+		For point of flattenedRows
+			parentCurve ← get curve closest to point
+			If clByOutline contains key parentCurve Then
+				clByOutline[key of parentCurve].push(point)
+			Else
+				clByOutline[key of parentCurve] = [point]
+			Endif
+		Endfor
+		
+		# add edges around the outline
+		For points in clByOutline
+			sort points by curve offset in ascending order
+			
+			For i=0 to points.length - 1
+				edge1 ← points[i]
+				edge2 ← points[i + 1]
+				
+				graph.addEdge(edge1, edge2)
+				
+				# even vertex corrector
+				If i % 2 = 1 Then
+					graph.addEdge(edge1, edge2)
+				Endif
+			Endfor
+		Endfor
+		
+		blocks ← new 2D Array of points
+		
+		# handling connected sub-graphs
+		visitedIndexed ← new Array of int of length graph vertex count
+		fill visitedIndexed with 0
+		counter ← 1
+		
+		While visitedIndexed contains 0
+			startIndex ← first index of element in visitedIndexed which is 0
+			
+			currentVisited ← new Array of boolean of length graph vertex count
+			fill currentVisited with false
+			
+			graph.recursionCheck(startIndex, currentVisited)
+			
+			For i=0 to currentVisited.length
+				If currentVisited[i] Then
+					visitedIndexed[i] = counter
+				Endif
+			Endfor
+			
+			counter ← counter + 1
+		Endwhile
+		
+		# generate paths in each sub-graph
+		For i=1 to counter - 1
+			availableVertices ← new Array of int
+			
+			For j=0 to visitedIndexed.length 
+				If visitedIndexed[j] = i Then
+					availableVertices.push(j)
+				Endif
+			Endfor
+			
+			startPoint ← 0
+			
+			# jump the smallest distance away
+			If i > 1 Then 
+				startPoint ← index of the closest point in the current subgraph to the last point in the previous block
+			Endif
+			
+			result ← graph.getEulorianPath(availableVertices[startPoint])
+			buffer ← new Array of point 
+			
+			# convert path into intermediate points that are no longer than stitchLength 
+			For i=0 to result.length - 2
+				
+				# defined in pseduocode before
+				divisions = straightSubdivisions(result[i].point, result[i + 1].point, stitchLength, true)
+				
+				buffer.push(elements of divisions)
+			Endfor
+			
+			buffer.push(result[result.length - 1].point)
+			blocks.push(buffer)
+		Endfor
+		
+		Return blocks
+	}
+
+	procedure getDirectionVector(path) {
+		halfDistance ← path.length / 2
+		totalX ← 0
+		totalY ← 0
+		
+		For i=0 to floor(halfDistance) + 1
+			point ← normal vector at path offset i
+			totalX ← totalX + point.x
+			totalY ← totalY + point.y
+		Endfor
+		
+		result ← new point
+		result.x ← totalX / halfDistance
+		result.y ← totalY / halfDistance
+	}
+
+
+Running Stitch Encoding
+=======================
 
 Description
-	aaa
+	Converts the outline of SVG paths into a set of points which can be easily converted into embroidery files. Running stitches are used only for slim width outlines because it is only 1 thread thick.
 
 Implementation
 	src/lib/stitch/convert/strokePath.ts
 
+.. code-block:: none
+	:linenos:
+
+	procedure runningPath(path, stitchLength) {
+		buffer ← new Array of points
+		totalDistance ← length of path 
+		anchorDistances ← new Array of int
+		
+		For segment to path.segments 
+			anchorDistances.push(offset of path at segment)
+		Endfor
+		
+		For i=0 to floor(totalDistance / stitchLength) + 1
+			currentDistance ← stitchLength * i
+			
+			# Add anchor points if passed
+			While anchorDistances.length > 0 and currentDistance > anchorDistances[0]
+				buffer.push(point on path at offset anchorDistances[0])
+				anchorDistances.shift()
+			Endwhile
+			
+			buffer.push(point on path at offset currentDistance)
+		Endfor
+		
+		# tie-in, prevents threads from coming loose
+		If buffer.length > 2 Then
+			buffer.unshift(buffer[0], buffer[1], buffer[0], buffer[1])
+		Endif
+		
+		# add point at end of path if it doesn't exist already
+		If buffer[buffer.length - 1] != point on path at offset totalDistance Then
+			buffer.push(point on path at offset totalDistance)
+			
+		# tie-out
+		If buffer.length > 2 Then
+			buffer.push(buffer[buffer.length - 2],
+				buffer[buffer.length - 1],
+				buffer[buffer.length - 2],
+				buffer[buffer.length - 1])
+		Endif
+		
+		Return buffer
+	}
+
+
+Satin Stitch Encoding
+=====================
+
+Description
+	Converts the outline of SVG paths into a set of points which can be easily converted into embroidery files. Satin stitches are used for outlines which are wide, this zigzag pattern of satin represents the width of the stroke.
+
+Implementation
+	src/lib/stitch/convert/satinPath.ts
+
+.. code-block:: none
+	:linenos:
+
+	
 
 **************
 Class Diagrams
