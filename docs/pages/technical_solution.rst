@@ -3043,7 +3043,9 @@ This is only a small extract, the full file is too large
         constructor(curveLocations: paper.CurveLocation[]) {
             this.adjacencyList = new Array(curveLocations.length);
             this.referenceTable = curveLocations;
-            this.adjacencyList.fill([]);
+            for (let i = 0; i < curveLocations.length; i++) {
+                this.adjacencyList[i] = [];
+            }
         }
 
         /**
