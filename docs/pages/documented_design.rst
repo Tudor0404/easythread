@@ -2,14 +2,17 @@
 Documented Design
 #################
 
-***********
-Flow Charts
-***********
-.. figure:: /_static/images/general-system-flowchart.png
-    :alt: general system flowchart
+*********
+UI Design
+*********
+
+React uses JSX, which is a way of merging html, css and JavaScript into a single component. These components can then be contained and used in composition, inheritance and aggregation is not used since nearly everything can be created those 2 concepts. The diagram below shows the composition of components from the root
+
+.. figure:: /_static/images/JSX-structure.png
+    :alt: JSX structure
     :align: center 
     
-    Abstracted general system flowchart
+    JSX structure from the root
 
 **************
 Libraries used
