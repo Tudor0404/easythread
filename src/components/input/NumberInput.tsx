@@ -29,6 +29,16 @@ const NumberInput: React.FC<Props> = (props) => {
 						e.preventDefault();
 					}
 				}}
+				onPaste={(e) => {
+					e.stopPropagation();
+					e.preventDefault();
+
+					let pastedData = e.clipboardData.getData("Text");
+
+					if (/^-?[0-9]+.?[0-9]*$/.test(pastedData)) {
+						props.setValue(pastedData);
+					}
+				}}
 				onKeyUp={props.onKeyUp}
 			></input>
 		</div>

@@ -250,6 +250,8 @@ class Container {
 					// adjust the new point with the difference in mind, this prevents offset
 					cP = new Paper.Point(cP.x + dX / 10, cP.y - dY / 10);
 				}
+
+				preBytes.push(["stitch", 0, 0]);
 			}
 
 			for (let s = 0; s < block.stitches.length; s++) {

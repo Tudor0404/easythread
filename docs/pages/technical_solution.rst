@@ -6,7 +6,10 @@ Technical Solution
 Advanced Coding Skills Pointer
 ******************************
 
-
+.. //TODO: add how I resolved problems I encountered
+.. exp offset accumulating over time issue (took into account offset when I set the new current point when calculating difference)
+.. resolved sub graphs issue where a non connected graph was produced due to the compound paths not being part of a full shape (differentiated the sub graphs by tracking which ones I visited and tag them according to the sub graph they are, then set the starting vertex to one in the list). Hard to create new graphs from each due to how the data is stored (array based), which could cause conflitions and very resource intensive
+.. path finding algorithm going twice over edges; forgot to delete edge from other vector too
 
 ***************
 System Overview
@@ -102,7 +105,7 @@ Code
 ./src/components/button/Button.tsx
 ----------------------------------
 
-.. code-block:: tsx 
+.. code-block:: none 
     :linenos:
     :name: Button.tsx
     :caption: Button.tsx
@@ -186,7 +189,7 @@ Code
 ./src/components/canvas/Canvas.tsx
 ----------------------------------
 
-.. code-block:: tsx 
+.. code-block:: none 
     :linenos:
     :name: Canvas.tsx
     :caption: Canvas.tsx
@@ -687,7 +690,7 @@ Code
 ./src/components/dropdown/Dropdown.tsx
 --------------------------------------
 
-.. code-block:: tsx 
+.. code-block:: none 
     :linenos:
     :name: Dropdown.tsx
     :caption: Dropdown.tsx
@@ -785,7 +788,7 @@ Code
 ./src/components/dropdown/DropdownItem.tsx
 ------------------------------------------
 
-.. code-block:: tsx 
+.. code-block:: none 
     :linenos:
     :name: DropdownItem.tsx
     :caption: DropdownItem.tsx
@@ -824,7 +827,7 @@ Code
 ./src/components/input/NumberInput.tsx
 --------------------------------------
 
-.. code-block:: tsx 
+.. code-block:: none 
     :linenos:
     :name: NumberInput.tsx
     :caption: NumberInput.tsx
@@ -872,7 +875,7 @@ Code
 ./src/components/input/Switch.tsx
 ---------------------------------
 
-.. code-block:: tsx 
+.. code-block:: none 
     :linenos:
     :name: Switch.tsx
     :caption: Switch.tsx
@@ -908,7 +911,7 @@ Code
 ./src/components/input/TextInput.tsx
 ------------------------------------
 
-.. code-block:: tsx 
+.. code-block:: none 
     :linenos:
     :name: TextInput.tsx
     :caption: TextInput.tsx
@@ -947,7 +950,7 @@ Code
 ./src/components/modal/Modal.tsx
 --------------------------------
 
-.. code-block:: tsx 
+.. code-block:: none 
     :linenos:
     :name: Modal.tsx
     :caption: Modal.tsx
@@ -1037,7 +1040,7 @@ Code
 ./src/components/separator/Separator.tsx
 ----------------------------------------
 
-.. code-block:: tsx 
+.. code-block:: none 
     :linenos:
     :name: Separator.tsx
     :caption: Separator.tsx
@@ -1056,7 +1059,7 @@ Code
 ./src/components/sidebar/ColourBox.tsx
 --------------------------------------
 
-.. code-block:: tsx 
+.. code-block:: none 
     :linenos:
     :name: ColourBox.tsx
     :caption: ColourBox.tsx
@@ -1091,7 +1094,7 @@ Code
 ./src/components/sidebar/Sidebar.tsx
 ------------------------------------
 
-.. code-block:: tsx 
+.. code-block:: none 
     :linenos:
     :name: Sidebar.tsx
     :caption: Sidebar.tsx
@@ -1322,7 +1325,7 @@ Code
 ./src/components/toolbar/OptionsDropdown.tsx
 --------------------------------------------
 
-.. code-block:: tsx 
+.. code-block:: none 
     :linenos:
     :name: OptionsDropdown.tsx
     :caption: OptionsDropdown.tsx
@@ -1478,7 +1481,7 @@ Code
 ./src/components/toolbar/Toolbar.tsx
 ------------------------------------
 
-.. code-block:: tsx 
+.. code-block:: none 
     :linenos:
     :name: Toolbar.tsx
     :caption: Toolbar.tsx
@@ -1964,7 +1967,7 @@ Code
 ./src/components/tooltip/Tooltip.tsx
 ------------------------------------
 
-.. code-block:: tsx 
+.. code-block:: none 
     :linenos:
     :name: Tooltip.tsx
     :caption: Tooltip.tsx
@@ -3598,7 +3601,7 @@ This is only a small extract, the full file is too large
 ./src/App.tsx
 -------------
 
-.. code-block:: tsx 
+.. code-block:: none 
     :linenos:
     :name: App.tsx
     :caption: App.tsx
@@ -3708,7 +3711,7 @@ This is only a small extract, the full file is too large
 ./src/index.tsx
 ---------------
 
-.. code-block:: tsx
+.. code-block:: none
     :linenos:
     :name: index.tsx
     :caption: index.tsx
