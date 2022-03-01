@@ -71,7 +71,7 @@ The following are screenshots of the website, while in multiple scenarios
 Libraries used
 **************
 
-Libraries in web development are essential, a lot of edge cases and standards exist which need to be abstracted. Here is a list of direct (exlcuding dependencies) libraries I have used:
+Libraries in web development are essential, a lot of edge cases and standards exist which need to be abstracted. Here is a list of direct (excluding dependencies) libraries I have used:
 
 User Interface
 ==============
@@ -664,8 +664,8 @@ The event bus is also used to **maintain data integrity** by keeping all the com
     eventBus diagram
 
 
-UML class diagrams 
-==================
+UML class diagram 
+=================
 
 This diagram shows the relationship between different classes involved in the conversion algorithm (not design). **Most of the functions involved in the conversion algorithm are not included in the diagram because convention in TypeScript is to componentize sections which do a specific function in different files**. OOP is used, but it is not as integral as it is in C#.
 
@@ -675,6 +675,19 @@ This diagram shows the relationship between different classes involved in the co
     :width: 60%
 
     UML diagram
+
+
+UI Events 
+=========
+
+For the UI to be interactive and engaging, the UI should change to the user's actions. The following diagram shows most of the events that can happen because of user interaction.
+
+.. figure:: /_static/images/UI-events.png
+    :alt: UI events
+    :align: center
+    :width: 80%
+
+    UI events 
 
 
 Simple Conversion Flowchart
@@ -693,7 +706,7 @@ This flowchart shows the basic process of converting SVGs into embroidery a `Con
 Data Structures
 ***************
 
-Data structures are used intensively throughout the conversion algorithm. 
+Data structures are used intensively throughout the conversion algorithm. The methods and properties of the Graph, Block and Container can be seen in the `UML class diagram`_.
 
 Graph
 =====
@@ -788,3 +801,122 @@ Pseduocode for onPaste:
     }
 
 `/^-?[0-9]+.?[0-9]*$/` matches against the whole line, making sure that it contains one or more numbers, followed by an optional fullstop and followed by any amount of numbers. This is to make sure the pasted value is a float or integer
+
+Filenames
+=========
+
+When opening a SVG file, the file extension is stripped using the regex code `/\.[^/.]+$/`. When the file is about to be saved, spaces are replaced with underscores and the extension '.exp' or '.svg' is added, depending whether the user wants to save the file as. 
+
+
+*********
+Test Plan
+*********
+
+To make sure the program works correctly and to its initial goals, while providing a good user interface with minimal issues, a set of tests compiled from the list of objectives, have been outlined below. The tests will be performed in a video format, with the final results being presented in this document.
+
+Some tests may not have all the NEB conditions because input is limited. NEB = (1)Normal, (2)Erroneous, (3)Extreme, where the input is in italics, and the expected output in bold
+
+
+1 Upload SVG File 
+=================
+#. *valid SVG file* - **graphic to be displayed on the canvas, Then the dimensions in the toolbar should change**
+#. *invalid SVG file* - **nothing**
+#. *very large SVG file* - **same as (1.1)**
+
+
+2 Movement of canvas
+====================
+
+#. *slow dragging and zooming* - **graphic to move accordingly, with rulers changing value**
+#. *zooming beyond limits* - **no more zooming**
+#. *very fast scrolling and zooming* - **same as (2.1)**
+
+
+3 Selecting elements and changing properties
+============================================
+
+#. *selecting several shapes and changing the stroke and fill colour, and stroke width* - **the elements change, reflecting user input**
+#. *changing stroke width to negative* - **nothing**
+#. -
+
+
+4 Saving canvas as SVG
+======================
+
+#. *pressing the 'Save SVG' button* - **saves the canvas as a SVG to local storage**
+#. -
+#. -
+
+
+5 Tooltips to appear on hover
+=============================
+
+#. *hover over button with tooltip* - **tooltip to be shown after a period of time, then hidden after hovering off the button**
+#. *try to open multiple tooltips at once* - **normal individual behaviour**
+#. -
+
+
+6 Smoothness of program
+=======================
+
+#. *display of ~20kb SVG file* - **frame rate above 30fps**
+#. -
+#. *display of ~30MB SVG file* - **very slow load and frame rate**
+
+
+7 Changing dimensions of items
+==============================
+
+#. *changing width to 200mm* - **width changed to 200mm at the correct aspect ratio**
+#. *changing width to -100m* - **prevent input**
+#. *changing width to 1000000mm* - **width changed to 1000000mm at the correct aspect ratio**
+
+
+8 Changing the name of a file
+=============================
+
+#. *changing name to one of ~10 characters long* - **when the file is to be saved, it is changed with the new filename**
+#. -
+#. *changing name to one of ~50 characters long* - **same as (8.1)**
+
+9 Converting graphics
+=====================
+
+#. *converting a 2kb file* - **a preview should be shown after the conversion has taken place, the preview should resemble the initial graphic. During conversion, a loading modal should appear to prevent input**
+#. *converting nothing* - **nothing**
+#. *converting a very large file* - **same as (9.1) but slower, may run into stack overflow**
+
+10 Converting compound shapes
+=============================
+
+#. *converting a compound shape, where a shape cuts out of its fill in the middle* - **same as (9.1)**
+#. -
+#. *converting a very complex concave shape* - **same as (9.1)**
+
+11 Flatten SVGs 
+===============
+
+#. *SVG with overlaying paths* - **converted shapes should not overlap**
+#. *non-overlapping shapes* - **nothing**
+#. *SVG with 10 overlaps* - **same as (11.1)**
+
+12 Change conversion settings
+=============================
+
+#. *change conversion settings* - **the conversion should act differently due to the change in parameters, a preview should be shown after the conversion**
+#. *enter negative values into the input boxes* - **input rejected**
+#. *remove all conversion steps* - **conversion should do nothing**
+
+13 Saving as EXP 
+================
+
+#. *user presses button to save EXP after conversion has taken place* - **file should be prompted to save**
+#. *user presses button to save EXP when NO conversion has taken place* - **nothing**
+#. -
+
+14 Undo and redo of graphics 
+============================
+
+#. *user presses button to undo, given they have changed something* - **graphic goes back to different state**
+#. *user presses button to undo, given there have been NO changes* - **nothing**
+#. *user tries to go back and forth ~10times* - **graphic goes to the intended state**

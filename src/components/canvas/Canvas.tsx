@@ -433,6 +433,8 @@ const Canvas: React.FC<Props> = (props) => {
 						//@ts-ignore
 						resize="true"
 						onWheel={(event) => {
+							// https://codepen.io/hichem147/pen/dExxNK
+
 							let newZoom = Paper.view.zoom;
 							let oldZoom = Paper.view.zoom;
 

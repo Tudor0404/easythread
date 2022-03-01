@@ -23,6 +23,3 @@ Glossary
 
   Eulerian circuit
 	A path starting at any point on a graph where all edges are visited once, and it ends up where it started
-
-
- 

@@ -2,14 +2,153 @@
 Technical Solution
 ##################
 
+****************
+Issues and fixes
+****************
+
+One of the first issues I came across first was that when generating a, eulerian cycle, in some cases it would go over the same edge twice. I found the issue to be that I forgot to delete the connection in the adjacency list in both vertices.
+
+Another issue I came across later was that the path after being converted to .exp was gradually moving away from the outline. I found the issue to be that I forgot to take into account the rounding that occurs when saving points to 8bit signed integers, where I set the new current point (.exp uses relative positioning) to the non-rounded point, meaning that the difference between the current and next point is going to be different. A simple fix to this, was setting the current point to the rounded equivalent.
+
+A more complex issue I ran into was that some shapes were not getting filled. I found that when I subtract a shape, and it results in the splitting of it into multiple separated shapes, the entire group of separated shapes would be contained into a compound shape. Therefore, when I create the graph after row guttering, I would be left with multiple connected sub-graphs. At first, I tried to fix this by creating new graphs, but since the adjacency list is stored as an array, changing all the edges and vertex indices to accommodate a new graph would have been very hard. Instead, I iterated over all the connected sub graphs and treated them separately. I could not have separated the shapes before creating the graph, because I would have not known if the shape was separate, or was actually an empty hole.
+
+Finally, an issue which I can not fix was the stack limit that gets brought up when I convert very large shapes. Browsers have a limited amount of RAM to prevent attacks, so I do not have access to the same amount of RAM as I would have in a native application. A drastic change in my algorithm would have been needed to accommodate this issue.
+
 ******************************
 Advanced Coding Skills Pointer
 ******************************
 
-.. //TODO: add how I resolved problems I encountered
-.. exp offset accumulating over time issue (took into account offset when I set the new current point when calculating difference)
-.. resolved sub graphs issue where a non connected graph was produced due to the compound paths not being part of a full shape (differentiated the sub graphs by tracking which ones I visited and tag them according to the sub graph they are, then set the starting vertex to one in the list). Hard to create new graphs from each due to how the data is stored (array based), which could cause conflitions and very resource intensive
-.. path finding algorithm going twice over edges; forgot to delete edge from other vector too
+
+
+Hierholzer's algorithm
+======================
+
+Explanation
+    Generates an eulorian circuit which is used to convert SVG fills into embroidery stitches
+
+FileName
+    Graph.ts
+
+Page Number
+    999
+
+
+Fill encoding (complex algorithm)
+=================================
+
+Explanation
+    Converts SVG fills into stitch points, essential part of the conversion process
+
+FileName
+    fillPath.ts
+
+Page Number
+    999
+
+
+Satin path (complex algorithm)
+==============================
+
+Explanation
+    The algorithm which converts a SVG outline into a set of points which resembles a wide stroke, uses vectors to get the offset from a particular point using the noraml at that point
+
+FileName
+    satinPath.ts
+
+Page Number
+    999
+
+
+Row guttering (complex algorithm)
+=================================
+
+Explanation
+    Row guttering is used to get the edges across the shape. The algorithm is optimised by reducing the number of intersections it needs to check by calculating the vertical and horizontal offset of the gutters using the normal angle. It also prevents errorous intersections from being saved, by removing the last intersection if the length of the intersections is odd
+
+FileName
+    rowGutter.ts
+
+Page Number
+    999
+
+
+Regex
+=====
+
+Explanation
+    Validates user input and prevents input which would not work further into the conversion process to reach it
+
+FileName
+    NumberInput.tsx, Canvas.tsx
+
+Page Number
+    999,999
+
+
+Fallbacks and catching errors
+=============================
+
+Explanation
+    Certain errors such a stack overflow which occurs when the shape that is being converted is too big, can lead to the shape not being converted properly. As a fallback if the fill fails, it will generate the stroke regardless if it has a stroke or not. This fallback is also called regularly due to the shape being too small to have its fill encoded. The block sequence is sanitized when it is generated to prevent blocks which are too small or points which are invalid, which can cause errors during conversion
+
+FileName
+    Container.ts
+
+Page Number
+    999
+
+
+Data synchronization between files
+==================================
+
+Explanation
+    The event bus is used to synchronise data between components where a direct communication line through the props property would not be viable due to them being too far apart. One example, is how Canvas.tsx dispatches a "conversionFinished" message if conversion has finished to Toolbar.tsx, this allows to communicate to the user that a conversion has finished by closing the loading modal which is opened when the user presses the convert button
+
+FileName
+    Canvas.tsx, Toolbar.tsx
+
+Page Number
+    999, 999
+
+
+Undo and redo functionality
+===========================
+
+Explanation
+    The user can undo and redo to different states, this solution uses a stack to contain the saved frame
+
+FileName
+    UndoRedoTool.ts
+
+Page Number
+    999
+
+
+Converting blocks of points to SVG path
+=======================================
+
+Explanation
+    To visually represnt the converted file, a preview is generated using SVG paths created programmatically
+
+FileName
+    UndoRedoTool.ts
+
+Page Number
+    999
+
+
+Converting blocks of points into EXP files
+==========================================
+
+Explanation
+    EXP files need to be converted to a binary file which ismade of signed integers for an embroidery machine to read it
+
+FileName
+    Container.ts
+
+Page Number
+    999
+
 
 ***************
 System Overview
@@ -22,7 +161,7 @@ File tree
 .. parsed-literal::  
 
     easythread
-    ┣ public                                   metadata of the website
+    ┣ public                            metadata of the website
     ┃ ┣ android-chrome-192x192.png
     ┃ ┣ android-chrome-512x512.png
     ┃ ┣ apple-touch-icon.png
@@ -35,12 +174,12 @@ File tree
     ┃ ┣ robots.txt
     ┃ ┣ safari-pinned-tab.svg
     ┃ ┗ site.webmanifest
-    ┣ src                                      logic and website
-    ┃ ┣ components                             reusable react components
+    ┣ src                               logic and website
+    ┃ ┣ components                      reusable react components
     ┃ ┃ ┣ button
     ┃ ┃ ┃ ┗ :ref:`Button.tsx`                  buttons
     ┃ ┃ ┣ canvas
-    ┃ ┃ ┃ ┗ :ref:`Canvas.tsx`                  main canvas and logic
+    ┃ ┃ ┃ ┗ :ref:`Canvas.tsx`                  main canvas and canvas logic
     ┃ ┃ ┣ dropdown
     ┃ ┃ ┃ ┣ :ref:`Dropdown.tsx`                dropdown menu
     ┃ ┃ ┃ ┗ :ref:`DropdownItem.tsx`            list item for dropdowns
@@ -60,25 +199,25 @@ File tree
     ┃ ┃ ┃ ┗ :ref:`Toolbar.tsx`	               top toolbar
     ┃ ┃ ┗ tooltip
     ┃ ┃ ┃ ┗ :ref:`Tooltip.tsx`	               hover tooltips on buttons
-    ┃ ┣ data                                   static data for components
+    ┃ ┣ data                            static data for components
     ┃ ┃ ┣ :ref:`DMCColours.json`               json of DMC threads
-    ┃ ┃ ┣ logo.png                             top left logo
+    ┃ ┃ ┣ logo.png                      top left logo
     ┃ ┃ ┗ :ref:`options.json`                  options controlling the canvas
-    ┃ ┣ lib	                                   Non-UI logic
+    ┃ ┣ lib	                        Non-UI logic
     ┃ ┃ ┣ canvas
     ┃ ┃ ┃ ┗ :ref:`UndoRedoTool.ts`             unde and redo of the canvas
-    ┃ ┃ ┣ stitch                               conversion algorithm
+    ┃ ┃ ┣ stitch                        conversion algorithms
     ┃ ┃ ┃ ┣ convert
-    ┃ ┃ ┃ ┃ ┣ :ref:`fillPath.ts`               converts fills
+    ┃ ┃ ┃ ┃ ┣ :ref:`fillPath.ts`               converts fills to stitch path
     ┃ ┃ ┃ ┃ ┣ :ref:`rowGutter.ts`              helper function for fillpath
-    ┃ ┃ ┃ ┃ ┣ :ref:`runningPath.ts`            converts strokes to running paths
-    ┃ ┃ ┃ ┃ ┣ :ref:`satinPath.ts`              converts strokes to satin paths
+    ┃ ┃ ┃ ┃ ┣ :ref:`runningPath.ts`            converts stroke to running path
+    ┃ ┃ ┃ ┃ ┣ :ref:`satinPath.ts`              converts stroke to satin path
     ┃ ┃ ┃ ┃ ┗ :ref:`straightSubdivision.ts`    sanitizes lines
     ┃ ┃ ┃ ┣ :ref:`Block.ts`                    data structure for stitch points
-    ┃ ┃ ┃ ┣ :ref:`Container.ts`                data structure for the stitch sequence 
+    ┃ ┃ ┃ ┣ :ref:`Container.ts`                data structure for stitch sequence 
     ┃ ┃ ┃ ┣ :ref:`Graph.ts`                    graph data structure to help fillpath
     ┃ ┃ ┃ ┗ :ref:`helpers.ts`                  helper functions
-    ┃ ┃ ┣ svg                                  functions to modify SVGs
+    ┃ ┃ ┣ svg                           functions to modify SVGs
     ┃ ┃ ┃ ┣ :ref:`copyStyling.ts`              copy styling from one to another
     ┃ ┃ ┃ ┣ :ref:`getLeafItems.ts`             gets all the leaf PathItems 
     ┃ ┃ ┃ ┣ :ref:`itemToPathItem.ts`           converts items to PathItems
@@ -87,13 +226,13 @@ File tree
     ┃ ┃ ┗ :ref:`eventBus.ts`                   react component communication
     ┃ ┣ styles
     ┃ ┃ ┗ :ref:`App.css`                       initializes tailwindcss
-    ┃ ┣ types                                  TypeScript custom types
+    ┃ ┣ types                           TypeScript custom types
     ┃ ┃ ┣ :ref:`DMCColour.d.ts` 				
     ┃ ┃ ┗ :ref:`embroideryTypes.d.ts`
-    ┃ ┣ App.tsx                                root UI component 
+    ┃ ┣ App.tsx                         root UI component 
     ┃ ┣ :ref:`index.css`                       sets the font
     ┃ ┣ :ref:`index.tsx`                       entry point of react
-    ┃ ┣ :ref:`react-app-env.d.ts`              auto-generated
+    ┃ ┗ :ref:`react-app-env.d.ts`              auto-generated
     ┣ :ref:`package.json`                      package manager
     ┣ :ref:`postcss.config.js` 				
     ┣ :ref:`tailwind.config.js`                tailwind theme config
@@ -629,6 +768,8 @@ Code
                             //@ts-ignore
                             resize="true"
                             onWheel={(event) => {
+                                // https://codepen.io/hichem147/pen/dExxNK
+                                
                                 let newZoom = Paper.view.zoom;
                                 let oldZoom = Paper.view.zoom;
 
@@ -2124,7 +2265,7 @@ This is only a small extract, the full file is too large
         }
 
         /**
-        * @description creates event listeners between multiple endpoints, this allows for seperate components to communicate
+        * @description creates event listeners between multiple endpoints, this allows for separate components to communicate
         */
         private static checkSize() {
             if (UndoRedoTool.undoStack.length > options.maxUndo)
@@ -2157,6 +2298,9 @@ This is only a small extract, the full file is too large
     import Graph from "../Graph";
     import straightSubdivision from "./straightSubdivision";
     import { getClosestPoint } from "../helpers";
+
+    //https://github.com/inkstitch/inkstitch/blob/f2208a88fe4bb4bae20a1f821dd175880c2905d5/lib/stitches/auto_fill.py#L110
+    // this comment helped me come up with this algorithm, however, their implementation is vastly different because of the platform and language difference
 
     /**
     * @description generates a path of points to fill a shape without leaving any empty spaces
@@ -3533,6 +3677,8 @@ This is only a small extract, the full file is too large
     :linenos:
     :name: eventBus.ts
     :caption: eventBus.ts
+
+    // https://www.pluralsight.com/guides/how-to-communicate-between-independent-components-in-reactjs
 
     const eventBus = {
         on(event: any, callback: any) {

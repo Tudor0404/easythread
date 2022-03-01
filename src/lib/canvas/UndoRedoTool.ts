@@ -66,7 +66,7 @@ class UndoRedoTool {
 	}
 
 	/**
-	 * @description creates event listeners between multiple endpoints, this allows for seperate components to communicate
+	 * @description creates event listeners between multiple endpoints, this allows for separate components to communicate
 	 */
 	private static checkSize() {
 		if (UndoRedoTool.undoStack.length > options.maxUndo)

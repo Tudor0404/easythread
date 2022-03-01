@@ -3,7 +3,7 @@ EasyThread
 ===========
 
 
-EasyThread is a client-server model which aims to transcode embroidery file types to SVGs and back.
+EasyThread is a website which aims to transcode SVGs to embroidery files.
 
 
 .. toctree::

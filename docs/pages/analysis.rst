@@ -10,19 +10,19 @@ Analysis
 Brief Introduction
 ******************
 
-Currently, there are very few options to consider when you want to convert vector images such as SVGs into embroidery file types (e.g. PES). Most of the solutions require you to download a paid program, pay for a person to do it for you, or pay on a per-file basis. 
+Currently, there are very few options to consider when you want to convert vector images such as SVGs into embroidery file types (e.g. EXP). Most of the solutions require you to download a paid program, pay for a person to do it for you, or pay on a per-file basis. 
 
 This project targets this gap in the market. EasyThread is a client-server model which transcodes between SVG and embroidery file types. The target audience is people with embroidery machines who want to embroider SVGs easily and quickly.
 
-The client will work on all modern browsers and will be able to be hosted on machines which support Node.js, check out `Limitations`_ for more details.
+The client will work on all modern browsers and will be able to be hosted on machines which have a relatively up to date browser, check out `Limitations`_ for more details.
 
 *********************
 Background to Problem
 *********************
 
-Currently, there are very few options if you have limited experience in designing embroidery graphics and want to quickly convert vector graphics which are widely available, to files that a embroidery machine can use, for free. Current alternatives can be found in the `Alternatives`_ section.
+Currently, there are very few options if you have limited experience in designing embroidery graphics and want to quickly convert vector graphics which are widely available, to files that an embroidery machine can use, for free. Current alternatives can be found in the `Alternatives`_ section.
 
-Many solutions are also dated and provide a negative UI experience for the user due to the cluttered UI which presents a high learning curve, making the user avoid the software all together if they are not willing to learn how it works. ``Figure 1`` shows the GUI of a popular embroidery software, which supports conversion of vectors, if you are willing to pay extra. As you can see, the toolbar section names are not descriptive, and the icons are small and dated. This can be seen in many applications designed for professionals, where they need a high degree of customization. However, this is not ideal for the average consumer market.
+Many solutions are also dated and provide a negative UI (user interface) experience for the user due to the cluttered UI which presents a high learning curve, making the user avoid the software all together if they are not willing to learn how it works. ``Figure 1`` shows the GUI of a popular embroidery software, which supports conversion of vectors, if you are willing to pay extra. As you can see, the toolbar section names are not descriptive, and the icons are small and dated. This can be seen in many applications designed for professionals, where they need a high degree of customization. However, this is not ideal for the average consumer market.
 
 
 .. figure:: /_static/images/embird-GUI.png
@@ -77,8 +77,11 @@ Alternatives
 
 Since most of the alternatives cost money, I was not able to test the conversion algorithms of them, however, there are some example videos which show how they work 
 
-InkStitch_
-==========
+InkStitch
+=========
+
+https://inkstitch.org/
+
 **Price** 
 	Free
 **Use** 
@@ -101,8 +104,11 @@ InkStitch_
     InkStitch example
 
 
-Wilcom_
-=======
+Wilcom
+======
+
+https://www.wilcom.com/Products/EmbroideryStudioe4Designing.aspx
+
 **Price**
 	Need to enquire
 **Use** 
@@ -135,8 +141,8 @@ Website
 
 I need a simple and clean front end framework which will be able to load quickly, with features such as hooks and events available to use. Server-side rendering will not be used because the website will be small and will add to the complexion greatly. After looking over my options, here are my top choices:
 
-React.js_
-^^^^^^^^^
+React.js
+^^^^^^^^
 
     Since I have used React.js before, it would save me some time because I would not have to learn a new framework. React.js is a framework developed by Facebook and holds the most market share in the industry, with a large open source community.
 
@@ -149,8 +155,8 @@ React.js_
         * Poor documentation of user made packages
         * Updates regularly, so some packages may not work on newer builds
 
-Angular_
-^^^^^^^^
+Angular
+^^^^^^^
 
     Angular is a Google-made JavaScript framework which focuses on single page content. Works primarily by turning HTML dynamic by the use of directives.
 
@@ -164,8 +170,8 @@ Angular_
         * Steep learning curve 
         * Confusion between the different versions of Angular
 
-Vue.js_
-^^^^^^^
+Vue.js
+^^^^^^
 
     Vue.js is the least popular amongst them. It is a progressive web interface for one-page applications, and can be used on multiple platforms.
 
@@ -179,7 +185,7 @@ Vue.js_
         * Low amounts open source contributions
         * Limited resources
 
-In the end, I will be using react.js due to previous knowledge alongside with `Tailwind <https://tailwindcss.com/>`_ used for styling custom components. Tailwind is preferable over normal CSS because the classes provided are powerful and work together in unison, allowing for quick design work.
+In the end, I will be using react.js due to previous knowledge alongside with `Tailwind (https://tailwindcss.com/) <https://tailwindcss.com/>`_ used for styling custom components. Tailwind is preferable over normal CSS because the classes provided are powerful and work together in unison, allowing for quick design work.
 
 
 Conversion Algorithm
@@ -190,7 +196,7 @@ What are and why SVGs?
 
 SVGs, short for Scalable Vector Graphics are mathematically defined graphics which can be zoomed in or out as to an infinite degree without losing resolution, SVGs are used throughout design and illustration market because primarily of this feature, and because they can be easily manipulated afterwards. 
 
-Because SVGs work on a coordinate grid, finding points of intersection and getting the length of a section of a path is much easier compared to bitmap images. Since bitmap images are pixel based, there is no mathematical way of finding out where two lines intersect due to the limited resol8tion. In the image below, the difference between SVG and PNG can be seen. To find the intersection coordinate of the left slope of the 'A' to the horizontal in bitmap, coordinates can only be found to an integer, in this case (0,4). However, with the SVG the exact coordinate to an appropriate amount of decimal points can be found ((0.7, 4.4) to 1 decimal points). This chain of reasoning can also be applied to why it is easier to get the distance of a section of a path in SVGs. Another problem SVGs remove, is the ambiguity of what the object in the image is. For example, on the left side of the diagram, we as humans recognize the image is depicting 2 angled slopes meeting at an acute angle with a horizontal line connecting these 2 slopes below the intersection, or an 'A'. But a computer does not know that. However on the right, the computer knows the equation of each line. This means that it understands the content, but not the context, which is enough for the project to work.
+Because SVGs work on a coordinate grid, finding points of intersection and getting the length of a section of a path is much easier compared to bitmap images. Since bitmap images are pixel based, there is no mathematical way of finding out where two lines intersect due to the limited resolution. In the image below, the difference between SVG and PNG can be seen. To find the intersection coordinate of the left slope of the 'A' to the horizontal in bitmap, coordinates can only be found to an integer, in this case (0,4). However, with the SVG the exact coordinate to an appropriate amount of decimal points can be found ((0.7, 4.4) to 1 decimal points). This chain of reasoning can also be applied to why it is easier to get the distance of a section of a path in SVGs. Another problem SVGs remove, is the ambiguity of what the object in the image is. For example, on the left side of the diagram, we as humans recognize the image is depicting 2 angled slopes meeting at an acute angle with a horizontal line connecting these 2 slopes below the intersection, or an 'A'. But a computer does not know that. However on the right, the computer knows the equation of each line. This means that it understands the content, but not the context, which is enough for the project to work.
 
 .. figure:: /_static/images/bitmap-vs-svg.png
     :alt: bitmap vs png diagram
@@ -211,7 +217,7 @@ with a corresponding tag. Tags are used to indicate what type of shape is the ob
 * ``polyline`` defines a line made up of multiple straight segments
 * ``rect`` defines a rectangle
 
-This limited list of tags will be encountered throughout the project, the full list of tags can be found `here <https://developer.mozilla.org/en-US/docs/Web/SVG/Element>`_. Attributes are used to describe how each element is to be displayed. Since elements differ, each tag has specific `attributes <https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute>`_. However, here are some universal attributes which conversion process will be using:
+This limited list of tags will be encountered throughout the project, the full list of tags can be found `here (https://developer.mozilla.org/en-US/docs/Web/SVG/Element) <https://developer.mozilla.org/en-US/docs/Web/SVG/Element>`_. Attributes are used to describe how each element is to be displayed. Since elements differ, each tag has specific `attributes (https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute) <https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute>`_. However, here are some universal attributes which conversion process will be using:
 
 * ``fill`` defines the colour inside the shape
 * ``stroke`` defines the colour of the perimeter of the shape
@@ -272,7 +278,7 @@ However, for quadratic Bézier curves or Nth Bézier curves, it is resource inte
 	The more popular out of the 2, numerical quadrature refers to any numerical method of approximating a definite integral, in our case, a Bézier curve. Arc length parameterization is one such method, which divides the curve ``N`` times, which gives ``N + 1`` points. Then the distance between every 2 subsequent points can be found using the formula found above, to calculate the distance of a linear path. Then, all the lengths of the divisions are added together to get the total length of the path. A specific arc length can be calculated given a range of ``t`` values, where the subdivision occurs between the range. This method will yield a result much faster than the alternate method at the cost of accuracy, but accuracy to such a high degree is not needed for this project, so arc length parameterization will be used.
 
 #. Definite Integration
-	The alternate method used is definite integration of a curve, which is defined by a radical (Nth root of an expression) integral, which means that it is very hard to compute and most importantly, resource intensive. Only quadratic Bézier curves have a closed integral which limits this method only to them. The result from the integral can be found `here <https://gamedev.stackexchange.com/a/125321>`_. At the cost of high computational complexity, the length of a quadratic Bézier can be found precisely, but the costs do not outweigh the benefits to use this method.
+	The alternate method used is definite integration of a curve, which is defined by a radical (Nth root of an expression) integral, which means that it is very hard to compute and most importantly, resource intensive. Only quadratic Bézier curves have a closed integral which limits this method only to them. The result from the integral can be found `here (https://gamedev.stackexchange.com/a/125321) <https://gamedev.stackexchange.com/a/125321>`_. At the cost of high computational complexity, the length of a quadratic Bézier can be found precisely, but the costs do not outweigh the benefits to use this method.
 
 Intersections
 -------------
@@ -289,10 +295,10 @@ The amount of roots the equation has by using ``b^2-4ac``. If the result is more
 
 The solution of ``x`` as the roots can be found using ``x = 0.5(b += (b^2 - 4ac)^0.5)``. The ``y`` component can then be found by substituting the solution back into the equation.
 
-For cubics, the general formula is much more complex and can be found `here <https://math.vanderbilt.edu/schectex/courses/cubic/>`_. But, the same principal is applied.
+For cubics, the general formula is much more complex and can be found `here (https://math.vanderbilt.edu/schectex/courses/cubic/) <https://math.vanderbilt.edu/schectex/courses/cubic/>`_. But, the same principal is applied.
 
 
-To gain an understanding on how embroidery files are made, `Embird <https://www.embird.net/>`_ was used to view an example file and analyse it.
+To gain an understanding on how embroidery files are made, `Embird (https://www.embird.net/) <https://www.embird.net/>`_ was used to view an example file and analyse it.
 
 .. figure:: /_static/images/squirrel-3D.png
     :alt: squirrel 3D render
@@ -459,12 +465,3 @@ Other secondary limitations include:
 
 * Time schedule - The project must be finished by March 2022
 * Knowledge - The project must not be too complicated such that I can not complete it due to complexity, even with additional learning.
-
-
-.. Website Links
-
-.. _React.js: https://reactjs.org/
-.. _Angular: https://angular.io/
-.. _Vue.js: https://vuejs.org/
-.. _InkStitch: https://inkstitch.org/
-.. _Wilcom: https://www.wilcom.com/Products/EmbroideryStudioe4Designing.aspx

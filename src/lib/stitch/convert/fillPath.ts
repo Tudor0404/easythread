@@ -6,6 +6,10 @@ import Graph from "../Graph";
 import straightSubdivision from "./straightSubdivision";
 import { getClosestPoint } from "../helpers";
 
+//https://github.com/inkstitch/inkstitch/blob/f2208a88fe4bb4bae20a1f821dd175880c2905d5/lib/stitches/auto_fill.py#L110
+
+// this comment helped me come up with this algorithm, however, their implementation is vastly different because of the platform and language difference
+
 /**
  * @description generates a path of points to fill a shape without leaving any empty spaces
  * @param path path
