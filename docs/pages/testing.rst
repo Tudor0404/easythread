@@ -6,7 +6,7 @@ Testing
 Video
 *****
 
-Testing was done in viedo format to convery more information efficiently. It contains testing from the main objectives and test plan. Link: LINK
+Testing was done in video format to convey more information efficiently. It contains testing from the main objectives and test plan. Link: 
 
 Summary 
 =======
@@ -23,37 +23,37 @@ Summary
     * - **1.1**
       - Upload SVG File
       - Success
-      - 00:00
+      - _______
     * - 1.2
       - 
       - Success
-      - 00:00
+      - _______
     * - 1.3
       -
       - Success
-      - 00:00
+      - _______
 
     * - **2.1**
       - Movement of canvas
       - Success
-      - 00:00
+      - _______
     * - 2.2
       - 
       - Success
-      - 00:00
+      - _______
     * - 2.3
       - 
       - Success
-      - 00:00
+      - _______
 
     * - **3.1**
       - Selecting elements and changing properties
       - Success
-      - 00:00
+      - _______
     * - 3.2
       - 
       - Success
-      - 00:00
+      - _______
     * - 3.3
       - 
       - n/a
@@ -62,11 +62,11 @@ Summary
     * - **4.1**
       - Saving canvas as SVG
       - Success
-      - 00:00
+      - _______
     * - 4.2
       - 
       - Success
-      - 00:00
+      - _______
     * - 4.3
       - 
       - n/a
@@ -75,11 +75,11 @@ Summary
     * - **5.1**
       - Tooltips to appear on hover
       - Success
-      - 00:00
+      - _______
     * - 5.2
       - 
       - Success
-      - 00:00
+      - _______
     * - 5.3
       - 
       - n/a
@@ -88,7 +88,7 @@ Summary
     * - **6.1**
       - Smoothness of program
       - Success
-      - 00:00
+      - _______
     * - 6.2
       - 
       - n/a
@@ -96,25 +96,25 @@ Summary
     * - 6.3
       - 
       - Success
-      - 00:00
+      - _______
 
     * - **7.1**
       - Changing dimensions of items
       - Success
-      - 00:00
+      - _______
     * - 7.2
       - 
       - Success
-      - 00:00
+      - _______
     * - 7.3
       - 
       - Success
-      - 00:00
+      - _______
 
     * - **8.1**
       - Changing the name of a file
       - Success
-      - 00:00
+      - _______
     * - 8.2
       - 
       - n/a
@@ -122,25 +122,25 @@ Summary
     * - 8.3
       - 
       - Success
-      - 00:00
+      - _______
 
     * - **9.1**
       - Converting designs
       - Success
-      - 00:00
+      - _______
     * - 9.2
       - 
       - Success
-      - 00:00
+      - _______
     * - 9.3
       - 
       - Success
-      - 00:00
+      - _______
 
     * - **10.1**
       - Converting compound shapes
       - Success
-      - 00:00
+      - _______
     * - 10.2
       - 
       - n/a
@@ -148,42 +148,42 @@ Summary
     * - 10.3
       - 
       - Success
-      - 00:00
+      - _______
 
     * - **11.1**
       - Flatten SVGs 
       - Success
-      - 00:00
+      - _______
     * - 11.2
       - 
       - Success
-      - 00:00
+      - _______
     * - 11.3
       - 
       - Success
-      - 00:00
+      - _______
 
     * - **12.1**
       - Change conversion settings
       - Success
-      - 00:00
+      - _______
     * - 12.2
       - 
       - Success
-      - 00:00
+      - _______
     * - 12.3
       - 
       - Success
-      - 00:00
+      - _______
 
     * - **13.1**
       - Saving as EXP 
       - Success
-      - 00:00
+      - _______
     * - 13.2
       - 
       - Success
-      - 00:00
+      - _______
     * - 13.3
       - 
       - n/a
@@ -192,15 +192,15 @@ Summary
     * - **14.1**
       - Undo and redo of graphics 
       - Success
-      - 00:00
+      - _______
     * - 14.2
       - 
       - Success
-      - 00:00
+      - _______
     * - 14.3
       - 
       - Success
-      - 00:00
+      - _______
 
 
 ********************
@@ -211,10 +211,10 @@ Reason For Each Test
 	For the program to do its intended function of converting SVG files, it must first have access to the file in memory. This test ensures I am able to load a SVG file.
 
 2 Movement of canvas 
-	For the user to inspect the design, the user must be able to move around the graphics. This is essentail to check if a conversion has completed correctly.
+	For the user to inspect the design, the user must be able to move around the graphics. This is essential to check if a conversion has completed correctly.
 
 3 Selecting elements and changing properties
-	The user should have accesss to basic tools to change the properties of shapes, this is to prevent users having to use other programs instead of EasyThread and decreasing user satisfaction.
+	The user should have access to basic tools to change the properties of shapes, this is to prevent users having to use other programs instead of EasyThread and decreasing user satisfaction.
 
 4 Saving canvas SVG 
 	In some cases, the user may want to save a the state of the current canvas so that they can work on it later, after changing the properties of the design.
@@ -223,7 +223,7 @@ Reason For Each Test
 	If users do not know what a button does, it is instinctive for them to hover over them to get some more information. These floating tooltips accommodate this.
 
 6 Smoothness of program 
-	If the program is not running smoothly to a point which it is not usable, the user may not choose the software. To ensure user satisfaction, the program must run somoothly in most cases.
+	If the program is not running smoothly to a point which it is not usable, the user may not choose the software. To ensure user satisfaction, the program must run smoothly in most cases.
 
 7 Changing dimensions if items 
 	Since SVGs are scalable, the uploaded SVG may be smaller or bigger than the user wants. To prevent having to edit the SVG in another program, basic functionality to change the dimensions which maintaining aspect ratio is essential.
@@ -238,7 +238,7 @@ Reason For Each Test
 	The difficulty of converting shapes increases greatly if a shape is made up of multiple ones with a specific fill rule. To make sure the program can handle more edge cases, compound shapes are tested.
 
 11 Flatten SVGs
-	SVGs may be made up of multiple overlaying shapes. While this is not an issue for SVGs, as the user cannot see them. During embroidery, the stitches of the ones below it may lead to big clusters, or even blockages if the shapes are not subtracted from eachother, to only reveal the visible areas.
+	SVGs may be made up of multiple overlaying shapes. While this is not an issue for SVGs, as the user cannot see them. During embroidery, the stitches of the ones below it may lead to big clusters, or even blockages if the shapes are not subtracted from each other, to only reveal the visible areas.
 
 12 Changing conversion settings 
 	Different fabrics and conditions require different settings (eg. close up logos require low stitch length and low gutter width). The user must be able to change these settings for the program to be useful.

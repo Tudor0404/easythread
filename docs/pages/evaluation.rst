@@ -117,9 +117,9 @@ In this table, I went back through my objectives, and check through all of them 
       - Yes
     * - 9
       - **The website should work well on touch based devices.**
-      - Nearly - tooltips do not work properly
+      - Yes
     * - 10
-      - Tooltips should be shown on some elements, such as buttons after hovering over them after a short while, to show a descriptive message about what the element does.
+      - **Tooltips should be shown on some elements, such as buttons after hovering over them after a short while, to show a descriptive message about what the element does.**
       - Yes
 
 .. list-table:: Conversion Algorithm Objective Outcomes
@@ -181,4 +181,4 @@ Another problem I encountered was using workers. React runs on a single threaded
 Conclusion
 **********
 
-Overall, I am very happy with the outcome of the project, given how niche machine embroidery is, and how little proven methods exist in the open-source community. I am happy with the 
+Overall, I am very happy with the outcome of the project, given how niche machine embroidery is, and how little proven methods exist in the open-source community. I am happy with the website as well, it looks professional and the user interaction is filled with transitions to provide feedback to the user. However, I could have used a different platform to build the application on top of to improve performance, a drawback being the UI being more difficult to build.

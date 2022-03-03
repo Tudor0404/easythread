@@ -285,7 +285,7 @@ However, for quadratic Bézier curves or Nth Bézier curves, it is resource inte
 Intersections
 -------------
 
-Finding the point of intersection will be vital for the conversion to work as shown in `Encoding SVG Fills`_. The maths behind intersections are already established.
+Finding the point of intersection will be vital for the conversion to work as shown in `SVG fills`_. The maths behind intersections are already established.
 
 Since the equation of each path is known, substitution can be used, then the roots can be found of the combined equation. When dealing with linear equations, matrices can be used to find the solution of system of equations.
 

@@ -24,7 +24,9 @@ const Tooltip: React.FC<Props> = (props) => {
 			else setShown(false);
 		}, 1000);
 
-		return clearTimeout(timeout);
+		return () => {
+			clearTimeout(timeout);
+		};
 	}, [props.isHover]);
 
 	return isShown ? (

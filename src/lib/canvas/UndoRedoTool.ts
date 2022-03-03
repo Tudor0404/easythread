@@ -18,8 +18,9 @@ class UndoRedoTool {
 			Paper.project.layers[0].clone({ insert: false })
 		);
 
-		// since state changed, must clean redo stack
 		UndoRedoTool.redoStack = [];
+
+		// since state changed, must clean redo stack
 
 		UndoRedoTool.checkSize();
 

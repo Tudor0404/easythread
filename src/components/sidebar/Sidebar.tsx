@@ -30,18 +30,21 @@ const Sidebar: React.FC = () => {
 	});
 	const { ref } = useResizeObserver({
 		onResize: ({ width }) => {
-			if (width !== undefined)
+			if (width !== undefined) {
+				width = Math.trunc(width / 10) * 10;
 				setColoursPerPage(
 					Math.floor((width / 26) * 7) < 10
 						? 10
 						: Math.floor((width / 26) * 7)
 				);
-			setCurrPage(1);
+				setCurrPage(1);
+			}
 		},
 	});
 
 	useEffect(() => {
 		setMaxPage(Math.ceil(DMCColours.length / coloursPerPage));
+		setCurrPage(1);
 	}, [coloursPerPage]);
 
 	return (
@@ -99,8 +102,7 @@ const Sidebar: React.FC = () => {
 					<div className="flex w-full flex-row flex-wrap items-start justify-center">
 						{DMCColours.slice(
 							(currPage - 1) * coloursPerPage,
-							currPage * coloursPerPage + 1 >
-								DMCColours.length - 1
+							currPage * coloursPerPage > DMCColours.length - 1
 								? DMCColours.length
 								: currPage * coloursPerPage + 1
 						).map((e, i) => {
