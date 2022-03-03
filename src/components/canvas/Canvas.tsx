@@ -168,8 +168,8 @@ const Canvas: React.FC<Props> = (props) => {
 			mousedrag: (event: paper.ToolEvent) => {
 				event.stopPropagation();
 				event.preventDefault();
-				let pan_offset = event.point.subtract(event.downPoint);
-				Paper.view.center = Paper.view.center.subtract(pan_offset);
+				let pan = event.point.subtract(event.downPoint);
+				Paper.view.center = Paper.view.center.subtract(pan);
 				setPreventSelect(true);
 				updateRulerDimensions();
 			},

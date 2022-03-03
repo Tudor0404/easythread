@@ -15,7 +15,7 @@ function satinPath(
 	stitchLength: number = 10,
 	spaceBetweenNormals: number = 1
 ): paper.Point[] {
-	let preBuffer: [paper.Point, paper.Point, number][] = [];
+	let preBuffer: [paper.Point, paper.Point][] = [];
 	let buffer: paper.Point[] = [];
 
 	for (
@@ -32,7 +32,6 @@ function satinPath(
 			path
 				.getPointAt(spaceBetweenNormals * i)
 				.add(vector.multiply(width / 2)),
-			spaceBetweenNormals * i,
 		]);
 	}
 

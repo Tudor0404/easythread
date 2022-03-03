@@ -149,6 +149,49 @@ FileName
 Page Number
     999
 
+**********************
+Proof of functionality
+**********************
+
+The first Svg I converted was the logo of Lacoste. The first image is the input, and the 2 others are what the result is. The first one is bigger and the gutter widths are bigger, while the second one is smaller and the gutter widths are smaller.
+
+.. figure:: /_static/images/lacoste.png
+    :alt: input image
+    :align: center 
+
+    https://seeklogo.com/vector-logo/168453/lacoste
+
+.. figure:: /_static/images/lacoste-converted1.jpg
+    :alt: output image 1
+    :align: center 
+
+    converted method 1
+
+.. figure:: /_static/images/lacoste-converted2.jpg
+    :alt: output image 2
+    :align: center 
+
+    converted method 2
+
+
+The next embroidery I did was with a shape which tested out all of the conversion techniques I have implemented, this includes fill, stroke and satin.
+
+.. figure:: /_static/images/test.png
+    :alt: test input
+	:width: 40%
+    :align: center 
+
+    test input
+
+.. figure:: /_static/images/test-converted.jpg
+    :alt: test converted
+	:width: 40%
+    :align: center 
+
+    test converted
+
+The resemblance is definatly there with all the designs and I am very happy with the result.
+
 
 ***************
 System Overview
@@ -503,8 +546,8 @@ Code
                 mousedrag: (event: paper.ToolEvent) => {
                     event.stopPropagation();
                     event.preventDefault();
-                    let pan_offset = event.point.subtract(event.downPoint);
-                    Paper.view.center = Paper.view.center.subtract(pan_offset);
+                    let pan = event.point.subtract(event.downPoint);
+                    Paper.view.center = Paper.view.center.subtract(pan);
                     setPreventSelect(true);
                     updateRulerDimensions();
                 },
@@ -1261,7 +1304,7 @@ Code
 
         const [currPage, setCurrPage] = useState<number>(1);
         const [coloursPerPage, setColoursPerPage] = useState<number>(60);
-        const [maxPerPage, setMaxPerPage] = useState(
+        const [maxPage, setMaxPage] = useState(
             Math.ceil(DMCColours.length / coloursPerPage)
         );
         const [softColour, setSoftColour] = useState<DMCColour>(defaultDMC);
@@ -1283,7 +1326,7 @@ Code
         });
 
         useEffect(() => {
-            setMaxPerPage(Math.ceil(DMCColours.length / coloursPerPage));
+            setMaxPage(Math.ceil(DMCColours.length / coloursPerPage));
         }, [coloursPerPage]);
 
         return (
@@ -1364,7 +1407,7 @@ Code
                         <Button
                             onClick={() => {
                                 setCurrPage(
-                                    currPage === 1 ? maxPerPage : currPage - 1
+                                    currPage === 1 ? maxPage : currPage - 1
                                 );
                             }}
                             className="border-2 p-1"
@@ -1373,12 +1416,12 @@ Code
                             <ChevronLeftIcon className="h-5 w-5" />
                         </Button>
                         <p className="select-none">
-                            {currPage} of {maxPerPage}
+                            {currPage} of {maxPage}
                         </p>
                         <Button
                             onClick={() => {
                                 setCurrPage(
-                                    currPage === maxPerPage ? 1 : currPage + 1
+                                    currPage === maxPage ? 1 : currPage + 1
                                 );
                             }}
                             className="border-2 p-1"
@@ -2661,7 +2704,7 @@ This is only a small extract, the full file is too large
         stitchLength: number = 10,
         spaceBetweenNormals: number = 1
     ): paper.Point[] {
-        let preBuffer: [paper.Point, paper.Point, number][] = [];
+        let preBuffer: [paper.Point, paper.Point][] = [];
         let buffer: paper.Point[] = [];
 
         for (
@@ -2677,8 +2720,7 @@ This is only a small extract, the full file is too large
                     .add(vector.multiply(width / 2).multiply(-1)),
                 path
                     .getPointAt(spaceBetweenNormals * i)
-                    .add(vector.multiply(width / 2)),
-                spaceBetweenNormals * i,
+                    .add(vector.multiply(width / 2))
             ]);
         }
 

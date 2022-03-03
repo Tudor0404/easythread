@@ -19,7 +19,7 @@ const Sidebar: React.FC = () => {
 
 	const [currPage, setCurrPage] = useState<number>(1);
 	const [coloursPerPage, setColoursPerPage] = useState<number>(60);
-	const [maxPerPage, setMaxPerPage] = useState(
+	const [maxPage, setMaxPage] = useState(
 		Math.ceil(DMCColours.length / coloursPerPage)
 	);
 	const [softColour, setSoftColour] = useState<DMCColour>(defaultDMC);
@@ -41,7 +41,7 @@ const Sidebar: React.FC = () => {
 	});
 
 	useEffect(() => {
-		setMaxPerPage(Math.ceil(DMCColours.length / coloursPerPage));
+		setMaxPage(Math.ceil(DMCColours.length / coloursPerPage));
 	}, [coloursPerPage]);
 
 	return (
@@ -122,7 +122,7 @@ const Sidebar: React.FC = () => {
 					<Button
 						onClick={() => {
 							setCurrPage(
-								currPage === 1 ? maxPerPage : currPage - 1
+								currPage === 1 ? maxPage : currPage - 1
 							);
 						}}
 						className="border-2 p-1"
@@ -131,12 +131,12 @@ const Sidebar: React.FC = () => {
 						<ChevronLeftIcon className="h-5 w-5" />
 					</Button>
 					<p className="select-none">
-						{currPage} of {maxPerPage}
+						{currPage} of {maxPage}
 					</p>
 					<Button
 						onClick={() => {
 							setCurrPage(
-								currPage === maxPerPage ? 1 : currPage + 1
+								currPage === maxPage ? 1 : currPage + 1
 							);
 						}}
 						className="border-2 p-1"

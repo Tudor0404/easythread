@@ -295,7 +295,7 @@ Implementation
         totalDistance ← distance from start to end point
         
         If totalDistance <= stitchLength and 
-            (percentOffset mod 100 = 0 || totalDistance <= stitchLength * (percentOffset/100)) Then
+            (percentOffset mod 100 = 0 or totalDistance <= stitchLength * (percentOffset/100)) Then
             If omitLast Then
                 Return [start]
             Else 
@@ -761,6 +761,272 @@ Since components are held in separate files, communication between them outside 
 
 This is useful because any type of file can use these callbacks and communicate (including TSX and normal TypeScript files).
 
+**********
+Data table 
+**********
+
+Some variables described below are react hooks, to prevent un-needed rows being used, the setter and getter will be under one variable name, with it in bold. Variables which are very self descriptive are not added.
+
+.. list-table:: Variables 
+    :widths: 30, 40, 30
+    :header-rows: 1
+
+    * - **Variable Name**
+      - **Use**
+      - **file**
+    * - **referenceElement**
+      - referencing a JSX item to use its position
+      - Button.tsx, Dropdown.tsx
+    * - **popperElement**
+      - tooltip container
+      - Button.tsx, Dropdown.tsx
+    * - **isHover**
+      - if the button is being currently hovered over
+      - Button.tsx, Dropdown.tsx
+    * - **canvasRef**
+      - reference to the canvas in JSX
+      - Canvas.tsx
+    * - **horizontalRulerRef**
+      - reference to the horizontal ruler in JSX
+      - Canvas.tsx
+    * - **verticalRulerRef**
+      - reference to the vertical ruler in JSX
+      - Canvas.tsx
+    * - **preventSelect**
+      - check if items are allowed to be selecteed in the canvas
+      - Canvas.tsx
+    * - **timer**
+      - used to prevent selection after dragging element after some time
+      - Canvas.tsx
+    * - **fileInputRef**
+      - used to handle uploading files
+      - Canvas.tsx
+    * - **viewZoom**
+      - zoom of the canvas
+      - Canvas.tsx
+    * - **currPage**
+      - current page of colour visible
+      - Sidebar.tsx
+    * - **coloursPerPage**
+      - maximum colours per page
+      - Sidebar.tsx
+    * - **maxPage**
+      - maximum page
+      - Sidebar.tsx
+    * - **softColour**
+      - colour being hovered over
+      - Sidebar.tsx
+    * - **hardColour**
+      - selected colour
+      - Sidebar.tsx
+    * - **stitchLength**
+      - maximum stitch length
+      - OptionsDropdown.tsx
+    * - **spaceBetweenNormals**
+      - space between normals in satin stitches
+      - OptionsDropdown.tsx
+    * - **satinStitchLength**
+      - maximum stitch length in satin paths
+      - OptionsDropdown.tsx
+    * - **fillGutterSpacing**
+      - space between gutters
+      - OptionsDropdown.tsx
+    * - **filename**
+      - name of file
+      - Toolbar.tsx
+    * - **width**
+      - width of graphic
+      - Toolbar.tsx
+    * - **height**
+      - height of graphic
+      - Toolbar.tsx
+    * - **isOutlineShown**
+      - if all the shapes are selected
+      - Toolbar.tsx
+    * - **isUndo**
+      - if the user can undo
+      - Toolbar.tsx
+    * - **isRedo**
+      - if the user can redo
+      - Toolbar.tsx
+    * - **areItemsSelected**
+      - if any number of items are selected
+      - Toolbar.tsx
+    * - **stroke**
+      - the stroke of the selected item
+      - Toolbar.tsx
+    * - **isModalOpen**
+      - if the laoding modal is open
+      - Toolbar.tsx
+    * - **isConvertToEmbroidery**
+      - if conversion should convert SVG to points
+      - Toolbar.tsx
+    * - **isRemoveOverlap**
+      - if conversion should flatten SVG
+      - Toolbar.tsx
+    * - **isAverageOutColours**
+      - if conversion should normalise colours
+      - Toolbar.tsx
+    * - buttonStyle
+      - the style of the buttons on the lower toolbar
+      - Toolbar.tsx
+    * - **isShown**
+      - if the tooltip is currently being shown
+      - Tooltip.tsx
+    * - undoStack
+      - stack containing previous canvas states, used to undo
+      - UndoRedoTool.ts
+    * - redoStack
+      - stack containing previous canvas states, used to redo
+      - UndoRedoTool.ts
+    * - tempPath
+      - path used to convert item
+      - fillPath.ts
+    * - directionVector
+      - average direction vector over half the path
+      - fillPath.ts
+    * - rows
+      - gutters generated
+      - fillPath.ts
+    * - flattenedCL
+      - intersection points as a 1D array
+      - fillPath.ts
+    * - clByOutline
+      - intersection points ordered by the path they intersect at
+      - fillPath.ts
+    * - pointBlocks
+      - array of points of array to hold the path generated
+      - fillPath.ts
+    * - visitedIndexed
+      - used to find all the connected sub graphs
+      - fillPath.ts
+    * - counter
+      - number of subgraphs - 1
+      - fillPath.ts
+    * - startIndex
+      - the first index found of a new sub graph
+      - fillPath.ts
+    * - curVisited
+      - vertices already visited
+      - fillPath.ts
+    * - availableVertices
+      - vertices in the current subgraph being converted
+      - fillPath.ts
+    * - startPoint
+      - vertex index to start at
+      - fillPath.ts
+    * - potentialClosestPoint
+      - potential vertex which is closest to previous point in pointBlocks
+      - fillPath.ts
+    * - result
+      - result from a function called
+      - fillPath.ts, Container.ts
+    * - buffer
+      - used to store a running total of points, can be 1D or 2D, but all serve the same purpose
+      - fillPath.ts, runningPath.ts, satinPath.ts, straightSubdivision.ts
+    * - precision
+      - sample distance of direction vector
+      - fillPath.ts
+    * - bounding 
+      - bounds of the shape being guttered 
+      - rowGutter.ts
+    * - hypotenuse 
+      - hypotenuse of the bounding
+      - rowGutter.ts
+    * - offset 
+      - x offset from center of the gutter lines 
+      - rowGutter.ts
+    * - lower 
+      - bottom y offset
+      - rowGutter.ts
+    * - upper 
+      - upper y offset
+      - rowGutter.ts
+    * - pStart, pEnd 
+      - start and end of the line
+      - rowGutter.ts
+    * - tempLine
+      - line of a gutter
+      - rowGutter.ts
+    * - gutterLines
+      - lines of the gutters
+      - rowGutter.ts
+    * - initialPoint
+      - start of a line
+      - rowGutter.ts
+    * - anchorDistances
+      - outline offset where the anchors are
+      - runningPath.ts
+    * - preBuffer
+      - start and end point of each normal, pre-santisation
+      - satinPath.ts
+    * - stitches
+      - stitch points in absolute terms
+      - Block.ts
+    * - sequence
+      - array of blocks. This holds the entrie path generated
+      - Container.ts
+    * - leafItems
+      - items with no children or is a CompoundPath
+      - Container.ts
+    * - strokeFlag
+      - signals if the stroke should be done no matter what
+      - Container.ts
+    * - pathDatas
+      - SVG path data of all leafItems
+      - Container.ts
+    * - commands
+      - list of abstracted SVG commands to generate the preview
+      - Container.ts
+    * - layer
+      - layer generated, will be sent to replace current canvas
+      - Container.ts
+    * - preBytes
+      - abstracted array of bytes in EXP format
+      - Container.ts
+    * - cP
+      - current point in encoding
+      - Container.ts
+    * - bytes
+      - compiled list of numbers to be saved as an EXP file
+      - Container.ts
+    * - counter
+      - current location in the bytes array
+      - Container.ts
+    * - referenceTable
+      - vertex to curve location table
+      - Graph.ts
+    * - cPath
+      - current path or 'circuit' that the eulorian circuit algorithm is working with
+      - Graph.ts
+    * - ePath
+      - final eulorian circuit path
+      - Graph.ts
+    * - items
+      - items which have no children or are a CompoundPath
+      - getLeafItems.ts
+    * - c1
+      - colour to comapre against
+      - normaliseColours.ts
+    * - dHue
+      - difference in hue between the 2 colours
+      - normaliseColours.ts
+    * - dSaturation
+      - difference in saturation between the 2 colours
+      - normaliseColours.ts
+    * - dBrightness
+      - difference in brightness between the 2 colours
+      - normaliseColours.ts
+    * - newArray
+      - final converted list of items
+      - removeOverlap.ts
+    * - parent
+      - item to subtract items from on top
+      - removeOverlap.ts
+    * - child
+      - item that is removed from the parent
+      - removeOverlap.ts
+
 
 ****************
 Validating Input
@@ -814,109 +1080,196 @@ Test Plan
 
 To make sure the program works correctly and to its initial goals, while providing a good user interface with minimal issues, a set of tests compiled from the list of objectives, have been outlined below. The tests will be performed in a video format, with the final results being presented in this document.
 
-Some tests may not have all the NEB conditions because input is limited. NEB = (1)Normal, (2)Erroneous, (3)Extreme, where the input is in italics, and the expected output in bold
+Some tests may not have all the NEB conditions because input is limited. NEB = (1)Normal, (2)Erroneous, (3)Extreme, where the input is in italics, and the expected output in **bold**
 
 
-1 Upload SVG File 
-=================
-#. *valid SVG file* - **graphic to be displayed on the canvas, Then the dimensions in the toolbar should change**
-#. *invalid SVG file* - **nothing**
-#. *very large SVG file* - **same as (1.1)**
+.. list-table:: Test Plan 
+    :widths: 10, 30,30,30
+    :header-rows: 1
 
+    * - **Number**
+      - **Name**
+      - **Input**
+      - **Expected Outcome**
 
-2 Movement of canvas
-====================
+    * - **1.1**
+      - Upload SVG File
+      - valid SVG file
+      - graphic to be displayed on the canvas, Then the dimensions in the toolbar should change
+    * - 1.2
+      - 
+      - invalid SVG file
+      - nothing
+    * - 1.3
+      - 
+      - very large SVG file
+      - same as (1.1)
 
-#. *slow dragging and zooming* - **graphic to move accordingly, with rulers changing value**
-#. *zooming beyond limits* - **no more zooming**
-#. *very fast scrolling and zooming* - **same as (2.1)**
+    * - **2.1**
+      - Movement of canvas
+      - slow dragging and zooming
+      - graphic to move accordingly, with rulers changing value
+    * - 2.2
+      - 
+      - zooming beyond limits
+      - no more zooming
+    * - 2.3
+      - 
+      - very fast scrolling and zooming
+      - same as (2.1)
 
+    * - **3.1**
+      - Selecting elements and changing properties
+      - selecting several shapes and changing the stroke and fill colour, and stroke width
+      - the elements change, reflecting user input
+    * - 3.2
+      - 
+      - changing stroke width to negative
+      - nothing
+    * - 3.3
+      - 
+      - 
+      - 
 
-3 Selecting elements and changing properties
-============================================
+    * - **4.1**
+      - Saving canvas as SVG
+      - pressing the 'Save SVG' button
+      - saves the canvas as a SVG to local storage
+    * - 4.2
+      - 
+      - pressing the 'Save SVG' button while the canvas is empty
+      - saves an empty SVG to local storage
+    * - 4.3
+      - 
+      - 
+      - 
 
-#. *selecting several shapes and changing the stroke and fill colour, and stroke width* - **the elements change, reflecting user input**
-#. *changing stroke width to negative* - **nothing**
-#. -
+    * - **5.1**
+      - Tooltips to appear on hover
+      - hover over button with tooltip
+      - tooltip to be shown after a period of time, then hidden after hovering off the button
+    * - 5.2
+      - 
+      - try to open multiple tooltips at once
+      - normal individual behaviour
+    * - 5.3
+      - 
+      - 
+      - 
 
+    * - **6.1**
+      - Smoothness of program
+      - display of ~20kb SVG file
+      - frame rate above 30fps
+    * - 6.2
+      - 
+      -
+      -
+    * - 6.3
+      - 
+      - display of ~30MB SVG file
+      - very slow load and frame rate
 
-4 Saving canvas as SVG
-======================
+    * - **7.1**
+      - Changing dimensions of items
+      - changing width to 200mm
+      - width changed to 200mm at the correct aspect ratio
+    * - 7.2
+      - 
+      - changing width to -100mm
+      - prevent input
+    * - 7.3
+      - 
+      - changing width to 20000mm
+      - width changed to 20000mm at the correct aspect ratio
 
-#. *pressing the 'Save SVG' button* - **saves the canvas as a SVG to local storage**
-#. -
-#. -
+    * - **8.1**
+      - Changing the name of a file
+      - changing name to one of ~10 characters long
+      - when the file is to be saved, it is changed with the new filename
+    * - 8.2
+      - 
+      - 
+      - 
+    * - 8.3
+      - 
+      - changing name to one of ~50 characters long
+      - same as (8.1)
 
+    * - **9.1**
+      - Converting designs
+      - converting a 2kb file
+      - a preview should be shown after the conversion has taken place, the preview should resemble the initial graphic. During conversion, a loading modal should appear to prevent input
+    * - 9.2
+      - 
+      - converting nothing
+      - nothing
+    * - 9.3
+      - 
+      - converting a very large file
+      - same as (9.1) but slower, may run into stack overflow
 
-5 Tooltips to appear on hover
-=============================
+    * - **10.1**
+      - Converting compound shapes
+      - converting a compound shape, where a shape cuts out of its fill in the middle
+      - same as (9.1)
+    * - 10.2
+      - 
+      - 
+      - 
+    * - 10.3
+      - 
+      - converting a very complex concave shape
+      - same as (9.1)
 
-#. *hover over button with tooltip* - **tooltip to be shown after a period of time, then hidden after hovering off the button**
-#. *try to open multiple tooltips at once* - **normal individual behaviour**
-#. -
+    * - **11.1**
+      - Flatten SVGs 
+      - SVG with overlaying paths
+      - converted shapes should not overlap
+    * - 11.2
+      - 
+      - non-overlapping shapes
+      - nothing
+    * - 11.3
+      - 
+      - SVG with 10 overlaps
+      - same as (11.1)
 
+    * - **12.1**
+      - Change conversion settings
+      - change conversion settings
+      - the conversion should act differently due to the change in parameters, a preview should be shown after the conversion
+    * - 12.2
+      - 
+      - enter negative values into the input boxes
+      - input rejected
+    * - 12.3
+      - 
+      - remove all conversion steps
+      - conversion should do nothing
 
-6 Smoothness of program
-=======================
+    * - **13.1**
+      - Saving as EXP 
+      - user presses button to save EXP after conversion has taken place
+      - file should be prompted to save
+    * - 13.2
+      - 
+      - user presses button to save EXP when NO conversion has taken place
+      - nothing
+    * - 13.3
+      - 
+      - 
+      - 
 
-#. *display of ~20kb SVG file* - **frame rate above 30fps**
-#. -
-#. *display of ~30MB SVG file* - **very slow load and frame rate**
-
-
-7 Changing dimensions of items
-==============================
-
-#. *changing width to 200mm* - **width changed to 200mm at the correct aspect ratio**
-#. *changing width to -100m* - **prevent input**
-#. *changing width to 1000000mm* - **width changed to 1000000mm at the correct aspect ratio**
-
-
-8 Changing the name of a file
-=============================
-
-#. *changing name to one of ~10 characters long* - **when the file is to be saved, it is changed with the new filename**
-#. -
-#. *changing name to one of ~50 characters long* - **same as (8.1)**
-
-9 Converting graphics
-=====================
-
-#. *converting a 2kb file* - **a preview should be shown after the conversion has taken place, the preview should resemble the initial graphic. During conversion, a loading modal should appear to prevent input**
-#. *converting nothing* - **nothing**
-#. *converting a very large file* - **same as (9.1) but slower, may run into stack overflow**
-
-10 Converting compound shapes
-=============================
-
-#. *converting a compound shape, where a shape cuts out of its fill in the middle* - **same as (9.1)**
-#. -
-#. *converting a very complex concave shape* - **same as (9.1)**
-
-11 Flatten SVGs 
-===============
-
-#. *SVG with overlaying paths* - **converted shapes should not overlap**
-#. *non-overlapping shapes* - **nothing**
-#. *SVG with 10 overlaps* - **same as (11.1)**
-
-12 Change conversion settings
-=============================
-
-#. *change conversion settings* - **the conversion should act differently due to the change in parameters, a preview should be shown after the conversion**
-#. *enter negative values into the input boxes* - **input rejected**
-#. *remove all conversion steps* - **conversion should do nothing**
-
-13 Saving as EXP 
-================
-
-#. *user presses button to save EXP after conversion has taken place* - **file should be prompted to save**
-#. *user presses button to save EXP when NO conversion has taken place* - **nothing**
-#. -
-
-14 Undo and redo of graphics 
-============================
-
-#. *user presses button to undo, given they have changed something* - **graphic goes back to different state**
-#. *user presses button to undo, given there have been NO changes* - **nothing**
-#. *user tries to go back and forth ~10times* - **graphic goes to the intended state**
+    * - **14.1**
+      - Undo and redo of graphics 
+      - user presses button to undo, given they have changed something
+      - graphic goes back to different state
+    * - 14.2
+      - 
+      - user presses button to undo, given there have been NO changes
+      - nothing
+    * - 14.3
+      - 
+      - user tries to go back and forth ~10times
+      - graphic goes to the intended state

@@ -12,9 +12,9 @@ Brief Introduction
 
 Currently, there are very few options to consider when you want to convert vector images such as SVGs into embroidery file types (e.g. EXP). Most of the solutions require you to download a paid program, pay for a person to do it for you, or pay on a per-file basis. 
 
-This project targets this gap in the market. EasyThread is a client-server model which transcodes between SVG and embroidery file types. The target audience is people with embroidery machines who want to embroider SVGs easily and quickly.
+This project targets this gap in the market. EasyThread is a website which encodes SVGs to embroidery files. The target audience consists of people with embroidery machines who want to embroider SVGs easily and quickly.
 
-The client will work on all modern browsers and will be able to be hosted on machines which have a relatively up to date browser, check out `Limitations`_ for more details.
+The website will work on all modern browsers and on all the popular operating systems (Windows, MacOS and Linux), check out `Limitations`_ for more details.
 
 *********************
 Background to Problem
@@ -85,7 +85,7 @@ https://inkstitch.org/
 **Price** 
 	Free
 **Use** 
-	It is mainly used to convert vector files into embroidery files, and embroidery files between them. It also allows the adjusting of particular stitches. This combined with the powerful tool that is Inkscape (vector illustration software), makes it a comparable choice. 
+	It is mainly used to convert vector files into embroidery files, and embroidery files between them. It also allows the adjusting of particular stitches. This combined with the powerful tool that is Inkscape (vector illustration software), makes it a strong choice. 
 **Platform** 
 	Inkscape (Windows/Mac/Linux)
 **Pros**
@@ -134,7 +134,7 @@ https://www.wilcom.com/Products/EmbroideryStudioe4Designing.aspx
 Research
 ********
 
-In this section, I will go through the 3 main components of the project and analyse my options and approach to accomplish the main task. I will be using JavaScript for the front end and back end since it is a language that I have experience in, and most frameworks use that language.
+In this section, I will go through the 2 main components of the project and analyse my options and approach to accomplish the main task. I will be using JavaScript (with TypeScript on top) since it is a language that I have experience in, and most frameworks use that language.
 
 Website
 =======
@@ -194,9 +194,11 @@ Conversion Algorithm
 What are and why SVGs?
 ^^^^^^^^^^^^^^^^^^^^^^
 
-SVGs, short for Scalable Vector Graphics are mathematically defined graphics which can be zoomed in or out as to an infinite degree without losing resolution, SVGs are used throughout design and illustration market because primarily of this feature, and because they can be easily manipulated afterwards. 
+SVGs, short for Scalable Vector Graphics are mathematically defined graphics which can be zoomed in or out as to an infinite degree without losing resolution, SVGs are used throughout design and illustration market because of this, and as they can be easily manipulated. 
 
-Because SVGs work on a coordinate grid, finding points of intersection and getting the length of a section of a path is much easier compared to bitmap images. Since bitmap images are pixel based, there is no mathematical way of finding out where two lines intersect due to the limited resolution. In the image below, the difference between SVG and PNG can be seen. To find the intersection coordinate of the left slope of the 'A' to the horizontal in bitmap, coordinates can only be found to an integer, in this case (0,4). However, with the SVG the exact coordinate to an appropriate amount of decimal points can be found ((0.7, 4.4) to 1 decimal points). This chain of reasoning can also be applied to why it is easier to get the distance of a section of a path in SVGs. Another problem SVGs remove, is the ambiguity of what the object in the image is. For example, on the left side of the diagram, we as humans recognize the image is depicting 2 angled slopes meeting at an acute angle with a horizontal line connecting these 2 slopes below the intersection, or an 'A'. But a computer does not know that. However on the right, the computer knows the equation of each line. This means that it understands the content, but not the context, which is enough for the project to work.
+SVGs work on a coordinate grid, this means that finding points of intersection and getting the length of a section of a path is much easier compared to bitmap images. Since bitmap images are pixel based, there is no mathematical way of finding out where two lines intersect due to the limited resolution. In the image below, the difference between SVG and PNG can be seen. To find the intersection coordinate of the left slope of the 'A' to the horizontal in bitmap, coordinates can only be found to an integer, in this case (0,4). However, with the SVG the exact coordinate to an appropriate amount of decimal points can be found ((0.7, 4.4) to 1 decimal points). This chain of reasoning can also be applied to why it is easier to get the distance of a section of a path in SVGs. Another problem SVGs remove, is the ambiguity of what the object in the image is. For example, on the left side of the diagram, we as humans recognize the image is depicting 2 angled slopes meeting at an acute angle with a horizontal line connecting these 2 slopes below the intersection, or an 'A'. But a computer does not know that. However on the right, the computer knows the equation of each line. This means that it understands the content, but not the context, which is enough for the project to work.
+
+Due to the complexity of handling SVGs, I will be using paper, which is a library focused on SVG manipulation and the display of them in an HTML canvas. However, it is important for me to understand how SVGs work, because I will need to programmatically write SVGs, and so I can write more efficient code. All the encoding from SVG points to embroidery files is done by me. Writing a library like paper by myself would go way beyond A-Level and all the code would be mostly copied from established algorithms which have been studied a long time ago, so it would be illogical to not use paper, this allows me to focus on encoding algorithms. Despite
 
 .. figure:: /_static/images/bitmap-vs-svg.png
     :alt: bitmap vs png diagram
@@ -283,7 +285,7 @@ However, for quadratic Bézier curves or Nth Bézier curves, it is resource inte
 Intersections
 -------------
 
-Finding the point of intersection will be vital for the conversion to work as shown in `Transcoding SVG Fills`_. The maths behind intersections are already established.
+Finding the point of intersection will be vital for the conversion to work as shown in `Encoding SVG Fills`_. The maths behind intersections are already established.
 
 Since the equation of each path is known, substitution can be used, then the roots can be found of the combined equation. When dealing with linear equations, matrices can be used to find the solution of system of equations.
 
@@ -324,8 +326,8 @@ To gain an understanding on how embroidery files are made, `Embird (https://www.
 Encoding SVGs to Embroidery
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Transcoding SVG fills
----------------------
+SVG fills
+---------
 
 Blocks of :term:`stitches<Stitch>` are more or less aligned to the normal at which the thread hits the block in ``Figure 1`` and ``Figure 2``. For implementation, the average normal will be taken of the :term:`SVG` path on one side from the start to the further point away, to get the equation of the threads that will be used to fill the block with in a diagonal pattern. Finally, the end and start of the next diagonal will be connected to form a block of stitches. This can be seen below in ``Figure 4``.
 
@@ -339,7 +341,8 @@ Blocks of :term:`stitches<Stitch>` are more or less aligned to the normal at whi
 However, this method does not work if during the 2nd step, there are more than 2 solutions to the line intersecting with the path. There are multiple approaches to this problem, them being:,
 
 #.  Branch out and carry out the same method in each branch, then do a :term:`jump stitch<Jump stitch>` to the other branch. 
-#.  Or, create gutters (slicing using multiple parallel equidistant lines) in the shape to create an eulerian graph, then visit each edge.
+#.  Create gutters (slicing using multiple parallel equidistant lines) in the shape to create an eulerian graph, then visit each edge.
+#. Or, create an eulorian graph given the intersection points, then generate an eulorian cycle.
 
 The first 2 methods can be seen below in ``Figure 5``.
 
@@ -361,10 +364,10 @@ For the last method, to create a :term:`eulerian graph<Eulerian graph>` all vert
 
 Since there is ambiguity in how to achieve a good result with the first 2 methods, the third method will be used, where the main challenge will be to create the gutter lines and generate the graph using the intersections of the gutter lines.
 
-Transcoding SVG paths
----------------------
+SVG strokes
+-----------
 
-SVG paths will be easier to encode. After a certain stroke width, the algorithm should encode a satin stitch to give the outline a width, otherwise a running stitch should be used.
+The stroke of an SVG path will be easier to encode. After a certain stroke width, the algorithm should encode a satin stitch to give the outline a width, otherwise a running stitch should be used.
 
 Running Stitch
 """"""""""""""
@@ -394,8 +397,7 @@ Objectives
 
 The objectives are split in 3 main parts of the project, as each of the sections will be contained in separate frameworks. The parts are: 
 
-#. Front end
-#. Back end
+#. Website
 #. Conversion algorithm
 
 The following objectives act as a checklist for what the final program should be able to accomplish, with extension objectives in *italics*.
@@ -406,50 +408,51 @@ Website
 #. A canvas should cover the majority of the webpage.
 	#. Movement of graphics in the canvas should be facilitated by dragging in the canvas.
 	#. Zooming should be allowed if mouse wheel scrolling while the mouse is in the canvas.
-	#. The user should be able to select items in a graphic by left-clicking the item. All other selections should be removed
+	#. The user should be able to select items in a graphic by left-clicking the item. All other selections should be removed.
 	#. If the user selects another item while holding control, the other selections should not disappear.
 	#. If the user left-clicks nothing, all selections should be removed.
 	#. Selections should be displayed using an outline around the item selected.
-	#. *directional rulers should be shown at the top and left side to give an idea to the user how large the graphic is.*
+	#. *Directional rulers should be shown at the top and left side to give an idea to the user how large the graphic is.*
 #. A side panel on the right-hand side should be shown, displaying colour information
 	#. In the panel, the user should be able to navigate a list of DMC (thread colours) threads.
 	#. Given a colour is selected, the user should be able to change the colour of the selected item's fill or stroke. 
-	#. Given the user presses a labelled button, the user should be able to normalize all the colours in the graphic to DMC colours.
+	#. Given the user presses a labelled button, the user should be able to normalize all the colours in the graphic to DMC (set of thread colours from a manufacturer) colours.
 #. A toolbar at the top should be shown, where the user can run operations.
 	#. The toolbar should be similar to existing programs such as Google Docs or Microsoft Word, so that users can navigate the program easily.
-	#. All items in this toolbar should always be visible
+	#. All items in this toolbar should always be visible.
 	#. If the user types in the filename input, the filename should change throughout to the user specified name.
 	#. Dropdowns should open when clicking on the menu buttons, which are:
 		#. The 'File' dropdown should show a menu of items which associate to the graphic that the user is working on, or will be. This includes saving and opening files.
 		#. The 'Edit' dropdown should show a menu of items which associate to the current graphic.
 		#. The 'View' dropdown should show a menu of items which associate to how the graphic is displayed in the canvas.
 	#. Below the dropdown, multiple buttons and inputs should be shown which change how the graphic is displayed, or that change attributes of the graphic.
-		#. Buttons should be shown that undo or redo the graphic when pressed
-		#. Inputs should be shown that change the dimensions of the graphic when submitted
+		#. Buttons should be shown that undo or redo the graphic when pressed.
+		#. Inputs should be shown that change the dimensions of the graphic when submitted.
 		#. Buttons should be shown that change how the canvas looks when pressed.
 		#. A button which is different from the other in the toolbar should be shown only when the graphic has not been converted yet, that converts the graphic to an embroidery graphic.
 		#. A settings button which opens a list of inputs in a dropdown should be shown which changes how the conversion process behaves
 	#. The user should be able to save any graphic displayed to their local device in whatever state it is in the conversion process (SVG or embroidery), given they click the descriptive buttons.
 	#. The user should be able to open any SVG graphic, such that it can be used in the conversion process.
-#. The size of the icons and text should be big enough that all users can see them clearly, while preventing overflow
+#. The size of the icons and text should be big enough that all users can see them clearly, while preventing overflow.
 #. The website should run smoothly (>30fps) with little to no stuttering while dragging a 500kb sized graphic around, when using most computers. 
 #. The website should load in under half a second on a good connection.
 #. The website should be able to display all elements of it and be functional, on all screens with a viewport 800x1024 or higher (standard tablet size).
 #. *The website should work well on touch based devices.*
-#. *tooltips should be shown on some elements, such as buttons after hovering over them after a short while, to show a descriptive message about what the element does.*
+#. *Tooltips should be shown on some elements, such as buttons after hovering over them after a short while, to show a descriptive message about what the element does.*
 
 
 Conversion algorithm
 ====================
-#. The conversion should output an .exp file
-#. A Conversion should be able to take place between SVG files to embroidery file types
-	#. The stroke of an SVG path (given it has one) should be converted to a set of points resembling a satin stitch or running stitch, with the result being affected by the stroke width of the path
+#. The conversion should output an .exp file.
+#. A Conversion should be able to take place from SVG files to embroidery file types.
+	#. The stroke of an SVG path (given it has one) should be converted to a set of points resembling a satin stitch or running stitch, with the result being affected by the stroke width of the path.
 	#. The fill of the SVG path (given it has one) should be filled such that when embroidered, the fabric below should be hard to be seen.
 	#. The colour of the stitch should be determined by the SVG path attribute, with the colours of different paths within the SVG file being done first to avoid the number of times the user has to switch the threads on the embroidery machine.
+	#. The options given to the user should affect the conversion, for example, a shorter stitch length should result in a more accurate conversion.
 	#. *Given the user said so, flatten the SVG, so there are no underlying paths. This can prevent too many threads being on top of each other.*
-#. Conversion should be able to take place between embroidery file types and PNG, by rendering embroidery file in SVG, then rendering it to bitmap.
+#. The converted file should be able to be saved as SVG (preview of the conversion).
 #. Conversion from any step to another must resemble the original input.
-#. Conversion should take a reasonable amount of time, maximum 10 seconds per conversion step 
+#. Conversion should take a reasonable amount of time, around 30 seconds for a 100 mm by 100 mm graphic.
 
 ***********
 Limitations
@@ -459,9 +462,8 @@ Since the website will contain a lot of information, only medium to large screen
 
 * CPU: Intel i5-6200U 
 * RAM: 8GB
-* Main storage: 256GB SSD
 
 Other secondary limitations include:
 
-* Time schedule - The project must be finished by March 2022
+* Time schedule - The project must be finished by March 4th, 2022
 * Knowledge - The project must not be too complicated such that I can not complete it due to complexity, even with additional learning.
