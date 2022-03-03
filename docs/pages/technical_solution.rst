@@ -26,6 +26,10 @@ Hierholzer's algorithm
 Explanation
     Generates an eulorian circuit which is used to convert SVG fills into embroidery stitches
 
+Techniques used 
+	* Graph traversal
+	* Linked List Maintaince 
+
 FileName
     Graph.ts
 
@@ -38,6 +42,17 @@ Fill encoding (complex algorithm)
 
 Explanation
     Converts SVG fills into stitch points, essential part of the conversion process
+
+Techniques used 
+	* Graph traversal
+	* Recursion (graph.recursionCheck())
+	* 2D arrays
+	* Nested for loops
+	* list operations
+	* dyanmic generation of points
+	* complex algorithms
+		* algorithm itself, see pseduocode 
+		* optimising the path jump points 
 
 FileName
     fillPath.ts
@@ -52,6 +67,10 @@ Satin path (complex algorithm)
 Explanation
     The algorithm which converts a SVG outline into a set of points which resembles a wide stroke, uses vectors to get the offset from a particular point using the noraml at that point
 
+Techniques used 
+	* vector maths
+	* dynamic generation of points
+
 FileName
     satinPath.ts
 
@@ -64,6 +83,13 @@ Row guttering (complex algorithm)
 
 Explanation
     Row guttering is used to get the edges across the shape. The algorithm is optimised by reducing the number of intersections it needs to check by calculating the vertical and horizontal offset of the gutters using the normal angle. It also prevents errorous intersections from being saved, by removing the last intersection if the length of the intersections is odd
+
+Techniques used 
+	* complex algorithm 
+	* trigonometry
+	* coordinate geometry
+	* dynamic generation of points
+	* list operations
 
 FileName
     rowGutter.ts
@@ -78,6 +104,9 @@ Regex
 Explanation
     Validates user input and prevents input which would not work further into the conversion process to reach it
 
+Techniques used 
+	* pattern matching
+
 FileName
     NumberInput.tsx, Canvas.tsx
 
@@ -91,6 +120,9 @@ Fallbacks and catching errors
 Explanation
     Certain errors such a stack overflow which occurs when the shape that is being converted is too big, can lead to the shape not being converted properly. As a fallback if the fill fails, it will generate the stroke regardless if it has a stroke or not. This fallback is also called regularly due to the shape being too small to have its fill encoded. The block sequence is sanitized when it is generated to prevent blocks which are too small or points which are invalid, which can cause errors during conversion
 
+Techniques used 
+	* data integrity
+
 FileName
     Container.ts
 
@@ -98,11 +130,14 @@ Page Number
     999
 
 
-Data synchronization between files
-==================================
+Data synchronization between modules
+====================================
 
 Explanation
     The event bus is used to synchronise data between components where a direct communication line through the props property would not be viable due to them being too far apart. One example, is how Canvas.tsx dispatches a "conversionFinished" message if conversion has finished to Toolbar.tsx, this allows to communicate to the user that a conversion has finished by closing the loading modal which is opened when the user presses the convert button
+
+Techniques used 
+	* callbacks
 
 FileName
     Canvas.tsx, Toolbar.tsx
@@ -117,6 +152,9 @@ Undo and redo functionality
 Explanation
     The user can undo and redo to different states, this solution uses a stack to contain the saved frame
 
+Techniques Used 
+	* Stack operations
+
 FileName
     UndoRedoTool.ts
 
@@ -130,8 +168,11 @@ Converting blocks of points to SVG path
 Explanation
     To visually represnt the converted file, a preview is generated using SVG paths created programmatically
 
+Techniques used 
+	* SVG manipulation
+
 FileName
-    UndoRedoTool.ts
+    Container.ts
 
 Page Number
     999
@@ -142,6 +183,10 @@ Converting blocks of points into EXP files
 
 Explanation
     EXP files need to be converted to a binary file which ismade of signed integers for an embroidery machine to read it
+
+Techniques
+	* saving to files
+	* using complex data types (EXP)
 
 FileName
     Container.ts
