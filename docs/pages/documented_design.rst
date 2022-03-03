@@ -137,7 +137,7 @@ Implementation
 .. code-block:: none
     :linenos:
 
-    procedure getEulorianPath(startingVertex) {
+    procedure getEulerianPath(startingVertex) {
         curVertex ← startingVertex
         cPath ← Array of int
         ePath ← Array of int
@@ -215,7 +215,7 @@ Implementation
             Endfor 
         }
         
-        public getEulorianPath(startingVertex=0) {
+        public getEulerianPath(startingVertex=0) {
             # defined before in pseudocode undder `Hierholzer's algorithm`
         }
         
@@ -266,7 +266,7 @@ Implementation
         For line in lines
             intersections ← point where path intersects with line
             
-            sort intsersections by the distance from the start point of the line to the intersection in ascending order
+            sort intersections by the distance from the start point of the line to the intersection in ascending order
         
             If intersectPoints.length < 2 Then
                 break
@@ -282,14 +282,14 @@ Implementation
         Return gutterLines
     }
 
-Straight Subdivison
-===================
+Straight Subdivision 
+====================
 
 Description
     This algorithm is used to split a line into multiple subsections of a specific length. These small sections are created because embroidery designs would not last and become loose, or even worse, not work if the sections are too large. The recommended length is 2.7mm.
 
 Implementation
-    src/lib/stitch/convert/straightSubdivison.ts
+    src/lib/stitch/convert/straightSubdivision.ts
 
 .. code-block:: none
     :linenos:
@@ -505,13 +505,13 @@ Implementation
                 startPoint ← index of the closest point in the current subgraph to the last point in the previous block
             Endif
             
-            result ← graph.getEulorianPath(availableVertices[startPoint])
+            result ← graph.getEulerianPath(availableVertices[startPoint])
             buffer ← new Array of point 
             
             # convert path into intermediate points that are no longer than stitchLength 
             For i=0 to result.length - 2
                 
-                # defined in pseduocode before
+                # defined in pseudocode before
                 divisions = straightSubdivisions(result[i].point, result[i + 1].point, stitchLength, true)
                 
                 buffer.push(elements of divisions)
@@ -741,7 +741,7 @@ Exp files are the most basic machine embroidery files which exist. It contains a
 * **Stop** - stops machine for a colour change (10000000 00000001)
 * **End** - end of program (10000000 10000000)
 
-If the first byte in a command is -128, it signals a control event (jump, stop, end), otherwise it is a stitch command. Because of this, the longest distance the machine can move in one command is +-127 in the x and y direction. Because of this, small designs may not be as accurate because it only allows for a precision of 1 decimal point of a milimeter (12.7 mm to -12.7 mm).
+If the first byte in a command is -128, it signals a control event (jump, stop, end), otherwise it is a stitch command. Because of this, the longest distance the machine can move in one command is +-127 in the x and y direction. Because of this, small designs may not be as accurate because it only allows for a precision of 1 decimal point of a millimetre (12.7 mm to -12.7 mm).
 
 Exp files can be generated from a Container. A preview of the exp file is generated in SVG form when the conversion finishes and is displayed.
 
@@ -797,7 +797,7 @@ Some variables described below are react hooks, to prevent un-needed rows being 
       - reference to the vertical ruler in JSX
       - Canvas.tsx
     * - **preventSelect**
-      - check if items are allowed to be selecteed in the canvas
+      - check if items are allowed to be selected in the canvas
       - Canvas.tsx
     * - **timer**
       - used to prevent selection after dragging element after some time
@@ -860,7 +860,7 @@ Some variables described below are react hooks, to prevent un-needed rows being 
       - the stroke of the selected item
       - Toolbar.tsx
     * - **isModalOpen**
-      - if the laoding modal is open
+      - if the loading modal is open
       - Toolbar.tsx
     * - **isConvertToEmbroidery**
       - if conversion should convert SVG to points
@@ -962,13 +962,13 @@ Some variables described below are react hooks, to prevent un-needed rows being 
       - outline offset where the anchors are
       - runningPath.ts
     * - preBuffer
-      - start and end point of each normal, pre-santisation
+      - start and end point of each normal, pre-sanitisation
       - satinPath.ts
     * - stitches
       - stitch points in absolute terms
       - Block.ts
     * - sequence
-      - array of blocks. This holds the entrie path generated
+      - array of blocks. This holds the entire path generated
       - Container.ts
     * - leafItems
       - items with no children or is a CompoundPath
@@ -1001,10 +1001,10 @@ Some variables described below are react hooks, to prevent un-needed rows being 
       - vertex to curve location table
       - Graph.ts
     * - cPath
-      - current path or 'circuit' that the eulorian circuit algorithm is working with
+      - current path or 'circuit' that the eulerian circuit algorithm is working with
       - Graph.ts
     * - ePath
-      - final eulorian circuit path
+      - final eulerian circuit path
       - Graph.ts
     * - items
       - items which have no children or are a CompoundPath
@@ -1041,7 +1041,7 @@ Number Inputs
 
 Inputs that require only floats need to have their input cleaned to prevent errors. To allow only numbers in the `NumberInput.tsx` react component, I used Regex on the `onKeyPress` and the `onPaste` keyboard event.
 
-Pseduocode for onKeyPress:
+Pseudocode for onKeyPress:
 
 .. code-block:: none 
     :linenos: 
@@ -1057,7 +1057,7 @@ Pseduocode for onKeyPress:
 
 `/[0-9]|\./` matches with a number or a fullstop. This is to prevent any non-numeric value being used
 
-Pseduocode for onPaste:
+Pseudocode for onPaste:
 
 .. code-block:: none 
     :linenos: 
@@ -1084,7 +1084,7 @@ Test Plan
 
 To make sure the program works correctly and to its initial goals, while providing a good user interface with minimal issues, a set of tests compiled from the list of objectives, have been outlined below. The tests will be performed in a video format, with the final results being presented in this document.
 
-Some tests may not have all the NEB conditions because input is limited. NEB = (1)Normal, (2)Erroneous, (3)Extreme, where the input is in italics, and the expected output in **bold**
+Some tests may not have all the NEB conditions because input is limited. NEB = (1) Normal, (2) Erroneous, (3) Extreme
 
 
 .. list-table:: Test Plan 
@@ -1128,7 +1128,7 @@ Some tests may not have all the NEB conditions because input is limited. NEB = (
       - the elements change, reflecting user input
     * - 3.2
       - 
-      - changing stroke width to negative
+      - changing stroke width to a negative number
       - nothing
     * - 3.3
       - 

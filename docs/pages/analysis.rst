@@ -321,7 +321,7 @@ To gain an understanding on how embroidery files are made, `Embird (https://www.
     :align: center
     :width: 70%
 
-    ``Figure 3`` Denisty map of squirrel.dst 
+    ``Figure 3`` Density map of squirrel.dst 
 
 Encoding SVGs to Embroidery
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -342,7 +342,7 @@ However, this method does not work if during the 2nd step, there are more than 2
 
 #.  Branch out and carry out the same method in each branch, then do a :term:`jump stitch<Jump stitch>` to the other branch. 
 #.  Create gutters (slicing using multiple parallel equidistant lines) in the shape to create an eulerian graph, then visit each edge.
-#. Or, create an eulorian graph given the intersection points, then generate an eulorian cycle.
+#. Or, create an eulerian graph given the intersection points, then generate an eulerian cycle.
 
 The first 2 methods can be seen below in ``Figure 5``.
 
@@ -395,7 +395,7 @@ Each of the vector is then added to the point at which the normal was sampled to
 Objectives
 **********
 
-The objectives are split in 3 main parts of the project, as each of the sections will be contained in separate frameworks. The parts are: 
+The objectives are split in 2 main parts of the project, as each of the sections will be contained in separate frameworks. The parts are: 
 
 #. Website
 #. Conversion algorithm

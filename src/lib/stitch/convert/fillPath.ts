@@ -138,7 +138,7 @@ async function fillPath(
 		}
 
 		// generate path then create sub divisons to prevent stitch lengths being too far apart
-		const result = graph.getEulorianPath(availableVertices[startPoint]);
+		const result = graph.getEulerianPath(availableVertices[startPoint]);
 		let buffer: paper.Point[] = [];
 
 		if (result) {
