@@ -6,7 +6,9 @@ Documented Design
 UI Design
 *********
 
-React uses JSX, which is a way of merging html, css and JavaScript into a single component. These components can then be contained and used in composition, inheritance and aggregation is not used since nearly everything can be created those 2 concepts. The diagram below shows the composition of components from the root
+React uses JSX, which is a way of merging html, css and JavaScript into a single component. These components can then be contained and used in composition and inheritance. Aggregation is not used since nearly everything can be created the other 2 concepts. The diagram below shows the composition of components from the root. 
+
+Note: TSX is the alternative to JSX when using TypeScript, they are functionally the same.
 
 .. figure:: /_static/images/JSX-structure.png
     :alt: JSX structure
@@ -89,7 +91,7 @@ react-usestateref
     Extension of the default use-state hook offered by react, which allows for immediate access of the data
 
 use-resize-observer
-    observer for when the window size changes, easily accessible with react hooks
+    Observer for when the window size changes, easily accessible with react hooks
 
 tailwindcss
     Utility CSS framework, allows for quick designing of elements
@@ -120,6 +122,8 @@ Algorithms
 **********
 
 The algorithms described below are the more complicated ones which make up the conversion process. Algorithms which ensure data integrity for react.js are not included, but rather in the diagrams.
+
+ I used TypeScript in my project because it allows me to use strong types variables and the benefits which come with it, this is essential for a large project where autocomplete and suggestions from IntelliSense are used remind you of how you structured your code.
 
 Hierholzer's algorithm
 ======================
@@ -759,7 +763,7 @@ Communication Between Components
 
 Since components are held in separate files, communication between them outside the props (parameter of react components) of react components is essential to avoid cluttering of the props and unnecessary components being passed to react components which may not use the communication stream. A fix for this is to create separate callbacks for components which want to communicate. Callbacks are like promises, a way to think of them is when you are in a queue at a restaurant, you may be handed a ticket with a number, when a monitor displays your number, you go and collect your food. This means that callbacks can be used asynchronously, and multiple components can receive the same information from a dispatch if they have the same 'ticket'. Also, keeping with the analogy, you do not need to get rid of your ticket, so that means you can go back and get food again if the monitor displays your ticket number again. You can see all of these 'tickets' in the `Event Bus Structure`_ section.
 
-This is useful because any type of file can use these callbacks and communicate (including TSX and normal TypeScript files).
+This is useful because any type of file can use these callbacks and communicate (including TSX, JSX for TypeScript, and normal TypeScript files).
 
 **********
 Data table 
@@ -1035,7 +1039,7 @@ Validating Input
 Number Inputs 
 =============
 
-Inputs that require only floats need to have their input cleaned to prevent errors. To allow only numbers in the `NumberInput.tsx` react component, I used Regex on the `onKeyPress` and `onPaste` event.
+Inputs that require only floats need to have their input cleaned to prevent errors. To allow only numbers in the `NumberInput.tsx` react component, I used Regex on the `onKeyPress` and the `onPaste` keyboard event.
 
 Pseduocode for onKeyPress:
 
